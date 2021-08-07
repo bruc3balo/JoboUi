@@ -1,0 +1,36 @@
+package com.example.joboui.login;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
+
+import com.example.joboui.R;
+import com.example.joboui.databinding.ActivitySignInBinding;
+
+public class SignInActivity extends AppCompatActivity {
+
+    private ActivitySignInBinding activity_sign_in;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        activity_sign_in = ActivitySignInBinding.inflate(getLayoutInflater());
+        setContentView(activity_sign_in.getRoot());
+
+        setWindowColors();
+
+    }
+
+    private void setWindowColors () {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getWindow().setStatusBarColor(getColor(R.color.deep_purple));
+            getWindow().setNavigationBarColor(getColor(R.color.deep_purple));
+        } else {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.deep_purple));
+            getWindow().setNavigationBarColor(getResources().getColor(R.color.deep_purple));
+        }
+
+    }
+}

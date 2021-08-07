@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".login.RegisterActivity">
+
+    <ScrollView
+        android:background="@color/deep_purple"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_marginTop="80dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/jobo"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:padding="20dp"
+                android:textSize="50sp"
+                android:textStyle="bold"
+                android:fontFamily="serif"/>
+
+            <TextView
+                android:layout_marginTop="40dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/register"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:textColor="@color/white"
+                android:padding="20dp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-condensed-light"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/edit_text_field_white"
+                android:hint="@string/first_name"
+                android:textColorHint="@color/black"
+                android:padding="20dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:inputType="textPersonName"
+                android:importantForAutofill="auto" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/edit_text_field_white"
+                android:hint="@string/second_name"
+                android:textColorHint="@color/black"
+                android:padding="20dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:inputType="textPersonName"
+                android:importantForAutofill="auto" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/edit_text_field_white"
+                android:hint="@string/phone_number"
+                android:textColorHint="@color/black"
+                android:padding="20dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:inputType="phone"
+                android:importantForAutofill="auto" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/edit_text_field_white"
+                android:hint="@string/jane_example_com"
+                android:textColorHint="@color/black"
+                android:padding="20dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:inputType="textEmailAddress"
+                android:importantForAutofill="auto" />
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/edit_text_field_white"
+                android:hint="@string/password_hint"
+                android:textColorHint="@color/black"
+                android:padding="20dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:inputType="textPassword"
+                android:importantForAutofill="auto" />
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/edit_text_field_white"
+                android:hint="@string/confirm_password"
+                android:textColorHint="@color/black"
+                android:padding="20dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:inputType="textPassword"
+                android:importantForAutofill="auto" />
+
+            <RadioGroup
+                android:layout_margin="25dp"
+                android:id="@+id/roleRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+
+                <RadioButton
+                    android:id="@+id/clientRadio"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:buttonTint="@color/purple"
+                    android:text="@string/client"
+                    android:padding="5dp"/>
+
+
+                <RadioButton
+                    android:id="@+id/serviceProviderRadio"
+                    android:layout_width="0dp"
+                    android:buttonTint="@color/purple"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:text="@string/service_provider"
+                    android:padding="5dp"/>
+
+
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/registerUserButton"
+                android:layout_width="match_parent"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="25dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/login_bg_button"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                android:text="@string/register" />
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:background="@color/black"
+                android:layout_margin="20dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

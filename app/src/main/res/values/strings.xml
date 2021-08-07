@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">JoboUi</string>
+    <string name="jobo">Jobo</string>
+    <string name="welcome_jobo">\n Welcome, \n Get a service provider from the \n convenience of your home</string>
+    <string name="register">Register</string>
+    <string name="login">Log in</string>
+    <string name="title_activity_service_view">ServiceViewActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="sign_in">Sign In</string>
+    <string name="jane_example_com">jane@example.com</string>
+    <string name="password_hint">* * * * * *</string>
+    <string name="first_name">First Name</string>
+    <string name="second_name">Second Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="client">Client</string>
+    <string name="service_provider">Service Provider</string>
+    <string name="additional_details">Additional Details</string>
+    <string name="preferred_hours">1. Preferred Working Hours</string>
+    <string name="specialities">2. Specialities</string>
+    <string name="finish" >Finish</string>
+    <string name="startTime">Start Time : </string>
+    <string name="to_be_filled">-</string>
+    <string name="endTime">End Time : </string>
+    <string name="s">S</string>
+    <string name="m">M</string>
+    <string name="w">W</string>
+    <string name="t">T</string>
+    <string name="f">F</string>
+    <string name="next">Next</string>
+    <string name="service">Service</string>
+</resources>
