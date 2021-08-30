@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.joboui">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- location -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- storage -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- location -->
 
     <application
         android:allowBackup="false"
@@ -9,6 +18,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.JoboUi">
+        <activity
+            android:name=".admin.AdminActivity"
+            android:exported="true" />
+        <activity
+            android:name=".clientUi.ClientActivity"
+            android:exported="true" />
+        <activity
+            android:name=".serviceProviderUi.ServiceProviderActivity"
+            android:exported="true" />
         <activity
             android:name=".login.ServiceProviderAdditionalActivity"
             android:exported="true" />
@@ -38,6 +56,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

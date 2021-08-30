@@ -7,39 +7,41 @@
     tools:context=".login.SignInActivity">
 
     <ScrollView
-        android:background="@color/deep_purple"
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
+            android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_marginTop="80dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/jobo"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:padding="20dp"
-                android:textSize="50sp"
-                android:textStyle="bold"
-                android:fontFamily="serif"/>
 
             <TextView
-                android:layout_marginTop="40dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/sign_in"
                 android:layout_gravity="center"
+                android:layout_marginTop="40dp"
+                android:fontFamily="@font/roboto_medium"
                 android:gravity="center_vertical"
-                android:textColor="@color/white"
                 android:padding="20dp"
+                android:text="@string/welcome_back"
+                android:textColor="@color/black"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-condensed-light"/>
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
+                android:padding="20dp"
+                android:text="@string/phone_number"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
 
             <EditText
@@ -48,19 +50,30 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:background="@drawable/edit_text_field_white"
-                android:hint="@string/jane_example_com"
+                android:hint="@string/phone_hint"
                 android:textColorHint="@color/black"
                 android:padding="20dp"
                 android:layout_gravity="center_vertical"
                 android:gravity="center_vertical"
-                android:inputType="textEmailAddress"
+                android:inputType="phone"
                 android:importantForAutofill="auto" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
+                android:padding="20dp"
+                android:text="@string/password"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:background="@drawable/edit_text_field_white"
@@ -82,18 +95,26 @@
                 android:layout_marginEnd="25dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/login_bg_button"
+                android:backgroundTint="@color/deep_purple"
                 android:textStyle="bold"
                 android:textSize="15sp"
                 android:textColor="@color/white"
                 android:text="@string/sign_in" />
 
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@color/black"
-                android:layout_margin="20dp"/>
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="@string/dont_have_account"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>

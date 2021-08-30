@@ -15,6 +15,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tutorialTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
@@ -25,12 +26,14 @@
             android:textSize="20sp"/>
 
         <ImageView
+            android:id="@+id/tutorialImage"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_gravity="center"/>
 
 
         <TextView
+            android:id="@+id/tutorialExplanation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/deep_purple"

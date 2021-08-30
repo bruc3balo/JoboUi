@@ -8,8 +8,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.joboui.R;
+import com.example.joboui.admin.AdminActivity;
 import com.example.joboui.databinding.ActivityLoginBinding;
 
 public class LoginActivity extends AppCompatActivity {
@@ -22,6 +24,12 @@ public class LoginActivity extends AppCompatActivity {
         loginBinding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(loginBinding.getRoot());
 
+        TextView adminSecret = loginBinding.adminSecret;
+        adminSecret.setOnLongClickListener(view -> {
+            goToAdminPage();
+            return false;
+        });
+
         Button signInButton = loginBinding.signInButton;
         signInButton.setOnClickListener(view -> goToSignInPage());
 
@@ -31,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         setWindowColors();
     }
 
-    private void setWindowColors () {
+    private void setWindowColors() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().setStatusBarColor(getColor(R.color.white));
             getWindow().setNavigationBarColor(getColor(R.color.white));
@@ -48,5 +56,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void goToRegisterPage() {
         startActivity(new Intent(this, RegisterActivity.class));
+    }
+
+    private void goToAdminPage() {
+        startActivity(new Intent(this, AdminActivity.class));
     }
 }

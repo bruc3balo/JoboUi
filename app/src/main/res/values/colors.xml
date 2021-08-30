@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple">#8548DC</color>
-    <color name="deep_purple">#2C0D60</color>
+    <color name="purple">#882B185B</color>
+    <color name="deep_purple">#2B185B</color>
     <color name="transparent">#00000000</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="grey">#877F7F</color>
+    <color name="lgrey">#E4E1E1</color>
+    <color name="brown_skin">#AC6F21</color>
+    <color name="red">#E81212</color>
 </resources>

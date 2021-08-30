@@ -7,11 +7,14 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.joboui.R;
 import com.example.joboui.models.Models;
 
@@ -46,6 +49,10 @@ public class TutorialVpAdapter extends RecyclerView.Adapter<TutorialVpAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
+        Glide.with(mContext).load(tutorialList.get(position).getImageId()).into(holder.tutorialImage);
+        holder.title.setText(tutorialList.get(position).getTitle());
+        holder.description.setText(tutorialList.get(position).getExplanation());
+
     }
 
     @Override
@@ -54,11 +61,15 @@ public class TutorialVpAdapter extends RecyclerView.Adapter<TutorialVpAdapter.Vi
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
+        ImageView tutorialImage;
+        TextView title, description;
 
         ViewHolder(View itemView) {
             super(itemView);
 
+            tutorialImage = itemView.findViewById(R.id.tutorialImage);
+            title = itemView.findViewById(R.id.tutorialTitle);
+            description = itemView.findViewById(R.id.tutorialExplanation);
 
             itemView.setOnClickListener(this);
         }

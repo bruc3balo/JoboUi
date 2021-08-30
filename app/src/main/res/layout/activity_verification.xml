@@ -32,7 +32,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/welcome_jobo"
+            android:text="@string/thank_you_for_registering"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:textColor="@color/black"
@@ -41,51 +41,37 @@
             android:textStyle="bold"
             android:fontFamily="sans-serif"/>
 
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginBottom="10dp"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal">
-
-
-        <Button
-            android:id="@+id/signInButton"
-            android:layout_width="0dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="25dp"
-            android:layout_gravity="center"
-            android:text="@string/login"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/check_email"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
             android:textColor="@color/black"
-            android:textStyle="bold"
-            android:background="@drawable/login_bg_button_white"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:padding="10dp"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:fontFamily="sans-serif"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/resent_email"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:textColor="@color/black"
+            android:padding="10dp"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:drawablePadding="30dp"
+            android:fontFamily="sans-serif"
+            app:drawableEndCompat="@android:drawable/ic_dialog_email"
+            app:drawableTint="@color/purple" />
 
-
-        <Button
-            android:id="@+id/registerButton"
-            android:layout_width="0dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="10dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/login_bg_button"
-            android:layout_weight="1"
-            android:textStyle="bold"
-            android:textSize="15sp"
-            android:textColor="@color/white"
-            android:text="@string/register" />
 
     </LinearLayout>
+
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

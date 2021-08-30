@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".clientUi.ClientActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:padding="10dp"
+            android:id="@+id/clientToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:orientation="vertical">
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:gravity="center_vertical"
+                   android:orientation="horizontal">
+
+                   <ImageButton
+                       android:layout_width="50dp"
+                       android:layout_height="50dp"
+                       android:layout_gravity="center"
+                       android:src="@drawable/ic_menu_circle"
+                       android:background="@android:color/transparent"/>
+
+                   <TextView
+                       android:layout_weight="1"
+                       android:layout_width="0dp"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="center_vertical"
+                       android:gravity="center_vertical"
+                       android:textColor="@color/deep_purple"
+                       android:textSize="18sp"
+                       android:fontFamily="@font/roboto_medium"
+                       android:text="@string/good_morning_wafula"/>
+
+                   <ImageButton
+                       android:layout_width="50dp"
+                       android:layout_height="50dp"
+                       android:layout_gravity="center"
+                       android:src="@drawable/ic_bell_notification"
+                       android:background="@android:color/transparent"/>
+
+               </LinearLayout>
+
+               <LinearLayout
+                   android:padding="10dp"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:gravity="center_vertical"
+                   android:orientation="horizontal">
+
+                   <TextView
+                       android:id="@+id/introText"
+                       android:layout_weight="1"
+                       android:layout_width="0dp"
+                       android:layout_height="match_parent"
+                       android:layout_gravity="center_vertical"
+                       android:gravity="center_vertical"
+                       android:textColor="@color/deep_purple"
+                       android:textSize="15sp"
+                       android:textStyle="bold"
+                       android:fontFamily="@font/roboto_medium"
+                       android:text="@string/what_service"/>
+
+                   <androidx.appcompat.widget.SearchView
+                       android:id="@+id/clientSearch"
+                       android:layout_width="100dp"
+                       android:layout_height="match_parent"
+                       android:layout_gravity="center"
+                       app:queryHint="@string/search"
+                       app:defaultQueryHint="@string/search"
+                       android:src="@drawable/ic_bell_notification"
+                       android:background="@drawable/search_bg"/>
+
+               </LinearLayout>
+
+           </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+         <LinearLayout
+             android:background="@color/lgrey"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical">
+
+             <TextView
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="top|center_vertical"
+                 android:gravity="center_vertical"
+                 android:textColor="@color/deep_purple"
+                 android:textSize="15sp"
+                 android:textStyle="bold"
+                 android:layout_marginTop="20dp"
+                 android:layout_marginStart="30dp"
+                 android:layout_marginEnd="30dp"
+                 android:layout_marginBottom="30dp"
+                 android:fontFamily="@font/roboto_medium"
+                 android:text="@string/select_service"/>
+
+             <GridView
+                 android:id="@+id/servicesGrid"
+                 android:layout_height="match_parent"
+                 android:layout_width="match_parent"
+                 android:layout_gravity="center"
+                 android:numColumns="3"/>
+
+
+         </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

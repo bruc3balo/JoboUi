@@ -7,195 +7,143 @@
     tools:context=".login.RegisterActivity">
 
     <ScrollView
-        android:background="@color/deep_purple"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_marginTop="80dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/jobo"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:padding="20dp"
-                android:textSize="50sp"
-                android:textStyle="bold"
-                android:fontFamily="serif"/>
 
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginTop="40dp"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
+                android:padding="20dp"
+                android:text="@string/welcome"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/register"
                 android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/roboto_medium"
                 android:gravity="center_vertical"
-                android:textColor="@color/white"
                 android:padding="20dp"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-condensed-light"/>
+                android:text="@string/phone_number"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginBottom="10dp"
                 android:background="@drawable/edit_text_field_white"
-                android:hint="@string/first_name"
-                android:textColorHint="@color/black"
-                android:padding="20dp"
-                android:layout_gravity="center_vertical"
                 android:gravity="center_vertical"
-                android:inputType="textPersonName"
-                android:importantForAutofill="auto" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/edit_text_field_white"
-                android:hint="@string/second_name"
-                android:textColorHint="@color/black"
-                android:padding="20dp"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:inputType="textPersonName"
-                android:importantForAutofill="auto" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/edit_text_field_white"
-                android:hint="@string/phone_number"
-                android:textColorHint="@color/black"
-                android:padding="20dp"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
+                android:hint="@string/phone_hint"
+                android:importantForAutofill="auto"
                 android:inputType="phone"
-                android:importantForAutofill="auto" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/edit_text_field_white"
-                android:hint="@string/jane_example_com"
-                android:textColorHint="@color/black"
                 android:padding="20dp"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:inputType="textEmailAddress"
-                android:importantForAutofill="auto" />
+                android:textColorHint="@color/black" />
 
-
-            <EditText
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/edit_text_field_white"
-                android:hint="@string/password_hint"
-                android:textColorHint="@color/black"
-                android:padding="20dp"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:inputType="textPassword"
-                android:importantForAutofill="auto" />
-
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/edit_text_field_white"
-                android:hint="@string/confirm_password"
-                android:textColorHint="@color/black"
-                android:padding="20dp"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:inputType="textPassword"
-                android:importantForAutofill="auto" />
-
-            <RadioGroup
-                android:layout_margin="25dp"
-                android:id="@+id/roleRadioGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_gravity="center"
-                android:gravity="center">
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
+                android:padding="20dp"
+                android:text="@string/new_password"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/edit_text_field_white"
+                android:gravity="center_vertical"
+                android:hint="@string/password_hint"
+                android:importantForAutofill="auto"
+                android:inputType="textPassword"
+                android:padding="20dp"
+                android:textColorHint="@color/black" />
 
-                <RadioButton
-                    android:id="@+id/clientRadio"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:buttonTint="@color/purple"
-                    android:text="@string/client"
-                    android:padding="5dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
+                android:padding="20dp"
+                android:text="@string/confirm_password"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
-
-                <RadioButton
-                    android:id="@+id/serviceProviderRadio"
-                    android:layout_width="0dp"
-                    android:buttonTint="@color/purple"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:text="@string/service_provider"
-                    android:padding="5dp"/>
-
-
-            </RadioGroup>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/edit_text_field_white"
+                android:gravity="center_vertical"
+                android:hint="@string/password_hint"
+                android:importantForAutofill="auto"
+                android:inputType="textPassword"
+                android:padding="20dp"
+                android:textColorHint="@color/black" />
 
             <Button
                 android:id="@+id/registerUserButton"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="15dp"
                 android:layout_marginStart="25dp"
                 android:layout_marginTop="25dp"
-                android:layout_marginBottom="5dp"
-                android:layout_gravity="center"
                 android:layout_marginEnd="25dp"
-                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:gravity="center"
                 android:background="@drawable/login_bg_button"
-                android:textStyle="bold"
-                android:textSize="15sp"
+                android:backgroundTint="@color/deep_purple"
+                android:text="@string/register"
                 android:textColor="@color/white"
-                android:text="@string/register" />
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@color/black"
-                android:layout_margin="20dp"/>
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="@string/have_account"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>

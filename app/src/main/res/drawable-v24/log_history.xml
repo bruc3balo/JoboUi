@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="translucent">
+    <item
+
+        android:bottom="0dp"
+        android:left="0dp"
+        android:right="0dp"
+        android:top="0dp"
+        android:height="90dp"
+        android:width="90dp"
+        android:drawable="@drawable/ic_file">
+
+
+
+        <shape android:shape="oval">
+            <solid android:color="@color/white" />
+            <corners android:radius="50dp" />
+        </shape>
+        <ripple android:color="@color/white"/>
+    </item>
+
+    <item
+        android:bottom="10dp"
+        android:left="10dp"
+        android:right="10dp"
+        android:top="10dp"
+        android:width="50dp"
+        android:height="50dp"
+        android:gravity="center"
+        android:drawable="@drawable/ic_history">
+        <shape android:shape="oval">
+            <solid android:color="@color/white" />
+            <corners android:radius="50dp" />
+        </shape>
+        <ripple android:color="@color/black"/>
+    </item>
+</layer-list>
