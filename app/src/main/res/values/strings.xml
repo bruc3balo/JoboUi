@@ -71,8 +71,9 @@
     <string name="email_address_hint">xyz@email.com</string>
     <string name="accept">Accept</string>
     <string name="cancel">Cancel</string>
-    <string name="bio">Bio</string>
+    <string name="bio">4. Bio</string>
     <string name="bio_hint">Tell us a bit about your left i.e. cover letter</string>
     <string name="id_hint">3540264</string>
-    <string name="id_number">Identity Number</string>
+    <string name="id_number">3. Identity Number</string>
+    <string name="username">Username</string>
 </resources>

@@ -131,7 +131,7 @@
             android:layout_marginEnd="25dp"
             android:layout_height="wrap_content"
             android:background="@drawable/login_bg_button_white"
-            android:backgroundTint="@color/purple"
+            android:backgroundTint="@color/deep_purple"
             android:textStyle="bold"
             android:textSize="15sp"
             android:textColor="@color/white"
@@ -152,6 +152,7 @@
             android:backgroundTint="@color/red"
             android:textStyle="bold"
             android:textSize="15sp"
+            android:padding="10dp"
             android:textColor="@color/white"
             android:text="@string/cancel" />
 

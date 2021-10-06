@@ -10,14 +10,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.joboui.R;
-import com.example.joboui.models.Models;
+import com.example.joboui.domain.Domain;
 
 import java.util.ArrayList;
 
 public class ServicesPageGrid extends BaseAdapter {
-    private final ArrayList<Models.Services> serviceList;
+    private final ArrayList<Domain.Services> serviceList;
 
-    public ServicesPageGrid(ArrayList<Models.Services> serviceList) {
+    public ServicesPageGrid(ArrayList<Domain.Services> serviceList) {
         this.serviceList = serviceList;
     }
 

@@ -6,17 +6,12 @@ import static com.example.joboui.globals.GlobalVariables.USER_DB;
 
 import android.app.Application;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.joboui.models.Models;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.joboui.domain.Domain;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,36 +32,35 @@ public class UserRepository {
 
     //Abstraction layer for encapsulation
 
-    private void insertUser(Models.User user) {
+    private void insertUser(Domain.User user) {
         new Thread(() -> {
             try {
+                clearUser();
                 userDao.insert(user);
-                System.out.println(user.getUid() + " inserted");
+                System.out.println(user.getUsername() + " inserted");
             } catch (Exception e) {
-                System.out.println(user.getUid() + " updated instead");
-                userDao.update(user);
+                System.out.println(user.getUsername() + " failed instead");
             }
         }).start();
     }
 
-    private Models.User updateUser(Models.User user) {
+    private Domain.User updateUser(Domain.User user) {
         new Thread(() -> {
             try {
-
                 userDao.update(user);
-                System.out.println(user.getUid() + " updated");
+                System.out.println(user.getUsername() + " updated");
             } catch (Exception e) {
-                System.out.println(user.getUid() + " inserted instead");
+                System.out.println(user.getUsername() + " inserted instead");
                 userDao.insert(user);
             }
         }).start();
         return user;
     }
 
-    private void deleteUser(Models.User user) {
+    private void deleteUser(Domain.User user) {
         new Thread(() -> {
             userDao.delete(user);
-            System.out.println(user.getUid() + " deleted");
+            System.out.println(user.getUsername() + " deleted");
         }).start();
     }
 
@@ -74,11 +68,11 @@ public class UserRepository {
         userDao.clear();
     }
 
-    private Models.User updateLocalData(String uid) {
-        final Models.User[] user = {null};
+    private Domain.User updateLocalData(String uid) {
+        final Domain.User[] user = {null};
         fireStoreDb.collection(USER_DB).document(uid).get().addOnCompleteListener(task -> {
             if (task.isComplete()) {
-                user[0] = Objects.requireNonNull(task.getResult()).toObject(Models.User.class);
+                user[0] = Objects.requireNonNull(task.getResult()).toObject(Domain.User.class);
             } else {
                 System.out.println(Objects.requireNonNull(task.getException()).toString());
             }
@@ -102,15 +96,15 @@ public class UserRepository {
 
 
     //Used Methods
-    public void insert(Models.User user) {
+    public void insert(Domain.User user) {
         insertUser(user);
     }
 
-    public void update(Models.User user) {
+    public void update(Domain.User user) {
         updateUser(user);
     }
 
-    public void delete(Models.User user) {
+    public void delete(Domain.User user) {
         deleteUser(user);
     }
 
@@ -118,15 +112,15 @@ public class UserRepository {
         clearUser();
     }
 
-    public Models.User getUser(String uid) {
-        return userDao.getUserObject(uid);
+    public Domain.User getUser() {
+        return userDao.getUserObject();
     }
 
-    public LiveData<Models.User> getUserLive() {
-        return userDao.getUserLiveData(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+    public LiveData<Domain.User> getUserLive() {
+        return userDao.getUserLiveData();
     }
 
-    public Models.User refreshUserDetails(String uid) {
+    public Domain.User refreshUserDetails(String uid) {
         return updateLocalData(uid);
     }
 

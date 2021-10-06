@@ -1,57 +1,29 @@
 package com.example.joboui.login;
 
-import static android.content.ContentValues.TAG;
-import static com.example.joboui.globals.GlobalDb.userRepository;
-import static com.example.joboui.globals.GlobalVariables.CLIENT_ROLE;
-import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_ROLE;
-import static com.example.joboui.login.RegisterActivity.getProgress;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.util.Log;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.joboui.R;
 import com.example.joboui.clientUi.ClientActivity;
 import com.example.joboui.databinding.ActivitySignInBinding;
-import com.example.joboui.databinding.CodeDialogBinding;
-import com.example.joboui.models.Models;
+import com.example.joboui.model.Models;
 import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthOptions;
-import com.google.firebase.auth.PhoneAuthProvider;
-
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 public class SignInActivity extends AppCompatActivity {
 
-    private ActivitySignInBinding activity_sign_in;
-    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+   /* private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
     private final FirebaseAuth.AuthStateListener authStateListener = firebaseAuth -> {
         if (firebaseAuth.getCurrentUser() != null) {
-            Models.User user = userRepository.getUser(firebaseAuth.getUid());
+            Domain.User user = userRepository.getUser(firebaseAuth.getUid());
             if (user != null) {
                 proceed(user.getRole());
             } else {
@@ -66,8 +38,10 @@ public class SignInActivity extends AppCompatActivity {
         } else {
             Toast.makeText(SignInActivity.this, "Sign in to continue", Toast.LENGTH_SHORT).show();
         }
-    };
+    };*/
 
+    private ActivitySignInBinding activity_sign_in;
+    private Models.UsernameAndPasswordAuthenticationRequest request;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,31 +49,55 @@ public class SignInActivity extends AppCompatActivity {
         activity_sign_in = ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(activity_sign_in.getRoot());
 
-        EditText phoneNumberField = activity_sign_in.phoneNumberField;
+        EditText usernameF = activity_sign_in.usernameF;
+        EditText passwordF = activity_sign_in.passwordF;
 
 
         Button signInUserButton = activity_sign_in.signInUserButton;
         signInUserButton.setOnClickListener(view -> {
-            if (phoneNumberField.getText().toString().isEmpty()) {
-                phoneNumberField.setError("Required");
-                phoneNumberField.requestFocus();
-            } else if (!phoneNumberField.getText().toString().startsWith("+254")) {
-                phoneNumberField.setError("Must start with +254");
-                phoneNumberField.setText("+254");
-                phoneNumberField.requestFocus();
-            } else if (phoneNumberField.getText().toString().length() != 13) {
-                phoneNumberField.setError("Invalid phone number");
-                phoneNumberField.requestFocus();
-            } else {
-                signInUser(phoneNumberField.getText().toString());
+            if (validateForm(usernameF,passwordF)) {
+                postSignInRequest();
             }
         });
 
         setWindowColors();
 
+        hidePb();
     }
 
-    private void signInUser(String phoneNumber) {
+    public boolean validateForm (EditText usernameF,EditText passwordF) {
+        boolean valid = false;;
+        if (usernameF.getText().toString().isEmpty()) {
+            usernameF.setError("required");
+            usernameF.requestFocus();
+        } else if (passwordF.getText().toString().isEmpty()) {
+            passwordF.setError("required");
+            passwordF.requestFocus();
+        } else {
+            request = new Models.UsernameAndPasswordAuthenticationRequest(usernameF.getText().toString(),passwordF.getText().toString());
+            valid = true;
+        }
+        return valid;
+    }
+
+    private void postSignInRequest() {
+        Toast.makeText(this, "Sign in ", Toast.LENGTH_SHORT).show();
+        showPb();
+
+        new Handler().postDelayed(this::hidePb,2500);
+    }
+
+    private void showPb () {
+        activity_sign_in.signInUserButton.setEnabled(false);
+        activity_sign_in.signInPb.setVisibility(View.VISIBLE);
+    }
+    private void hidePb () {
+        activity_sign_in.signInPb.setVisibility(View.GONE);
+        activity_sign_in.signInUserButton.setEnabled(true);
+
+    }
+
+    /*private void signInUser(String phoneNumber) {
 
         final boolean[] countDownTimerShowing = {false};
         final String[] verificationId = {""};
@@ -232,7 +230,7 @@ public class SignInActivity extends AppCompatActivity {
                 }
             }
         });
-    }
+    }*/
 
     @Override
     protected void onResume() {
@@ -241,19 +239,19 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void addListener() {
-        FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
+       // FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
     }
 
     private void removeListener() {
-        FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
+       // FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
     }
 
-    private void proceed(int role) {
+    private void proceed(String role) {
         switch (role) {
-            case CLIENT_ROLE:
+            case "ROLE_CLIENT":
                 goToClientPage();
                 break;
-            case LOCAL_SERVICE_PROVIDER_ROLE:
+            case "ROLE_SERVICE_PROVIDER":
                 goToServiceProviderPage();
                 break;
         }

@@ -1,152 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:minHeight="350dp"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:elevation="12dp">
+    app:cardElevation="12dp"
+    app:cardCornerRadius="20dp" >
 
-    <LinearLayout
+    <ScrollView
+        android:padding="10dp"
         android:gravity="center"
         android:layout_gravity="center"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-
-        <TextView
+        <LinearLayout
+            android:minWidth="350dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:fontFamily="@font/roboto_medium"
-            android:gravity="center_vertical"
-            android:padding="20dp"
-            android:text="@string/first_name"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/fName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/edit_text_field_white"
-            android:gravity="center_vertical"
-            android:hint="@string/first_name"
-            android:importantForAutofill="auto"
-            android:inputType="textPersonName"
-            android:padding="20dp"
-            android:textColorHint="@color/black" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:fontFamily="@font/roboto_medium"
-            android:gravity="center_vertical"
-            android:padding="20dp"
-            android:text="@string/second_name"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/sName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/edit_text_field_white"
-            android:gravity="center_vertical"
-            android:hint="@string/second_name"
-            android:importantForAutofill="auto"
-            android:inputType="textPersonName"
-            android:padding="20dp"
-            android:textColorHint="@color/black" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:fontFamily="@font/roboto_medium"
-            android:gravity="center_vertical"
-            android:padding="20dp"
-            android:text="@string/role"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <RadioGroup
-            android:id="@+id/roleRadioGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
             android:orientation="vertical">
 
-            <RadioButton
-                android:id="@+id/serviceProviderRadio"
+
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/roboto_medium"
                 android:gravity="center_vertical"
-                android:padding="10dp"
-                android:text="@string/local_service_provider"
-                android:textColor="@color/deep_purple"
-                android:textStyle="bold" />
-
-
-            <RadioButton
-                android:id="@+id/clientRadio"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center_vertical"
-                android:minHeight="48dp"
-                android:padding="10dp"
-                android:text="@string/client"
-                android:textColor="@color/deep_purple"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/confirmRoleButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="25dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginEnd="25dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/login_bg_button"
-                android:backgroundTint="@color/deep_purple"
-                android:gravity="center"
-                android:padding="15dp"
-                android:text="@string/confirm"
-                android:textColor="@color/white"
+                android:padding="20dp"
+                android:text="@string/role"
+                android:textColor="@color/black"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
-            <ImageButton
-                android:id="@+id/neverMindButton"
-                android:layout_width="wrap_content"
+            <RadioGroup
+                android:id="@+id/roleRadioGroup"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@android:color/transparent"
-                android:src="@android:drawable/ic_menu_close_clear_cancel"
-                android:layout_margin="10dp"
-                app:tint="@color/red" />
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/serviceProviderRadio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:text="@string/local_service_provider"
+                    android:textColor="@color/deep_purple"
+                    android:textStyle="bold" />
 
 
-        </RadioGroup>
+                <RadioButton
+                    android:id="@+id/clientRadio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
+                    android:text="@string/client"
+                    android:textColor="@color/deep_purple"
+                    android:textStyle="bold" />
 
-    </LinearLayout>
+                <Button
+                    android:id="@+id/confirmRoleButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/login_bg_button"
+                    android:backgroundTint="@color/deep_purple"
+                    android:gravity="center"
+                    android:padding="15dp"
+                    android:text="@string/confirm"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
-</ScrollView>
+                <Button
+                    android:id="@+id/cancel_button"
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="25dp"
+                    android:padding="10dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/login_bg_button_white"
+                    android:backgroundTint="@color/red"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="@color/white"
+                    android:text="@string/cancel" />
+
+
+            </RadioGroup>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.cardview.widget.CardView>

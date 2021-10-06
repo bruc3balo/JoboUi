@@ -61,6 +61,35 @@
                 android:textColorHint="@color/grey" />
 
             <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/roboto_medium"
+            android:gravity="center_vertical"
+            android:padding="20dp"
+            android:text="@string/username"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+
+            <EditText
+                android:id="@+id/usernameField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/edit_text_field_white"
+                android:gravity="center_vertical"
+                android:hint="@string/username"
+                android:importantForAutofill="auto"
+                android:inputType="textPersonName"
+                android:padding="20dp"
+                android:textColorHint="@color/grey" />
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -131,6 +160,7 @@
                 android:textStyle="bold" />
 
             <EditText
+                android:id="@+id/passwordF"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -158,6 +188,7 @@
                 android:textStyle="bold" />
 
             <EditText
+                android:id="@+id/cPasswordF"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -192,5 +223,12 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/deep_purple"
+        android:id="@+id/registerPb"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

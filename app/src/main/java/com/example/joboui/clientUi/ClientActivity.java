@@ -2,7 +2,6 @@ package com.example.joboui.clientUi;
 
 import static com.example.joboui.globals.GlobalDb.userRepository;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -11,23 +10,19 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.joboui.R;
-import com.example.joboui.SplashScreen;
 import com.example.joboui.adapters.ServicesPageGrid;
 import com.example.joboui.databinding.ActivityClientBinding;
+import com.example.joboui.domain.Domain;
 import com.example.joboui.login.LoginActivity;
-import com.example.joboui.models.Models;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -36,7 +31,7 @@ import java.util.ArrayList;
 public class ClientActivity extends AppCompatActivity {
     ActivityClientBinding clientBinding;
     ServicesPageGrid servicesPageGridAdapter;
-    private final ArrayList<Models.Services> serviceList = new ArrayList<>();
+    private final ArrayList<Domain.Services> serviceList = new ArrayList<>();
     private final FirebaseAuth.AuthStateListener authStateListener = firebaseAuth -> updateUi(firebaseAuth.getCurrentUser());
 
     @Override
@@ -87,7 +82,7 @@ public class ClientActivity extends AppCompatActivity {
     }
 
     private void addDummyServices() {
-        Models.Services services = new Models.Services("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia2.s-nbcnews.com%2Fi%2Fnewscms%2F2016_10%2F1002361%2Fcleaning-products-stock-today-160307-tease_4097ed238bc46047a15831a86dd47267.jpg&f=1&nofb=1", "Cleaning");
+        Domain.Services services = new Domain.Services("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia2.s-nbcnews.com%2Fi%2Fnewscms%2F2016_10%2F1002361%2Fcleaning-products-stock-today-160307-tease_4097ed238bc46047a15831a86dd47267.jpg&f=1&nofb=1", "Cleaning");
         for (int i = 0; i <= 12; i++) {
             serviceList.add(services);
             updateList();
@@ -102,9 +97,9 @@ public class ClientActivity extends AppCompatActivity {
     private void updateUi(FirebaseUser user) {
         if (user != null) {
 
-            Models.User localUser = userRepository.getUser(user.getUid());
+            Domain.User localUser = userRepository.getUser();
             if (localUser != null) {
-                clientBinding.welcomeText.setText("Good Morning " + localUser.getFirstName());
+                clientBinding.welcomeText.setText("Good Morning " + localUser.getUsername());
             }
 
         } else {

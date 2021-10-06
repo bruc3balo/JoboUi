@@ -4,14 +4,11 @@ import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.CLIENT_ROLE;
 import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_ROLE;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,22 +17,16 @@ import com.example.joboui.R;
 import com.example.joboui.admin.AdminActivity;
 import com.example.joboui.clientUi.ClientActivity;
 import com.example.joboui.databinding.ActivityLoginBinding;
-import com.example.joboui.models.Models;
+import com.example.joboui.domain.Domain;
 import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
-import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthOptions;
-import com.google.firebase.auth.PhoneAuthProvider;
-
-import java.util.concurrent.TimeUnit;
 
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding loginBinding;
-    private final FirebaseAuth.AuthStateListener authStateListener = firebaseAuth -> {
+    /*private final FirebaseAuth.AuthStateListener authStateListener = firebaseAuth -> {
         if (firebaseAuth.getCurrentUser() != null) {
-            Models.User user = userRepository.getUser(firebaseAuth.getUid());
+            Domain.User user = userRepository.getUser(firebaseAuth.getUid());
             if (user != null) {
                 proceed(user.getRole());
             } else {
@@ -50,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             Toast.makeText(LoginActivity.this, "Sign in to continue", Toast.LENGTH_SHORT).show();
         }
-    };
+    };*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,19 +77,19 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void addListener() {
-        FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
+      ////  FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
     }
 
     private void removeListener() {
-        FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
+      //  FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
     }
 
-    private void proceed(int role) {
+    private void proceed(String role) {
         switch (role) {
-            case CLIENT_ROLE:
+            case "ROLE_CLIENT":
                 goToClientPage();
                 break;
-            case LOCAL_SERVICE_PROVIDER_ROLE:
+            case "ROLE_SERVICE_PROVIDER":
                 goToServiceProviderPage();
                 break;
         }
@@ -117,12 +108,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private void goToSignInPage() {
         startActivity(new Intent(this, SignInActivity.class));
-        finish();
+       // finish();
     }
 
     private void goToServiceProviderPage() {
         startActivity(new Intent(this, ServiceProviderActivity.class));
-        finish();
+       // finish();
     }
 
     private void goToClientPage() {

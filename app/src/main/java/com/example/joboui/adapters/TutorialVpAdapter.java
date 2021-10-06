@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.joboui.R;
-import com.example.joboui.models.Models;
+import com.example.joboui.domain.Domain;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,10 +28,10 @@ public class TutorialVpAdapter extends RecyclerView.Adapter<TutorialVpAdapter.Vi
     private ItemClickListener mClickListener;
 
     private final Context mContext;
-    private final ArrayList<Models.TutorialModel> tutorialList;
+    private final ArrayList<Domain.TutorialModel> tutorialList;
 
 
-    public TutorialVpAdapter(Context context, ArrayList<Models.TutorialModel> tutorialList) {
+    public TutorialVpAdapter(Context context, ArrayList<Domain.TutorialModel> tutorialList) {
         this.mContext = context;
         this.tutorialList = tutorialList;
 

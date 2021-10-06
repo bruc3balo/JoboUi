@@ -1,72 +1,38 @@
 package com.example.joboui.login;
 
-import static android.content.ContentValues.TAG;
-import static com.example.joboui.globals.GlobalDb.fireStoreDb;
 import static com.example.joboui.globals.GlobalDb.userRepository;
-import static com.example.joboui.globals.GlobalVariables.CLIENT;
-import static com.example.joboui.globals.GlobalVariables.CLIENT_ROLE;
-import static com.example.joboui.globals.GlobalVariables.HY;
-import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_ROLE;
-import static com.example.joboui.globals.GlobalVariables.SERVICE_PROVIDER;
-import static com.example.joboui.globals.GlobalVariables.USER_DB;
-
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.util.Log;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.joboui.R;
 import com.example.joboui.databinding.ActivityRegisterBinding;
-import com.example.joboui.databinding.CodeDialogBinding;
 import com.example.joboui.databinding.RoleDialogBinding;
-import com.example.joboui.models.Models;
+import com.example.joboui.model.Models;
 import com.example.joboui.tutorial.TutorialActivity;
-import com.google.android.gms.safetynet.SafetyNet;
-import com.google.android.gms.safetynet.SafetyNetApi;
-import com.google.android.gms.safetynet.SafetyNetClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthOptions;
-import com.google.firebase.auth.PhoneAuthProvider;
+import com.example.joboui.utils.AppRolesEnum;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private ActivityRegisterBinding activityRegister;
-    private int role = 0;
-    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    private SafetyNetClient safetyNetClient;
-    private boolean safetyNetEnabled = false;
-    private final Models.User user = new Models.User();
+    private String role = "";
+    //private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+   // private SafetyNetClient safetyNetClient;
     private final ArrayList<String> phoneNumberList = new ArrayList<>();
+    private Models.NewUserForm newUserForm;
+
 
 
     @Override
@@ -76,38 +42,71 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(activityRegister.getRoot());
 
         Button registerUserButton = activityRegister.registerUserButton;
-        //registerUserButton.setOnClickListener(view -> showRoleDialog());
 
-
+        EditText namesField = activityRegister.namesField;
+        EditText userNameField = activityRegister.usernameField;
+        EditText emailAddressField = activityRegister.emailAddressField;
+        EditText passwordF = activityRegister.passwordF;
+        EditText cPasswordF = activityRegister.cPasswordF;
         EditText phoneNumberField = activityRegister.phoneNumberField;
+
         registerUserButton.setOnClickListener(view -> {
-            if (phoneNumberField.getText().toString().isEmpty()) {
-                phoneNumberField.setError("Required");
-                phoneNumberField.requestFocus();
-            } else if (!phoneNumberField.getText().toString().startsWith("+254")) {
-                phoneNumberField.setError("Must start with +254");
-                phoneNumberField.setText("+254");
-                phoneNumberField.requestFocus();
-            } else if (phoneNumberField.getText().toString().length() != 13) {
-                phoneNumberField.setError("Invalid phone number");
-                phoneNumberField.requestFocus();
-            } else if (phoneNumberList.contains(phoneNumberField.getText().toString())) {
-                phoneNumberField.setError("Already added. Sign in");
-                phoneNumberField.requestFocus();
-            } else {
-                initPhoneVerification(phoneNumberField.getText().toString());
+            if (validateForm(namesField, userNameField,emailAddressField, passwordF, cPasswordF, phoneNumberField)) {
+                showRoleDialog();
             }
         });
 
-        isSafetyNetEnabled();
 
         setWindowColors();
 
         populatePhoneNumberList();
+
+        hidePb();
     }
 
 
-    private void populatePhoneNumberList () {
+    private boolean validateForm(EditText namesField, EditText usernameField,EditText emailAddressField, EditText passwordF, EditText cPasswordF, EditText phoneNumberField) {
+        boolean valid = false;
+
+        if (namesField.getText().toString().isEmpty()) {
+            namesField.setError("required");
+            namesField.requestFocus();
+        } else if (emailAddressField.getText().toString().isEmpty()) {
+            emailAddressField.setError("required");
+            emailAddressField.requestFocus();
+        } else if (!emailAddressField.getText().toString().contains("@")) {
+            emailAddressField.setError("Invalid email format");
+            passwordF.requestFocus();
+        } else if (passwordF.getText().toString().length() < 6) {
+            passwordF.setError("Min characters 6");
+            passwordF.requestFocus();
+        } else if (!cPasswordF.getText().toString().equals(passwordF.getText().toString())) {
+            cPasswordF.setError("Passwords don't match");
+            cPasswordF.requestFocus();
+        } else if (phoneNumberField.getText().toString().isEmpty()) {
+            phoneNumberField.setError("Required");
+            phoneNumberField.requestFocus();
+        } else if (!phoneNumberField.getText().toString().startsWith("+254")) {
+            phoneNumberField.setError("Must start with +254");
+            phoneNumberField.setText("+254");
+            phoneNumberField.requestFocus();
+        } else if (phoneNumberField.getText().toString().length() < 12) {
+            phoneNumberField.setError("Invalid phone number");
+            phoneNumberField.requestFocus();
+        } else if (phoneNumberList.contains(phoneNumberField.getText().toString())) {
+            phoneNumberField.setError("Already added. Sign in");
+            phoneNumberField.requestFocus();
+        } else {
+            //initPhoneVerification(phoneNumberField.getText().toString());String names, String username, String emailAddress, String password, String phone_number
+            newUserForm = new Models.NewUserForm(namesField.getText().toString(),usernameField.getText().toString(),emailAddressField.getText().toString(),cPasswordF.getText().toString(),phoneNumberField.getText().toString());
+            valid = true;
+        }
+
+        return valid;
+    }
+
+
+    private void populatePhoneNumberList() {
         userRepository.getMobileNumbers().observe(this, strings -> {
             phoneNumberList.clear();
             phoneNumberList.addAll(strings);
@@ -115,7 +114,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    private void showRoleDialog(FirebaseUser firebaseUser) {
+    private void showRoleDialog() {
         Dialog d = new Dialog(RegisterActivity.this);
         RoleDialogBinding roleDialogBinding = RoleDialogBinding.inflate(getLayoutInflater());
         d.setContentView(roleDialogBinding.getRoot());
@@ -126,43 +125,52 @@ public class RegisterActivity extends AppCompatActivity {
 
         Button confirmRoleButton = roleDialogBinding.confirmRoleButton;
         RadioGroup roleRadioGroup = roleDialogBinding.roleRadioGroup;
-        ImageButton neverMindButton = roleDialogBinding.neverMindButton;
-
-        EditText fName = roleDialogBinding.fName;
-        EditText sName = roleDialogBinding.sName;
+        Button neverMindButton = roleDialogBinding.cancelButton;
 
         d.show();
 
         roleRadioGroup.setOnCheckedChangeListener((radioGroup, checkedId) -> {
             if (checkedId == roleDialogBinding.clientRadio.getId()) {
-                role = CLIENT_ROLE;
+                role = AppRolesEnum.valueOf("ROLE_CLIENT").name();
             } else {
-                role = LOCAL_SERVICE_PROVIDER_ROLE;
+                role = AppRolesEnum.valueOf("ROLE_SERVICE_PROVIDER").name();
             }
-            user.setRole(role);
+            newUserForm.setRole(role);
         });
 
         confirmRoleButton.setOnClickListener(view -> {
-            if (role == 0) {
+            if (role.equals("")) {
                 Toast.makeText(RegisterActivity.this, "Pick a role", Toast.LENGTH_SHORT).show();
-            } else if (fName.getText().toString().isEmpty()) {
-                fName.setError("First name required");
-                fName.requestFocus();
-            } else if (sName.getText().toString().isEmpty()) {
-                sName.setError("Second name required");
-                sName.requestFocus();
             } else {
-                user.setFirstName(fName.getText().toString());
-                user.setLastName(sName.getText().toString());
-                user.setRole(role);
                 d.dismiss();
-                getAdditionalData(firebaseUser);
+                sendRegisterRequest();
             }
         });
         neverMindButton.setOnClickListener(view -> d.dismiss());
     }
 
-    private void initPhoneVerification(String phoneNumber) {
+    private void sendRegisterRequest() {
+        Toast.makeText(this, "Sending request", Toast.LENGTH_SHORT).show();
+        showPb();
+
+        new Handler().postDelayed(this::hidePb,2500);
+
+        proceed();
+    }
+
+    private void showPb () {
+        activityRegister.registerUserButton.setEnabled(false);
+        activityRegister.registerPb.setVisibility(View.VISIBLE);
+    }
+    private void hidePb () {
+        activityRegister.registerPb.setVisibility(View.GONE);
+        activityRegister.registerUserButton.setEnabled(true);
+
+    }
+
+    /*private void initPhoneVerification(String phoneNumber) {
+
+        isSafetyNetEnabled();
 
         final boolean[] countDownTimerShowing = {false};
         final String[] verificationId = {""};
@@ -269,14 +277,14 @@ public class RegisterActivity extends AppCompatActivity {
                 .build();
 
         PhoneAuthProvider.verifyPhoneNumber(options);
-    }
+    }*/
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    /*@RequiresApi(api = Build.VERSION_CODES.N)
     public static int getProgress(long timeRemaining, long timeOut) {
         return Math.toIntExact((timeRemaining * 100) / timeOut);
-    }
+    }*/
 
-    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+    /* private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -301,40 +309,40 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
-    }
+    }*/
 
-
-    private void getAdditionalData(FirebaseUser firebaseUser) {
-        user.setCreatedAt(Calendar.getInstance().getTime().toString());
-        user.setUid(firebaseUser.getUid());
-        user.setPhoneNumber(firebaseUser.getPhoneNumber());
+    /*private void getAdditionalData(FirebaseUser firebaseUser) {
+        user.setCreated_at(Calendar.getInstance().getTime().toString());
+        user.setId(firebaseUser.getUid());
+        user.setPhone_number(firebaseUser.getPhoneNumber());
 
         saveUserDetails(user);
-    }
+    }*/
 
-    private void saveUserDetails(Models.User user) {
-        userRepository.insert(user);
-        fireStoreDb.collection(USER_DB).document(user.getUid()).set(user).addOnCompleteListener(task -> {
-            if (task.isComplete()) {
-                proceed();
-            } else {
-                Toast.makeText(RegisterActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+    /*
+        private void saveUserDetails(Domain.User user) {
+            userRepository.insert(user);
+            fireStoreDb.collection(USER_DB).document(user.getUid()).set(user).addOnCompleteListener(task -> {
+                if (task.isComplete()) {
+                    proceed();
+                } else {
+                    Toast.makeText(RegisterActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }*/
 
     private void proceed() {
         switch (role) {
-            case CLIENT_ROLE:
+            case "ROLE_CLIENT":
                 goToTutorialsPage();
                 break;
-            case LOCAL_SERVICE_PROVIDER_ROLE:
+            case "ROLE_SERVICE_PROVIDER":
                 goToAdditionalInfoActivity();
                 break;
         }
     }
 
-    private void isSafetyNetEnabled() {
+   /* private void isSafetyNetEnabled() {
         firebaseAuth.setLanguageCode("en");
         safetyNetClient = SafetyNet.getClient(this);
 
@@ -344,10 +352,8 @@ public class RegisterActivity extends AppCompatActivity {
                 assert result != null;
                 if (result.isVerifyAppsEnabled()) {
                     Log.d("MY_APP_TAG", "The Verify Apps feature is enabled.");
-                    safetyNetEnabled = true;
 
                 } else {
-                    safetyNetEnabled = false;
                     Log.d("MY_APP_TAG", "The Verify Apps feature is disabled.");
                     enableSafetyNet();
                 }
@@ -363,18 +369,16 @@ public class RegisterActivity extends AppCompatActivity {
                 SafetyNetApi.VerifyAppsUserResponse result = task.getResult();
                 assert result != null;
                 if (result.isVerifyAppsEnabled()) {
-                    Log.d("MY_APP_TAG", "The user gave consent " + "to enable the Verify Apps feature.");
-                    safetyNetEnabled = true;
+                    Log.d("REGISTRATION", "The user gave consent " + "to enable the Verify Apps feature.");
                 } else {
-                    safetyNetEnabled = false;
-                    Log.d("MY_APP_TAG", "The user didn't give consent " + "to enable the Verify Apps feature.");
+                    Log.d("REGISTRATION", "The user didn't give consent " + "to enable the Verify Apps feature.");
                 }
             } else {
-                Log.e("MY_APP_TAG", "A general error occurred.");
+                Log.e("REGISTRATION", "A general error occurred.");
             }
         });
     }
-
+*/
     private void goToAdditionalInfoActivity() {
         startActivity(new Intent(this, ServiceProviderAdditionalActivity.class));
     }

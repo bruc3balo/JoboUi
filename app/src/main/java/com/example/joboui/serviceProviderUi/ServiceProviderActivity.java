@@ -12,10 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.joboui.R;
-import com.example.joboui.clientUi.ClientActivity;
 import com.example.joboui.databinding.ActivityServiceProviderBinding;
+import com.example.joboui.domain.Domain;
 import com.example.joboui.login.LoginActivity;
-import com.example.joboui.models.Models;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -50,7 +49,7 @@ public class ServiceProviderActivity extends AppCompatActivity {
     private void updateUi(FirebaseUser user) {
         if (user != null) {
 
-            Models.User localUser = userRepository.getUser(user.getUid());
+            Domain.User localUser = userRepository.getUser();
             if (localUser != null) {
 
             }

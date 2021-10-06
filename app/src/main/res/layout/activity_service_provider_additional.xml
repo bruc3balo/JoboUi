@@ -73,8 +73,8 @@
                 android:orientation="horizontal">
 
 
-
                 <TextView
+                    android:id="@+id/su"
                     android:layout_margin="5dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
@@ -88,6 +88,7 @@
                     android:text="@string/s"/>
 
                 <TextView
+                    android:id="@+id/mo"
                     android:layout_margin="5dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
@@ -101,6 +102,7 @@
                     android:text="@string/m"/>
 
                 <TextView
+                    android:id="@+id/tu"
                     android:layout_margin="5dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
@@ -114,6 +116,7 @@
                     android:text="@string/t"/>
 
                 <TextView
+                    android:id="@+id/w"
                     android:layout_margin="5dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
@@ -127,6 +130,7 @@
                     android:text="@string/w"/>
 
                 <TextView
+                    android:id="@+id/th"
                     android:layout_margin="5dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
@@ -140,6 +144,7 @@
                     android:text="@string/t"/>
 
                 <TextView
+                    android:id="@+id/fr"
                     android:layout_margin="5dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
@@ -153,6 +158,7 @@
                     android:text="@string/f"/>
 
                 <TextView
+                    android:id="@+id/sa"
                     android:layout_margin="5dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
@@ -184,7 +190,35 @@
                 android:fontFamily="sans-serif-condensed-light"/>
 
 
-            <!--todo add list view for specialities-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_weight="1"
+                    android:id="@+id/specialityField"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/edit_text_field_white"
+                    android:gravity="center_vertical"
+                    android:hint="@string/id_hint"
+                    android:importantForAutofill="auto"
+                    android:inputType="text"
+                    android:padding="20dp"
+                    android:textColorHint="@color/grey" />
+
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/circle_day_bg_selected"
+                    android:src="@drawable/ic_add"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"/>
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/specialitiesRv"
@@ -244,6 +278,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="20dp"
+                android:minHeight="150dp"
                 android:layout_marginEnd="20dp"
                 android:background="@drawable/edit_text_field_white"
                 android:gravity="center_vertical"
@@ -251,6 +286,7 @@
                 android:importantForAutofill="auto"
                 android:inputType="text"
                 android:padding="20dp"
+                android:textColor="@color/black"
                 android:textColorHint="@color/grey" />
 
 

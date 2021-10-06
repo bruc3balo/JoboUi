@@ -11,10 +11,10 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.example.joboui.models.Models;
+import com.example.joboui.domain.Domain;
 
 
-@Database(entities = {Models.User.class}, version = 1, exportSchema = false)
+@Database(entities = {Domain.User.class}, version = 1, exportSchema = false)
 public abstract class UserDB extends RoomDatabase {
 
     private static UserDB instance;
