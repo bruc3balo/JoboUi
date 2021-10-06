@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:layout_width="350dp"
+    android:layout_height="match_parent">
+
+
+    <ProgressBar
+        android:id="@+id/progressCountDown"
+        style="@style/CircularDeterminateProgressBar"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:indeterminateOnly="false" />
+
+
+    <EditText
+        android:hint="@string/code_hint"
+        android:inputType="phone"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_margin="20dp"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/codeField"/>
+
+    <Button
+        android:id="@+id/confirmCodeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/login_bg_button"
+        android:backgroundTint="@color/deep_purple"
+        android:gravity="center"
+        android:padding="15dp"
+        android:text="@string/confirm"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+
+    <ImageButton
+        android:id="@+id/neverMindButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:layout_margin="10dp"
+        app:tint="@color/red" />
+
+</LinearLayout>

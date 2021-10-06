@@ -16,7 +16,8 @@
     <string name="client">Client</string>
     <string name="service_provider">Service Provider</string>
     <string name="additional_details">Additional Details</string>
-    <string name="preferred_hours">1. Preferred Working Hours</string>
+    <string name="preferred_days">1. Preferred Working Days</string>
+    <string name="preferred_time">Preferred Working Time</string>
     <string name="specialities">2. Specialities</string>
     <string name="finish">Finish</string>
     <string name="startTime">Start Time : </string>
@@ -50,7 +51,7 @@
     <string name="welcome_back">Welcome back,</string>
     <string name="password">Password</string>
     <string name="dont_have_account">Don\'t have an account? Sign up</string>
-    <string name="phone_hint">07xxxxxxxx</string>
+    <string name="phone_hint">+254xxxxxxxx</string>
     <string name="welcome">Welcome,</string>
     <string name="new_password">New Password</string>
     <string name="have_account">Already a member? Sign in</string>
@@ -61,4 +62,17 @@
     <string name="confirm">Confirm</string>
     <string name="local_service_provider">Local Service Provider</string>
     <string name="sign_up">Sign up</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="code_hint">X X X - X X X</string>
+    <string name="role">Role</string>
+    <string name="names">Names</string>
+    <string name="names_hint">John Doe</string>
+    <string name="email_address">Email Address</string>
+    <string name="email_address_hint">xyz@email.com</string>
+    <string name="accept">Accept</string>
+    <string name="cancel">Cancel</string>
+    <string name="bio">Bio</string>
+    <string name="bio_hint">Tell us a bit about your left i.e. cover letter</string>
+    <string name="id_hint">3540264</string>
+    <string name="id_number">Identity Number</string>
 </resources>

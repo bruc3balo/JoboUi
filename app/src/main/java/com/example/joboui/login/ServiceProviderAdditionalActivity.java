@@ -1,7 +1,9 @@
 package com.example.joboui.login;
 
-import static com.example.joboui.models.Models.ROLE;
-import static com.example.joboui.models.Models.SERVICE_PROVIDER;
+
+
+import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_ROLE;
+import static com.example.joboui.globals.GlobalVariables.ROLE;
 
 import android.content.Intent;
 import android.os.Build;
@@ -43,7 +45,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
     }
 
     private void goToTutorialPage() {
-        startActivity(new Intent(this, TutorialActivity.class).putExtra(ROLE, SERVICE_PROVIDER));
+        startActivity(new Intent(this, TutorialActivity.class).putExtra(ROLE, LOCAL_SERVICE_PROVIDER_ROLE));
         finish();
     }
 }

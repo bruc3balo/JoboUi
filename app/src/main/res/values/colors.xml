@@ -2,6 +2,7 @@
 <resources>
     <color name="purple">#882B185B</color>
     <color name="deep_purple">#2B185B</color>
+    <color name="bright_purple">#8548DC</color>
     <color name="transparent">#00000000</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>

@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.joboui.databinding.ActivitySplashScreenBinding;
+import com.example.joboui.globals.GlobalDb;
 import com.example.joboui.login.LoginActivity;
 
 import org.jetbrains.annotations.NotNull;
@@ -74,10 +75,11 @@ public class SplashScreen extends AppCompatActivity {
 
         goneToLogin = false;
 
+        GlobalDb.init(getApplication());
 
     }
 
-    private void setWindowColors () {
+    private void setWindowColors() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().setStatusBarColor(getColor(R.color.deep_purple));
             getWindow().setNavigationBarColor(getColor(R.color.deep_purple));

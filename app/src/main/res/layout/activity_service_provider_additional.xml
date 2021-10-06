@@ -10,7 +10,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/deep_purple">
+        android:background="@color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,12 +21,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="40dp"
                 android:fontFamily="serif"
                 android:gravity="center"
                 android:padding="20dp"
                 android:text="@string/service_provider"
-                android:textColor="@color/white"
+                android:textColor="@color/deep_purple"
                 android:textSize="50sp"
                 android:textStyle="bold" />
 
@@ -38,124 +38,34 @@
                 android:text="@string/additional_details"
                 android:layout_gravity="center"
                 android:gravity="center_vertical"
-                android:textColor="@color/white"
+                android:textColor="@color/deep_purple"
                 android:padding="20dp"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-condensed-light"/>
-
 
             <TextView
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="40dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/preferred_hours"
+                android:text="@string/preferred_days"
                 android:layout_gravity="center"
                 android:gravity="center_vertical"
-                android:textColor="@color/white"
+                android:textColor="@color/deep_purple"
                 android:padding="20dp"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-condensed-light"/>
 
-            <LinearLayout
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/startTime"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:padding="20dp"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:fontFamily="sans-serif-condensed-light"/>
-
-
-                <TextView
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/to_be_filled"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:textColor="@color/purple"
-                    android:padding="20dp"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:fontFamily="sans-serif-condensed-light"/>
-
-                <ImageButton
-                    android:layout_marginEnd="10dp"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/circle_day_bg_unselected"
-                    android:src="@android:drawable/ic_lock_idle_alarm"
-                    app:tint="@color/white" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/endTime"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:padding="20dp"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:fontFamily="sans-serif-condensed-light"/>
-
-
-                <TextView
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/to_be_filled"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:textColor="@color/purple"
-                    android:padding="20dp"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:fontFamily="sans-serif-condensed-light"/>
-
-                <ImageButton
-                    android:layout_marginEnd="10dp"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/circle_day_bg_unselected"
-                    android:src="@android:drawable/ic_lock_idle_alarm"
-                    app:tint="@color/white" />
-
-
-            </LinearLayout>
-
-
         <HorizontalScrollView
+
             android:layout_gravity="center_vertical"
             android:scrollbars="none"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <LinearLayout
+                android:padding="5dp"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:layout_width="wrap_content"
@@ -267,7 +177,7 @@
                 android:text="@string/specialities"
                 android:layout_gravity="center"
                 android:gravity="center_vertical"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:padding="20dp"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -275,6 +185,73 @@
 
 
             <!--todo add list view for specialities-->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/specialitiesRv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:padding="10dp"
+                android:background="@drawable/edit_text_field_white"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
+                android:padding="20dp"
+                android:text="@string/id_number"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+
+            <EditText
+                android:id="@+id/idField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/edit_text_field_white"
+                android:gravity="center_vertical"
+                android:hint="@string/id_hint"
+                android:importantForAutofill="auto"
+                android:inputType="text"
+                android:padding="20dp"
+                android:textColorHint="@color/grey" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
+                android:padding="20dp"
+                android:text="@string/bio"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+
+            <EditText
+                android:id="@+id/bioField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/edit_text_field_white"
+                android:gravity="center_vertical"
+                android:hint="@string/bio_hint"
+                android:importantForAutofill="auto"
+                android:inputType="text"
+                android:padding="20dp"
+                android:textColorHint="@color/grey" />
 
 
             <Button
@@ -287,9 +264,10 @@
                 android:layout_marginEnd="25dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/login_bg_button_white"
+                android:backgroundTint="@color/deep_purple"
                 android:textStyle="bold"
                 android:textSize="15sp"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:text="@string/finish" />
 
         </LinearLayout>
