@@ -23,7 +23,7 @@ public class Models {
 
         private String username;
 
-        private String emailAddress;
+        private String email_address;
 
         private String password;
 
@@ -44,35 +44,20 @@ public class Models {
 
         }
 
-        public NewUserForm(String names, String username, String emailAddress, String password, String phone_number) {
+        public NewUserForm(String names, String username, String email_address, String password, String phone_number) {
             this.names = names;
             this.username = username;
-            this.emailAddress = emailAddress;
             this.password = password;
             this.phone_number = phone_number;
+            this.email_address = email_address;
         }
 
-
-        public NewUserForm(String names, String username, String emailAddress, String password, String phone_number, String role) {
-            this.names = names;
-            this.username = username;
-            this.emailAddress = emailAddress;
-            this.password = password;
-            this.phone_number = phone_number;
-            this.role = role;
+        public String getEmail_address() {
+            return email_address;
         }
 
-        public NewUserForm(String names, String username, String emailAddress, String password, String phone_number, String id_number, String bio, Map<String, String> preferred_working_hours, List<String> specialities, String role) {
-            this.names = names;
-            this.username = username;
-            this.emailAddress = emailAddress;
-            this.password = password;
-            this.phone_number = phone_number;
-            this.id_number = id_number;
-            this.bio = bio;
-            this.preferred_working_hours = preferred_working_hours;
-            this.specialities = specialities;
-            this.role = role;
+        public void setEmail_address(String email_address) {
+            this.email_address = email_address;
         }
 
         public String getNames() {
@@ -91,13 +76,6 @@ public class Models {
             this.username = username;
         }
 
-        public String getEmailAddress() {
-            return emailAddress;
-        }
-
-        public void setEmailAddress(String emailAddress) {
-            this.emailAddress = emailAddress;
-        }
 
         public String getPassword() {
             return password;
@@ -266,6 +244,13 @@ public class Models {
 
         public UserUpdateForm() {
 
+        }
+
+        public UserUpdateForm(String id_number, String bio, Map<String, String> preferred_working_hours, List<String> specialities) {
+            this.id_number = id_number;
+            this.bio = bio;
+            this.preferred_working_hours = preferred_working_hours;
+            this.specialities = specialities;
         }
 
         public UserUpdateForm(String names, String email_address, String password, String role, String phone_number, String id_number, String bio, Map<String, String> preferred_working_hours, List<String> specialities) {

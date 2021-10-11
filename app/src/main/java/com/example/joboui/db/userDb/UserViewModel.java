@@ -36,8 +36,10 @@ import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -77,12 +79,15 @@ public class UserViewModel extends AndroidViewModel {
 
                 //save user to offline db
                 Models.AppUser user = mapper.readValue(userJson.toString(), Models.AppUser.class);
+
                 userRepository.insert(new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword()));
 
                 //update login status
                 Map<String, Boolean> map = new HashMap<>();
                 map.put(LOGGED_IN, true);
                 editSp(USER_DB, map, application);
+
+                userMutableLiveData.setValue(user);
             } catch (IOException e) {
                 e.printStackTrace();
                 Toast.makeText(application, "Something went wrong", Toast.LENGTH_SHORT).show();
@@ -112,7 +117,7 @@ public class UserViewModel extends AndroidViewModel {
         return userMutableLiveData;
     }
 
-    private MutableLiveData<Map<String, String>> accessToken(Models.UsernameAndPasswordAuthenticationRequest request, Application application) throws JSONException, JsonProcessingException {
+    private MutableLiveData<Map<String, String>> accessToken(Models.UsernameAndPasswordAuthenticationRequest request) throws JSONException, JsonProcessingException {
         Toast.makeText(application, "Sign in ", Toast.LENGTH_SHORT).show();
 
         Map<String, String> map = new HashMap<>();
@@ -168,6 +173,8 @@ public class UserViewModel extends AndroidViewModel {
         return mutableLiveData;
     }
 
+
+
     private MutableLiveData<List<String>> getUsernames() {
         MutableLiveData<List<String>> mutableLiveData = new MutableLiveData<>();
         RequestQueue queue = Volley.newRequestQueue(application);
@@ -181,18 +188,20 @@ public class UserViewModel extends AndroidViewModel {
             try {
                 //extract user data
                 JsonResponse jsonResponse = mapper.readValue(response.toString(), JsonResponse.class);
-                JsonObject userJson = new JsonArray(mapper.writeValueAsString(jsonResponse.getData())).getJsonObject(0);
-                System.out.println("USERNAMES" + userJson);
-            } catch (IOException e) {
+                List jsonUsernames = mapper.readValue(new JSONArray(jsonResponse.getData().toString()).toString(), List.class);
+
+                System.out.println("USERNAMELISTList : "+jsonUsernames);
+                usernames.addAll(jsonUsernames);
+                mutableLiveData.setValue(usernames);
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
                 Toast.makeText(application, "Something went wrong", Toast.LENGTH_SHORT).show();
             }
 
-        }, error -> Toast.makeText(application, "Failed to login " + error, Toast.LENGTH_SHORT).show()) {
+        }, error -> Toast.makeText(application, "Failed to login " + error, Toast.LENGTH_SHORT).show()){
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> header = new HashMap<>();
-                header.put(AUTHORIZATION, "Bearer " + getSp(USER_DB, application).get(ACCESS_TOKEN));
                 header.put(CONTENT_TYPE, APPLICATION_JSON);
                 return header;
             }
@@ -210,23 +219,25 @@ public class UserViewModel extends AndroidViewModel {
         String url = API_URL + CONTEXT_URL + "/user/numbers";
         ObjectMapper mapper = getObjectMapper();
 
+
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
 
             try {
                 //extract user data
                 JsonResponse jsonResponse = mapper.readValue(response.toString(), JsonResponse.class);
-                JsonObject userJson = new JsonArray(mapper.writeValueAsString(jsonResponse.getData())).getJsonObject(0);
-                System.out.println("NUMBERS" + userJson);
-            } catch (IOException e) {
+                List jsonUsernames = mapper.readValue(new JSONArray(jsonResponse.getData().toString()).toString(), List.class);
+                numbers.addAll(jsonUsernames);
+                mutableLiveData.setValue(numbers);
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
                 Toast.makeText(application, "Something went wrong", Toast.LENGTH_SHORT).show();
             }
 
-        }, error -> Toast.makeText(application, "Failed to login " + error, Toast.LENGTH_SHORT).show()) {
+        }, error -> Toast.makeText(application, "Failed to login " + error, Toast.LENGTH_SHORT).show()){
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> header = new HashMap<>();
-                header.put(AUTHORIZATION, "Bearer " + getSp(USER_DB, application).get(ACCESS_TOKEN));
                 header.put(CONTENT_TYPE, APPLICATION_JSON);
                 return header;
             }
@@ -239,7 +250,7 @@ public class UserViewModel extends AndroidViewModel {
 
     //expose
     public LiveData<Map<String, String>> getAccessToken(Models.UsernameAndPasswordAuthenticationRequest request) throws JSONException, JsonProcessingException {
-        return accessToken(request, application);
+        return accessToken(request);
     }
 
     public LiveData<Models.AppUser> getUserByUsername(String username) {
@@ -253,4 +264,6 @@ public class UserViewModel extends AndroidViewModel {
     public LiveData<List<String>> getAllPhoneNumbers() {
         return getPhoneNumbers();
     }
+
+
 }

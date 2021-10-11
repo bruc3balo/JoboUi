@@ -1,6 +1,10 @@
 package com.example.joboui.login;
 
 
+import static com.example.joboui.globals.GlobalDb.userRepository;
+import static com.example.joboui.globals.GlobalVariables.ACCESS_TOKEN;
+import static com.example.joboui.globals.GlobalVariables.API_URL;
+import static com.example.joboui.globals.GlobalVariables.CONTEXT_URL;
 import static com.example.joboui.globals.GlobalVariables.FRIDAY;
 import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_ROLE;
@@ -10,7 +14,15 @@ import static com.example.joboui.globals.GlobalVariables.SATURDAY;
 import static com.example.joboui.globals.GlobalVariables.SUNDAY;
 import static com.example.joboui.globals.GlobalVariables.THURSDAY;
 import static com.example.joboui.globals.GlobalVariables.TUESDAY;
+import static com.example.joboui.globals.GlobalVariables.USERNAME;
+import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.globals.GlobalVariables.WEDNESDAY;
+import static com.example.joboui.login.SignInActivity.getObjectMapper;
+import static com.example.joboui.login.SignInActivity.getSp;
+import static com.google.common.net.HttpHeaders.AUTHORIZATION;
+import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
+
+import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_JSON;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -29,16 +41,33 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.joboui.R;
 import com.example.joboui.adapters.ListRvAdapter;
 import com.example.joboui.databinding.ActivityServiceProviderAdditionalBinding;
 import com.example.joboui.databinding.WorkingHourPickerBinding;
+import com.example.joboui.db.userDb.UserViewModel;
+import com.example.joboui.domain.Domain;
+import com.example.joboui.model.Models;
 import com.example.joboui.tutorial.TutorialActivity;
+import com.example.joboui.utils.JsonResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -47,14 +76,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+
+import io.vertx.core.json.JsonObject;
 
 public class ServiceProviderAdditionalActivity extends AppCompatActivity {
 
     private ActivityServiceProviderAdditionalBinding serviceProviderAdditionalBinding;
     private final Map<String, String> preferredWorkingHours = new HashMap<>();
     private final ArrayList<String> speciality = new ArrayList<>();
-    private String id = HY;
-    private String bio = HY;
+    private Models.UserUpdateForm updateForm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +93,17 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         serviceProviderAdditionalBinding = ActivityServiceProviderAdditionalBinding.inflate(getLayoutInflater());
         setContentView(serviceProviderAdditionalBinding.getRoot());
 
+
         Button finishAdditionalInfoButton = serviceProviderAdditionalBinding.finishAdditionalInfoButton;
-        finishAdditionalInfoButton.setOnClickListener(view -> goToTutorialPage());
+        finishAdditionalInfoButton.setOnClickListener(view -> {
+            if (validateForm()) {
+                try {
+                    updateUser(updateForm);
+                } catch (JSONException | JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         TextView sun = serviceProviderAdditionalBinding.su;
         sun.setOnClickListener(view -> showDayLayout(sun, SUNDAY));
@@ -138,6 +178,9 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         int[] nowHour = new int[]{0};
         int[] nowMinute = new int[]{0};
 
+        TextView dayTitle = binding.dayTitle;
+        dayTitle.setText("Preferred Working hours for " + day);
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             LocalDateTime now = LocalDateTime.now();
             nowHour[0] = now.getHour();
@@ -173,6 +216,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
                 String time = startTime[0].concat(HY).concat(endTime[0]);
                 preferredWorkingHours.put(day, time);
                 dayTv.setBackground(getDrawable(R.drawable.circle_day_bg_selected));
+                dialog.dismiss();
             }
         });
 
@@ -181,9 +225,76 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
             dayTv.setBackground(getDrawable(R.drawable.circle_day_bg_unselected));
             dialog.dismiss();
         });
-
-
     }
+
+
+    private boolean validateForm() {
+        boolean valid = false;
+
+        if (preferredWorkingHours.isEmpty()) {
+            Toast.makeText(this, "You must pick at least one day", Toast.LENGTH_SHORT).show();
+        } else if (speciality.isEmpty()) {
+            Toast.makeText(this, "You must add at least one speciality", Toast.LENGTH_SHORT).show();
+        } else if (serviceProviderAdditionalBinding.idField.getText().toString().isEmpty()) {
+            serviceProviderAdditionalBinding.idField.setError("Id required");
+            serviceProviderAdditionalBinding.idField.requestFocus();
+        } else {
+            String id = serviceProviderAdditionalBinding.idField.getText().toString();
+            String bio = serviceProviderAdditionalBinding.bioField.getText().toString();
+
+            updateForm = new Models.UserUpdateForm(id, bio, preferredWorkingHours, speciality);
+            valid = true;
+        }
+
+        return valid;
+    }
+
+    private void updateUser(Models.UserUpdateForm form) throws JSONException, JsonProcessingException {
+        Toast.makeText(this, "Sign in ", Toast.LENGTH_SHORT).show();
+        RequestQueue queue = Volley.newRequestQueue(this);
+        Optional<Domain.User> repositoryUser = userRepository.getUser();
+
+        if (!repositoryUser.isPresent()) {
+            return;
+        }
+
+        String url = API_URL + CONTEXT_URL + "/user/update/{" + repositoryUser.get().getUsername() + "}";
+        ObjectMapper mapper = getObjectMapper();
+
+        String data = mapper.writeValueAsString(form);
+        JSONObject object = new JSONObject(data);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, object, response -> {
+
+            try {
+                JsonResponse jsonResponse = mapper.readValue(response.toString(), JsonResponse.class);
+                JsonObject userJson = new JsonObject(mapper.writeValueAsString(jsonResponse.getData()));
+                System.out.println("NEW USER : " + userJson);
+                Models.AppUser user = mapper.readValue(userJson.toString(), Models.AppUser.class);
+                userRepository.insert(new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword()));
+                goToTutorialPage();
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error updating account", Toast.LENGTH_SHORT).show();
+                System.out.println("====================== Error updating account =======================");
+            }
+
+        }, error -> {
+            System.out.println("============================ ERROR SENDING UPDATE REQUEST " + error.getMessage() + "==============================");
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> header = new HashMap<>();
+                header.put(CONTENT_TYPE, APPLICATION_JSON);
+                header.put(AUTHORIZATION, "Bearer " + getSp(USER_DB, getApplication()).get(ACCESS_TOKEN));
+                return header;
+            }
+        };
+
+        // Access the RequestQueue through your singleton class.
+        queue.add(jsonObjectRequest);
+    }
+
 
     private void setWindowColors() {
         getWindow().setStatusBarColor(getColor(R.color.deep_purple));

@@ -1,21 +1,13 @@
 package com.example.joboui.db.userDb;
 
-import static com.example.joboui.globals.GlobalDb.fireStoreDb;
-import static com.example.joboui.globals.GlobalVariables.PHONE_NUMBER;
-import static com.example.joboui.globals.GlobalVariables.USER_DB;
-
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import androidx.room.Transaction;
 
 import com.example.joboui.domain.Domain;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -33,6 +25,7 @@ public class UserRepository {
 
     //Abstraction layer for encapsulation
 
+    @Transaction
     private void insertUser(Domain.User user) {
         new Thread(() -> {
             try {
@@ -45,6 +38,7 @@ public class UserRepository {
         }).start();
     }
 
+    @Transaction
     private Domain.User updateUser(Domain.User user) {
         new Thread(() -> {
             try {
@@ -52,12 +46,13 @@ public class UserRepository {
                 System.out.println(user.getUsername() + " updated");
             } catch (Exception e) {
                 System.out.println(user.getUsername() + " inserted instead");
-                insert(user);
+                insertUser(user);
             }
         }).start();
         return user;
     }
 
+    @Transaction
     private void deleteUser(Domain.User user) {
         new Thread(() -> {
             userDao.delete(user);
@@ -65,6 +60,7 @@ public class UserRepository {
         }).start();
     }
 
+    @Transaction
     private void clearUser() {
         userDao.clear();
     }

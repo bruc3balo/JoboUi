@@ -19,6 +19,7 @@
     <string name="preferred_days">1. Preferred Working Days</string>
     <string name="preferred_time">Preferred Working Time</string>
     <string name="specialities">2. Specialities</string>
+    <string name="speciality">Speciality</string>
     <string name="finish">Finish</string>
     <string name="startTime">Start Time : </string>
     <string name="to_be_filled">-</string>
