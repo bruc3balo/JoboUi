@@ -1,10 +1,12 @@
 package com.example.joboui.login;
 
+import static com.example.joboui.SplashScreen.directToLogin;
+import static com.example.joboui.login.SignInActivity.checkToLoginUser;
+
+import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,40 +16,20 @@ import com.example.joboui.clientUi.ClientActivity;
 import com.example.joboui.databinding.ActivityLoginBinding;
 import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding loginBinding;
-    /*private final FirebaseAuth.AuthStateListener authStateListener = firebaseAuth -> {
-        if (firebaseAuth.getCurrentUser() != null) {
-            Domain.User user = userRepository.getUser(firebaseAuth.getUid());
-            if (user != null) {
-                proceed(user.getRole());
-            } else {
-                user = userRepository.refreshUserDetails(firebaseAuth.getUid());
-                if (user != null) {
-                    proceed(user.getRole());
-                } else {
-                    Toast.makeText(LoginActivity.this, "Failed to get user info . Please Sign in", Toast.LENGTH_SHORT).show();
-                    goToSignInPage();
-                }
-            }
-        } else {
-            Toast.makeText(LoginActivity.this, "Sign in to continue", Toast.LENGTH_SHORT).show();
-        }
-    };*/
+    private Timer loginTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loginBinding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(loginBinding.getRoot());
-
-        TextView adminSecret = loginBinding.adminSecret;
-        adminSecret.setOnLongClickListener(view -> {
-            goToAdminPage();
-            return false;
-        });
 
         Button signInButton = loginBinding.signInButton;
         signInButton.setOnClickListener(view -> goToSignInPage());
@@ -71,57 +53,63 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void addListener() {
-      ////  FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
+        loginTimer = new Timer();
+        loginTimer.scheduleAtFixedRate(new TimerTask() {@Override public void run() { checkToLoginUser(LoginActivity.this, getApplication()); }}, 1000, 1000);
     }
 
     private void removeListener() {
-      //  FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
-    }
-
-    private void proceed(String role) {
-        switch (role) {
-            case "ROLE_CLIENT":
-                goToClientPage();
-                break;
-            case "ROLE_SERVICE_PROVIDER":
-                goToServiceProviderPage();
-                break;
-        }
+        loginTimer.cancel();
     }
 
     private void setWindowColors() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getWindow().setStatusBarColor(getColor(R.color.white));
-            getWindow().setNavigationBarColor(getColor(R.color.white));
-        } else {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.white));
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.white));
-        }
+        getWindow().setStatusBarColor(getColor(R.color.white));
+        getWindow().setNavigationBarColor(getColor(R.color.white));
     }
-
 
     private void goToSignInPage() {
         startActivity(new Intent(this, SignInActivity.class));
-       // finish();
-    }
-
-    private void goToServiceProviderPage() {
-        startActivity(new Intent(this, ServiceProviderActivity.class));
-       // finish();
-    }
-
-    private void goToClientPage() {
-        startActivity(new Intent(this, ClientActivity.class));
-        finish();
+        // finish();
     }
 
     private void goToRegisterPage() {
         startActivity(new Intent(this, RegisterActivity.class));
-        finish();
+        // finish();
     }
 
-    private void goToAdminPage() {
-        startActivity(new Intent(this, AdminActivity.class));
-        finish();
+    public static void proceed(String role, Activity activity) {
+        if (role == null) {
+            directToLogin(activity);
+        } else {
+            switch (role) {
+                case "ROLE_CLIENT":
+                    goToClientPage(activity);
+                    break;
+                case "ROLE_SERVICE_PROVIDER":
+                    goToServiceProviderPage(activity);
+                    break;
+
+                case "ROLE_ADMIN":
+                case "ROLE_ADMIN_TRAINEE":
+                    goToAdminPage(activity);
+                    break;
+            }
+        }
     }
+
+    public static void goToServiceProviderPage(Activity activity) {
+        activity.startActivity(new Intent(activity, ServiceProviderActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+        activity.finish();
+    }
+
+    public static void goToClientPage(Activity activity) {
+        activity.startActivity(new Intent(activity, ClientActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+        activity.finish();
+    }
+
+    public static void goToAdminPage(Activity activity) {
+        activity.startActivity(new Intent(activity, AdminActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+        activity.finish();
+    }
+
+
 }

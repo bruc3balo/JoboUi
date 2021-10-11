@@ -19,11 +19,10 @@ public class Domain {
 
         @PrimaryKey
         @NotNull
-        private String id;
+        private Long id;
         private String id_number;
         private String phone_number;
         private String bio;
-        private String location;
         private String email_address;
         private String names;
         private String username;
@@ -41,12 +40,11 @@ public class Domain {
         public User() {
         }
 
-        public User(@NotNull String id, String id_number, String phone_number, String bio, String location, String email_address, String names, String username, String role, String createdAt, String updatedAt, boolean is_deleted, boolean is_disabled, String specialities, String preferred_working_hours, String last_known_location, String password) {
+        public User(@NotNull Long id, String id_number, String phone_number, String bio, String email_address, String names, String username, String role, String createdAt, String updatedAt, boolean is_deleted, boolean is_disabled, String specialities, String preferred_working_hours, String last_known_location, String password) {
             this.id = id;
             this.id_number = id_number;
             this.phone_number = phone_number;
             this.bio = bio;
-            this.location = location;
             this.email_address = email_address;
             this.names = names;
             this.username = username;
@@ -61,12 +59,14 @@ public class Domain {
             this.password = password;
         }
 
+
+
         @NonNull
-        public String getId() {
+        public Long getId() {
             return id;
         }
 
-        public void setId(@NonNull String id) {
+        public void setId(@NonNull Long id) {
             this.id = id;
         }
 
@@ -94,13 +94,6 @@ public class Domain {
             this.bio = bio;
         }
 
-        public String getLocation() {
-            return location;
-        }
-
-        public void setLocation(String location) {
-            this.location = location;
-        }
 
         public String getEmail_address() {
             return email_address;

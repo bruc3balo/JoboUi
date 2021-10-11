@@ -1,20 +1,24 @@
 package com.example.joboui.admin;
 
-import static com.example.joboui.clientUi.ClientActivity.goToLoginPage;
-import static com.example.joboui.globals.GlobalDb.userRepository;
+import static com.example.joboui.clientUi.ClientActivity.checkToLogoutUser;
+import static com.example.joboui.globals.GlobalVariables.LOGGED_IN;
+import static com.example.joboui.globals.GlobalVariables.USER_DB;
+import static com.example.joboui.login.SignInActivity.editSp;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.annotation.SuppressLint;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.example.joboui.R;
 import com.example.joboui.databinding.ActivityAdminBinding;
-import com.example.joboui.domain.Domain;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 //1. Manage Services
@@ -28,13 +32,13 @@ import com.example.joboui.domain.Domain;
 public class AdminActivity extends AppCompatActivity {
 
     ActivityAdminBinding adminBinding;
+    private Timer loginTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         adminBinding = ActivityAdminBinding.inflate(getLayoutInflater());
         setContentView(adminBinding.getRoot());
-
 
         Toolbar clientToolbar = adminBinding.adminToolbar;
         setSupportActionBar(clientToolbar);
@@ -45,21 +49,33 @@ public class AdminActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Logout").setOnMenuItemClickListener(menuItem -> {
-            userRepository.deleteUserDb();
-            updateUi();
+            Map<String, Boolean> map = new HashMap<>();
+            map.put(LOGGED_IN, false);
+            editSp(USER_DB, map, getApplication());
             return false;
         }).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         return super.onCreateOptionsMenu(menu);
     }
 
-    @SuppressLint("SetTextI18n")
-    private void updateUi() {
-        Domain.User localUser = userRepository.getUser();
-        if (localUser != null) {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        addListener();
+    }
 
-        } else {
-            goToLoginPage(this);
-        }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        removeListener();
+    }
+
+    private void addListener() {
+        loginTimer = new Timer();
+        loginTimer.scheduleAtFixedRate(new TimerTask() {@Override public void run() { checkToLogoutUser(AdminActivity.this, getApplication()); }}, 1000, 1000);
+    }
+
+    private void removeListener() {
+        loginTimer.cancel();
     }
 
     private void setWindowColors() {

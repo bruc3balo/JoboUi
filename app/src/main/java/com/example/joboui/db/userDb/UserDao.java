@@ -12,6 +12,8 @@ import androidx.room.Update;
 
 import com.example.joboui.domain.Domain;
 
+import java.util.List;
+
 @Dao
 public interface UserDao {
 
@@ -32,7 +34,7 @@ public interface UserDao {
     void clear();
 
     @Query(GET_ALL_USER)
-    Domain.User getUserObject();
+    List<Domain.User> getUserObject();
 
     @Query(GET_ALL_USER)
     LiveData<Domain.User> getUserLiveData ();

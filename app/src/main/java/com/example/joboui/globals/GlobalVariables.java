@@ -7,8 +7,7 @@ public class GlobalVariables {
     public static final int LOCAL_SERVICE_PROVIDER_ROLE = 2;
     public static final String UID = "uid";
     public static final String EMAIL_ADDRESS = "emailAddress";
-    public static final String FIRST_NAME = "firstName";
-    public static final String LAST_NAME = "lastName";
+    public static final String USERNAME = "username";
     public static final String ROLE = "role";
     public static final String CREATED_AT = "createdAt";
     public static final String CLIENT = "Client";
@@ -24,6 +23,11 @@ public class GlobalVariables {
     public static final String FRIDAY = "Friday";
     public static final String SATURDAY = "Saturday";
 
-    public static final String API_URL = "https://f6fd-197-232-244-229.ngrok.io";
+    public static final String API_URL = "https://89ea-197-232-244-229.ngrok.io";
     public static final String CONTEXT_URL = "/api/v1";
+
+    public static final String LOGGED_IN = "logged_in";
+    public static final String ACCESS_TOKEN = "access_token";
+    public static final String REFRESH_TOKEN = "refresh_token";
+    public static final String PASSWORD = "password";
 }

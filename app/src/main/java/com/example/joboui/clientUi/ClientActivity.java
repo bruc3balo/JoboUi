@@ -1,9 +1,16 @@
 package com.example.joboui.clientUi;
 
+import static com.example.joboui.SplashScreen.directToLogin;
 import static com.example.joboui.globals.GlobalDb.userRepository;
+import static com.example.joboui.globals.GlobalVariables.LOGGED_IN;
+import static com.example.joboui.globals.GlobalVariables.USER_DB;
+import static com.example.joboui.login.LoginActivity.proceed;
+import static com.example.joboui.login.SignInActivity.editSp;
+import static com.example.joboui.login.SignInActivity.getSp;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,20 +24,30 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 
 import com.example.joboui.R;
 import com.example.joboui.adapters.ServicesPageGrid;
 import com.example.joboui.databinding.ActivityClientBinding;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.login.LoginActivity;
+import com.example.joboui.login.SignInActivity;
+import com.squareup.okhttp.Call;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ClientActivity extends AppCompatActivity {
     ActivityClientBinding clientBinding;
     ServicesPageGrid servicesPageGridAdapter;
     private final ArrayList<Domain.Services> serviceList = new ArrayList<>();
+    private Timer loginTimer;
+    private Domain.User me;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +71,14 @@ public class ClientActivity extends AppCompatActivity {
             }
         });
 
+        userRepository.getUserLive().observe(this, user -> {
+           if (user != null) {
+               me = user;
+               clientBinding.welcomeText.setText("Good Morning " + me.getUsername());
+           }
+        });
+
+
         addDummyServices();
         setWindowColors();
 
@@ -62,8 +87,9 @@ public class ClientActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Logout").setOnMenuItemClickListener(menuItem -> {
-            userRepository.deleteUserDb();
-            updateUi();
+            Map<String, Boolean> map = new HashMap<>();
+            map.put(LOGGED_IN, false);
+            editSp(USER_DB, map, getApplication());
             return false;
         }).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         return super.onCreateOptionsMenu(menu);
@@ -91,15 +117,6 @@ public class ClientActivity extends AppCompatActivity {
         servicesPageGridAdapter.notifyDataSetChanged();
     }
 
-    @SuppressLint("SetTextI18n")
-    private void updateUi() {
-        Domain.User localUser = userRepository.getUser();
-        if (localUser != null) {
-            clientBinding.welcomeText.setText("Good Morning " + localUser.getUsername());
-        } else {
-            goToLoginPage(this);
-        }
-    }
 
     public static void goToLoginPage(Activity activity) {
         activity.startActivity(new Intent(activity, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -109,12 +126,51 @@ public class ClientActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        addListener();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        removeListener();
     }
+
+    private void addListener() {
+        loginTimer = new Timer();
+        loginTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                checkToLogoutUser(ClientActivity.this, getApplication());
+            }
+        }, 1000, 1000);
+    }
+
+    private void removeListener() {
+        loginTimer.cancel();
+    }
+
+
+    public static void checkToLogoutUser(Activity activity, Application application) {
+        Map<String, ?> map = getSp(USER_DB, application);
+
+        if (map == null) {
+            System.out.println("No user sp");
+            //todo rectify
+            return;
+        }
+
+        Boolean loggedIn = (Boolean) map.get(LOGGED_IN);
+        if (loggedIn == null) {
+            System.out.println("No logged in value sp");
+            //todo rectify
+            return;
+        }
+
+        if (!loggedIn) {
+            directToLogin(activity);
+        }
+    }
+
 
 
     private void setWindowColors() {

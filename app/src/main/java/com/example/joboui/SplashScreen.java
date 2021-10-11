@@ -1,5 +1,9 @@
 package com.example.joboui;
 
+import static com.example.joboui.globals.GlobalDb.userRepository;
+import static com.example.joboui.login.LoginActivity.proceed;
+import static com.example.joboui.login.SignInActivity.checkToLoginUser;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -25,10 +29,15 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.joboui.databinding.ActivitySplashScreenBinding;
+import com.example.joboui.domain.Domain;
 import com.example.joboui.globals.GlobalDb;
 import com.example.joboui.login.LoginActivity;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -63,11 +72,16 @@ public class SplashScreen extends AppCompatActivity {
             askPermissions();
         }
     });
+    private Timer loginTimer;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        GlobalDb.init(getApplication());
+
+
         screenBinding = ActivitySplashScreenBinding.inflate(getLayoutInflater());
         setContentView(screenBinding.getRoot());
 
@@ -75,43 +89,39 @@ public class SplashScreen extends AppCompatActivity {
 
         goneToLogin = false;
 
-        GlobalDb.init(getApplication());
-
     }
 
-    private void setWindowColors() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getWindow().setStatusBarColor(getColor(R.color.deep_purple));
-            getWindow().setNavigationBarColor(getColor(R.color.deep_purple));
-        } else {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.deep_purple));
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.deep_purple));
-        }
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        removeListener();
     }
-
-
-    private void askPermissions() {
-        System.out.println("app asking permission");
-        if (!locationGranted) {
-            getLocationPermission();
-        } else if (!storageGranted) {
-            getStoragePermission();
-        } else if (!isMapsEnabled()) {
-            getGpsPermission();
-        } else if (isMapsEnabled()) {
-            System.out.println("app gps permission granted");
-            goToLogin();
-        } else {
-            goToLogin();
-        }
-    }
-
 
     @Override
     protected void onResume() {
         super.onResume();
         askPermissions();
+        addListener();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case LOCATION_PERMISSION_CODE:
+                locationGranted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                askPermissions();
+                locationAskCount++;
+
+                break;
+
+            case STORAGE_PERMISSION_CODE:
+
+                storageGranted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                askPermissions();
+                storageAskCount++;
+                break;
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -176,7 +186,6 @@ public class SplashScreen extends AppCompatActivity {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
-
     private void getGpsResult() {
         Intent enableGps = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         gpsLauncher.launch(enableGps);
@@ -189,27 +198,26 @@ public class SplashScreen extends AppCompatActivity {
         settingsPermission.launch(intent);
     }
 
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case LOCATION_PERMISSION_CODE:
-                locationGranted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                askPermissions();
-                locationAskCount++;
-
-                break;
-
-            case STORAGE_PERMISSION_CODE:
-
-                storageGranted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                askPermissions();
-                storageAskCount++;
-                break;
-        }
+    private void setWindowColors() {
+        getWindow().setStatusBarColor(getColor(R.color.deep_purple));
+        getWindow().setNavigationBarColor(getColor(R.color.deep_purple));
     }
 
+    private void askPermissions() {
+        System.out.println("app asking permission");
+        if (!locationGranted) {
+            getLocationPermission();
+        } else if (!storageGranted) {
+            getStoragePermission();
+        } else if (!isMapsEnabled()) {
+            getGpsPermission();
+        } else if (isMapsEnabled()) {
+            System.out.println("app gps permission granted");
+            proceed(userRepository.getUser().map(Domain.User::getRole).orElse(null), SplashScreen.this);
+        } else {
+            proceed(userRepository.getUser().map(Domain.User::getRole).orElse(null), SplashScreen.this);
+        }
+    }
 
     private void showOpenPermissionsDialog(Context context, String s) {
         Dialog d = new Dialog(context);
@@ -237,20 +245,29 @@ public class SplashScreen extends AppCompatActivity {
 
     }
 
-
-    private void goToLogin() {
-        if (!goneToLogin) {
-            goneToLogin = true;
-            startActivity(new Intent(SplashScreen.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-            finish();
-        } else {
-            System.out.println("Login already started");
-        }
+    public static void directToLogin(Activity activity) {
+        userRepository.deleteUserDb();
+        activity.startActivity(new Intent(activity, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+        activity.finish();
     }
 
     private void hideNavBar() {
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
+    }
+
+    private void addListener() {
+        loginTimer = new Timer();
+        loginTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                checkToLoginUser(SplashScreen.this, getApplication());
+            }
+        }, 1000, 1000);
+    }
+
+    private void removeListener() {
+        loginTimer.cancel();
     }
 }

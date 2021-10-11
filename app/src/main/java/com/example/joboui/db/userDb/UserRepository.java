@@ -16,6 +16,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 
 public class UserRepository {
@@ -68,32 +69,6 @@ public class UserRepository {
         userDao.clear();
     }
 
-    private Domain.User updateLocalData(String uid) {
-        final Domain.User[] user = {null};
-        fireStoreDb.collection(USER_DB).document(uid).get().addOnCompleteListener(task -> {
-            if (task.isComplete()) {
-                user[0] = Objects.requireNonNull(task.getResult()).toObject(Domain.User.class);
-            } else {
-                System.out.println(Objects.requireNonNull(task.getException()).toString());
-            }
-        });
-        return user[0];
-    }
-
-    private MutableLiveData<List<String>> getPhoneNumbers() {
-        MutableLiveData<List<String>> mutableLiveData = new MutableLiveData<>();
-        List<String> phoneList = new ArrayList<>();
-        fireStoreDb.collection(USER_DB).get().addOnCompleteListener(task -> {
-           if (task.isSuccessful()) {
-               for (QueryDocumentSnapshot qs: Objects.requireNonNull(task.getResult())) {
-                   phoneList.add(Objects.requireNonNull(qs.get(PHONE_NUMBER)).toString());
-               }
-           }
-           mutableLiveData.setValue(phoneList);
-        });
-        return mutableLiveData;
-    }
-
 
     //Used Methods
     public void insert(Domain.User user) {
@@ -112,20 +87,17 @@ public class UserRepository {
         clearUser();
     }
 
-    public Domain.User getUser() {
-        return userDao.getUserObject();
+    public Optional<Domain.User> getUser() {
+        List<Domain.User> user = userDao.getUserObject();
+        if (user == null || user.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(user.get(0));
+        }
     }
 
     public LiveData<Domain.User> getUserLive() {
         return userDao.getUserLiveData();
-    }
-
-    public Domain.User refreshUserDetails(String uid) {
-        return updateLocalData(uid);
-    }
-
-    public LiveData<List<String>> getMobileNumbers () {
-        return getPhoneNumbers();
     }
 
 
