@@ -51,7 +51,7 @@ public class UserRepository {
                 System.out.println(user.getUsername() + " updated");
             } catch (Exception e) {
                 System.out.println(user.getUsername() + " inserted instead");
-                userDao.insert(user);
+                insert(user);
             }
         }).start();
         return user;

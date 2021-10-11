@@ -44,7 +44,6 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
-
             <EditText
                 android:id="@+id/namesField"
                 android:layout_width="match_parent"
@@ -72,7 +71,6 @@
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="bold" />
-
 
             <EditText
                 android:id="@+id/usernameField"
@@ -102,7 +100,6 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
-
             <EditText
                 android:id="@+id/emailAddressField"
                 android:layout_width="match_parent"
@@ -131,7 +128,6 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
-
             <EditText
                 android:id="@+id/phoneNumberField"
                 android:layout_width="match_parent"
@@ -146,6 +142,7 @@
                 android:inputType="phone"
                 android:padding="20dp"
                 android:textColorHint="@color/grey" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

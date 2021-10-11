@@ -76,4 +76,5 @@
     <string name="id_hint">3540264</string>
     <string name="id_number">3. Identity Number</string>
     <string name="username">Username</string>
+    <string name="removeitembutton">Remove Item</string>
 </resources>

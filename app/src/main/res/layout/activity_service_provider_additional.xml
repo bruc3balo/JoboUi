@@ -212,6 +212,7 @@
                     android:textColorHint="@color/grey" />
 
                 <ImageButton
+                    android:id="@+id/addSpecialityButton"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:background="@drawable/circle_day_bg_selected"

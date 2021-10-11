@@ -51,6 +51,7 @@
 
 
             <TextView
+                android:id="@+id/startTimeTv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -64,6 +65,7 @@
                 android:textStyle="bold" />
 
             <ImageButton
+                android:id="@+id/startPicker"
                 app:tint="@color/white"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
@@ -96,6 +98,7 @@
 
 
             <TextView
+                android:id="@+id/endTimeTv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -109,6 +112,7 @@
                 android:textStyle="bold" />
 
             <ImageButton
+                android:id="@+id/endPicker"
                 app:tint="@color/white"
                 android:layout_width="50dp"
                 android:layout_height="50dp"

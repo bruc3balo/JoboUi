@@ -15,4 +15,14 @@ public class GlobalVariables {
     public static final String SERVICE_PROVIDER = "Service Provider";
     public static final String PHONE_NUMBER = "phoneNumber";
     public static final String HY = "-";
+
+    public static final String SUNDAY = "Sunday";
+    public static final String MONDAY = "Monday";
+    public static final String TUESDAY = "Tuesday";
+    public static final String WEDNESDAY = "Wednesday";
+    public static final String THURSDAY = "Thursday";
+    public static final String FRIDAY = "Friday";
+    public static final String SATURDAY = "Saturday";
+
+    public static final String API_URL = "192.168.56.1:";
 }
