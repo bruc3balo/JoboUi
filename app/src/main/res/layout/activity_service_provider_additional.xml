@@ -98,7 +98,7 @@
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:textSize="18sp"
-                    android:background="@drawable/circle_day_bg_selected"
+                    android:background="@drawable/circle_day_bg_unselected"
                     android:text="@string/m"/>
 
                 <TextView
@@ -112,7 +112,7 @@
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:textSize="18sp"
-                    android:background="@drawable/circle_day_bg_selected"
+                    android:background="@drawable/circle_day_bg_unselected"
                     android:text="@string/t"/>
 
                 <TextView
@@ -126,7 +126,7 @@
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:textSize="18sp"
-                    android:background="@drawable/circle_day_bg_selected"
+                    android:background="@drawable/circle_day_bg_unselected"
                     android:text="@string/w"/>
 
                 <TextView
@@ -140,7 +140,7 @@
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:textSize="18sp"
-                    android:background="@drawable/circle_day_bg_selected"
+                    android:background="@drawable/circle_day_bg_unselected"
                     android:text="@string/t"/>
 
                 <TextView
@@ -154,7 +154,7 @@
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:textSize="18sp"
-                    android:background="@drawable/circle_day_bg_selected"
+                    android:background="@drawable/circle_day_bg_unselected"
                     android:text="@string/f"/>
 
                 <TextView

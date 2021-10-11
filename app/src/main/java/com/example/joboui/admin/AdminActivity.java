@@ -1,13 +1,20 @@
 package com.example.joboui.admin;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static com.example.joboui.clientUi.ClientActivity.goToLoginPage;
+import static com.example.joboui.globals.GlobalDb.userRepository;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.joboui.R;
 import com.example.joboui.databinding.ActivityAdminBinding;
-
+import com.example.joboui.domain.Domain;
 
 
 //1. Manage Services
@@ -28,17 +35,36 @@ public class AdminActivity extends AppCompatActivity {
         adminBinding = ActivityAdminBinding.inflate(getLayoutInflater());
         setContentView(adminBinding.getRoot());
 
+
+        Toolbar clientToolbar = adminBinding.adminToolbar;
+        setSupportActionBar(clientToolbar);
+
         setWindowColors();
     }
 
-    private void setWindowColors() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getWindow().setStatusBarColor(getColor(R.color.purple));
-            getWindow().setNavigationBarColor(getColor(R.color.purple));
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("Logout").setOnMenuItemClickListener(menuItem -> {
+            userRepository.deleteUserDb();
+            updateUi();
+            return false;
+        }).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void updateUi() {
+        Domain.User localUser = userRepository.getUser();
+        if (localUser != null) {
+
         } else {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.purple));
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.purple));
+            goToLoginPage(this);
         }
+    }
+
+    private void setWindowColors() {
+        getWindow().setStatusBarColor(getColor(R.color.purple));
+        getWindow().setNavigationBarColor(getColor(R.color.purple));
 
     }
 }

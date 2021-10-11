@@ -5,10 +5,12 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.example.joboui.globals.GlobalVariables;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Domain {
 
@@ -34,6 +36,7 @@ public class Domain {
         private String preferred_working_hours;
         private String last_known_location;
         private String password;
+
 
         public User() {
         }

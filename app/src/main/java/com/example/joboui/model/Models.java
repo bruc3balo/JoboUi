@@ -3,7 +3,11 @@ package com.example.joboui.model;
 
 import static com.example.joboui.globals.GlobalVariables.HY;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -11,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class Models{
+public class Models {
 
     public static class NewUserForm {
 
@@ -346,6 +350,322 @@ public class Models{
 
         public void setSpecialities(List<String> specialities) {
             this.specialities = specialities;
+        }
+    }
+
+    public static class LoginResponse implements Serializable {
+        private String access_token;
+        private String refresh_token;
+        private String auth_type;
+
+        public LoginResponse() {
+        }
+
+        public String getAccess_token() {
+            return access_token;
+        }
+
+        public void setAccess_token(String access_token) {
+            this.access_token = access_token;
+        }
+
+        public String getRefresh_token() {
+            return refresh_token;
+        }
+
+        public void setRefresh_token(String refresh_token) {
+            this.refresh_token = refresh_token;
+        }
+
+        public String getAuth_type() {
+            return auth_type;
+        }
+
+        public void setAuth_type(String auth_type) {
+            this.auth_type = auth_type;
+        }
+    }
+
+    public static class AppUser implements Serializable{
+
+        private Long id;
+
+        private String names;
+
+
+        private String username;
+
+
+        private String id_number;
+
+
+        private String email_address;
+
+        private String phone_number;
+
+
+        private String password;
+
+
+        private String bio;
+
+
+        private String last_known_location;
+
+
+        private Date created_at;
+
+
+        private Date updated_at;
+
+
+        private AppRole role;
+
+
+        private String preferred_working_hours;
+
+
+        private String specialities;
+
+
+        private Boolean disabled;
+
+
+        private Boolean deleted;
+
+        public AppUser() {
+
+        }
+
+        public AppUser(Long id, String names, String username, String id_number, String email_address, String phone_number, String password, String bio, String last_known_location, Date created_at, Date updated_at, AppRole role, String preferred_working_hours, String specialities, Boolean disabled, Boolean deleted) {
+            this.id = id;
+            this.names = names;
+            this.username = username;
+            this.id_number = id_number;
+            this.email_address = email_address;
+            this.phone_number = phone_number;
+            this.password = password;
+            this.bio = bio;
+            this.last_known_location = last_known_location;
+            this.created_at = created_at;
+            this.updated_at = updated_at;
+            this.role = role;
+            this.preferred_working_hours = preferred_working_hours;
+            this.specialities = specialities;
+            this.disabled = disabled;
+            this.deleted = deleted;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getNames() {
+            return names;
+        }
+
+        public void setNames(String names) {
+            this.names = names;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getId_number() {
+            return id_number;
+        }
+
+        public void setId_number(String id_number) {
+            this.id_number = id_number;
+        }
+
+        public String getEmail_address() {
+            return email_address;
+        }
+
+        public void setEmail_address(String email_address) {
+            this.email_address = email_address;
+        }
+
+        public String getPhone_number() {
+            return phone_number;
+        }
+
+        public void setPhone_number(String phone_number) {
+            this.phone_number = phone_number;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String getBio() {
+            return bio;
+        }
+
+        public void setBio(String bio) {
+            this.bio = bio;
+        }
+
+        public String getLast_known_location() {
+            return last_known_location;
+        }
+
+        public void setLast_known_location(String last_known_location) {
+            this.last_known_location = last_known_location;
+        }
+
+        public Date getCreated_at() {
+            return created_at;
+        }
+
+        public void setCreated_at(Date created_at) {
+            this.created_at = created_at;
+        }
+
+        public Date getUpdated_at() {
+            return updated_at;
+        }
+
+        public void setUpdated_at(Date updated_at) {
+            this.updated_at = updated_at;
+        }
+
+        public AppRole getRole() {
+            return role;
+        }
+
+        public void setRole(AppRole role) {
+            this.role = role;
+        }
+
+        public String getPreferred_working_hours() {
+            return preferred_working_hours;
+        }
+
+        public void setPreferred_working_hours(String preferred_working_hours) {
+            this.preferred_working_hours = preferred_working_hours;
+        }
+
+        public String getSpecialities() {
+            return specialities;
+        }
+
+        public void setSpecialities(String specialities) {
+            this.specialities = specialities;
+        }
+
+        public Boolean getDisabled() {
+            return disabled;
+        }
+
+        public void setDisabled(Boolean disabled) {
+            this.disabled = disabled;
+        }
+
+        public Boolean getDeleted() {
+            return deleted;
+        }
+
+        public void setDeleted(Boolean deleted) {
+            this.deleted = deleted;
+        }
+    }
+
+    public static class AppRole implements Serializable{
+
+        private Long id;
+        private String name;
+        private Set<Permissions> permissions = new LinkedHashSet<>();
+
+        public AppRole() {
+
+        }
+
+        public AppRole(String name) {
+            this.name = name;
+        }
+
+        public AppRole(Long id, String name, Set<Permissions> permissions) {
+            this.id = id;
+            this.name = name;
+            this.permissions = permissions;
+        }
+
+        public AppRole(String name, Set<Permissions> permissions) {
+            this.name = name;
+            this.permissions = permissions;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Set<Permissions> getPermissions() {
+            return permissions;
+        }
+
+        public void setPermissions(Set<Permissions> permissions) {
+            this.permissions = permissions;
+        }
+    }
+
+    public static class Permissions implements Serializable{
+
+        private Long id;
+        private String name;
+
+        public Permissions() {
+        }
+
+        public Permissions(String name) {
+            this.name = name;
+        }
+
+        public Permissions(Long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
     }
 

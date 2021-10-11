@@ -1,25 +1,19 @@
 package com.example.joboui.login;
 
-import static com.example.joboui.globals.GlobalDb.userRepository;
-import static com.example.joboui.globals.GlobalVariables.CLIENT_ROLE;
-import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_ROLE;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.joboui.R;
 import com.example.joboui.admin.AdminActivity;
 import com.example.joboui.clientUi.ClientActivity;
 import com.example.joboui.databinding.ActivityLoginBinding;
-import com.example.joboui.domain.Domain;
 import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
-import com.google.firebase.auth.FirebaseAuth;
+
 
 public class LoginActivity extends AppCompatActivity {
 

@@ -24,5 +24,6 @@ public class GlobalVariables {
     public static final String FRIDAY = "Friday";
     public static final String SATURDAY = "Saturday";
 
-    public static final String API_URL = "192.168.56.1:";
+    public static final String API_URL = "https://f6fd-197-232-244-229.ngrok.io";
+    public static final String CONTEXT_URL = "/api/v1";
 }
