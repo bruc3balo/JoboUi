@@ -1,5 +1,7 @@
 package com.example.joboui.login;
 
+import static com.example.joboui.SplashScreen.addListener;
+import static com.example.joboui.SplashScreen.removeListener;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.ACCESS_TOKEN;
 import static com.example.joboui.globals.GlobalVariables.API_URL;
@@ -21,6 +23,7 @@ import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -92,7 +95,16 @@ public class SignInActivity extends AppCompatActivity {
                                 hidePb();
                                 Toast.makeText(SignInActivity.this, "Failed to get token", Toast.LENGTH_SHORT).show();
                             } else {
-                                userViewModel.getUserByUsername(map.get(USERNAME)).observe(SignInActivity.this, appUser -> Toast.makeText(SignInActivity.this, appUser.getUsername(), Toast.LENGTH_SHORT).show());
+                                userViewModel.getUserByUsername(map.get(USERNAME)).observe(SignInActivity.this, appUser -> {
+                                    if (appUser != null) {
+                                        if (appUser.getRole() != null) {
+                                            Toast.makeText(SignInActivity.this, appUser.getUsername(), Toast.LENGTH_SHORT).show();
+                                            proceed(appUser.getRole().getName(), SignInActivity.this);
+                                        } else {
+                                            //todo update role to client // cron does it
+                                        }
+                                    }
+                                });
                             }
                         }
                     });
@@ -100,6 +112,10 @@ public class SignInActivity extends AppCompatActivity {
                     e.printStackTrace();
                     hidePb();
                 }
+
+                try {
+                    new Handler().postDelayed(this::hidePb, 5000);
+                }catch (Exception ignored) {}
             }
         });
 
@@ -180,16 +196,27 @@ public class SignInActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    public static void clearSp(String name, Application application) {
+        SharedPreferences sh = application.getSharedPreferences(name, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sh.edit();
+
+        editor.clear();
+
+        System.out.println(" ==============  SP MAP CLEARED ================ ");
+
+        editor.apply();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        addListener();
+        //addListener();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        removeListener();
+        //removeListener();
     }
 
     public static void checkToLoginUser(Activity activity, Application application) {
@@ -214,19 +241,6 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
-    private void addListener() {
-        loginTimer = new Timer();
-        loginTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                checkToLoginUser(SignInActivity.this, getApplication());
-            }
-        }, 1000, 1000);
-    }
-
-    private void removeListener() {
-        loginTimer.cancel();
-    }
 
     private void setWindowColors() {
         getWindow().setStatusBarColor(getColor(R.color.deep_purple));

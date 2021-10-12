@@ -1,10 +1,14 @@
 package com.example.joboui.clientUi;
 
+import static com.example.joboui.SplashScreen.addListener;
+import static com.example.joboui.SplashScreen.addLogoutListener;
 import static com.example.joboui.SplashScreen.directToLogin;
+import static com.example.joboui.SplashScreen.removeListener;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.LOGGED_IN;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.LoginActivity.proceed;
+import static com.example.joboui.login.SignInActivity.clearSp;
 import static com.example.joboui.login.SignInActivity.editSp;
 import static com.example.joboui.login.SignInActivity.getSp;
 
@@ -28,6 +32,7 @@ import androidx.lifecycle.Observer;
 
 import com.example.joboui.R;
 import com.example.joboui.adapters.ServicesPageGrid;
+import com.example.joboui.admin.AdminActivity;
 import com.example.joboui.databinding.ActivityClientBinding;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.login.LoginActivity;
@@ -37,6 +42,7 @@ import com.squareup.okhttp.Call;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -44,7 +50,6 @@ public class ClientActivity extends AppCompatActivity {
     ActivityClientBinding clientBinding;
     ServicesPageGrid servicesPageGridAdapter;
     private final ArrayList<Domain.Services> serviceList = new ArrayList<>();
-    private Timer loginTimer;
     private Domain.User me;
 
     @SuppressLint("SetTextI18n")
@@ -70,12 +75,11 @@ public class ClientActivity extends AppCompatActivity {
                 hideSearch(clientBinding.introText, clientSearch);
             }
         });
-
         userRepository.getUserLive().observe(this, user -> {
-           if (user != null) {
-               me = user;
-               clientBinding.welcomeText.setText("Good Morning " + me.getUsername());
-           }
+            if (user.isPresent()) {
+                me = user.get();
+                clientBinding.welcomeText.setText("Good Morning " + me.getUsername());
+            }
         });
 
 
@@ -84,16 +88,28 @@ public class ClientActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Logout").setOnMenuItemClickListener(menuItem -> {
             userRepository.deleteUserDb();
-            Map<String, Boolean> map = new HashMap<>();
-            map.put(LOGGED_IN, false);
-            editSp(USER_DB, map, getApplication());
+            clearSp(USER_DB, getApplication());
             return false;
         }).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        addListener();
+        addLogoutListener(ClientActivity.this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        removeListener();
     }
 
     private void showSearch(TextView tv, SearchView search) {
@@ -118,39 +134,6 @@ public class ClientActivity extends AppCompatActivity {
         servicesPageGridAdapter.notifyDataSetChanged();
     }
 
-
-    public static void goToLoginPage(Activity activity) {
-        activity.startActivity(new Intent(activity, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-        activity.finish();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        addListener();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        removeListener();
-    }
-
-    private void addListener() {
-        loginTimer = new Timer();
-        loginTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                checkToLogoutUser(ClientActivity.this, getApplication());
-            }
-        }, 1000, 1000);
-    }
-
-    private void removeListener() {
-        loginTimer.cancel();
-    }
-
-
     public static void checkToLogoutUser(Activity activity, Application application) {
 
         //todo use live data instead
@@ -173,8 +156,6 @@ public class ClientActivity extends AppCompatActivity {
             directToLogin(activity);
         }
     }
-
-
 
     private void setWindowColors() {
         getWindow().setStatusBarColor(getColor(R.color.purple));

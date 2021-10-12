@@ -82,10 +82,12 @@ public class UserViewModel extends AndroidViewModel {
 
                 userRepository.insert(new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword()));
 
+                System.out.println("======== ROLE INSERTED " + user.getRole().getName() + "===============");
+
                 //update login status
-                Map<String, Boolean> map = new HashMap<>();
+               /* Map<String, Boolean> map = new HashMap<>();
                 map.put(LOGGED_IN, true);
-                editSp(USER_DB, map, application);
+                editSp(USER_DB, map, application);*/
 
                 userMutableLiveData.setValue(user);
             } catch (IOException e) {
@@ -99,6 +101,7 @@ public class UserViewModel extends AndroidViewModel {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("username", username);
+                //todo fix param bug
                 return params;
             }
 
@@ -174,7 +177,6 @@ public class UserViewModel extends AndroidViewModel {
     }
 
 
-
     private MutableLiveData<List<String>> getUsernames() {
         MutableLiveData<List<String>> mutableLiveData = new MutableLiveData<>();
         RequestQueue queue = Volley.newRequestQueue(application);
@@ -190,7 +192,7 @@ public class UserViewModel extends AndroidViewModel {
                 JsonResponse jsonResponse = mapper.readValue(response.toString(), JsonResponse.class);
                 List jsonUsernames = mapper.readValue(new JSONArray(jsonResponse.getData().toString()).toString(), List.class);
 
-                System.out.println("USERNAMELISTList : "+jsonUsernames);
+                System.out.println("USERNAMELISTList : " + jsonUsernames);
                 usernames.addAll(jsonUsernames);
                 mutableLiveData.setValue(usernames);
             } catch (IOException | JSONException e) {
@@ -198,7 +200,7 @@ public class UserViewModel extends AndroidViewModel {
                 Toast.makeText(application, "Something went wrong", Toast.LENGTH_SHORT).show();
             }
 
-        }, error -> Toast.makeText(application, "Failed to login " + error, Toast.LENGTH_SHORT).show()){
+        }, error -> Toast.makeText(application, "Failed to login " + error, Toast.LENGTH_SHORT).show()) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> header = new HashMap<>();
@@ -220,7 +222,6 @@ public class UserViewModel extends AndroidViewModel {
         ObjectMapper mapper = getObjectMapper();
 
 
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
 
             try {
@@ -234,7 +235,7 @@ public class UserViewModel extends AndroidViewModel {
                 Toast.makeText(application, "Something went wrong", Toast.LENGTH_SHORT).show();
             }
 
-        }, error -> Toast.makeText(application, "Failed to login " + error, Toast.LENGTH_SHORT).show()){
+        }, error -> Toast.makeText(application, "Failed to login " + error, Toast.LENGTH_SHORT).show()) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> header = new HashMap<>();

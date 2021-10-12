@@ -29,7 +29,8 @@ public class UserRepository {
     private void insertUser(Domain.User user) {
         new Thread(() -> {
             try {
-                clearUser();
+                /*clearUser();
+                Thread.sleep(1500);*/
                 userDao.insert(user);
                 System.out.println(user.getUsername() + " inserted");
             } catch (Exception e) {
@@ -95,7 +96,7 @@ public class UserRepository {
         }
     }
 
-    public LiveData<Domain.User> getUserLive() {
+    public LiveData<Optional<Domain.User>> getUserLive() {
         return userDao.getUserLiveData();
     }
 

@@ -1,7 +1,6 @@
 package com.example.joboui.login;
 
 import static com.example.joboui.SplashScreen.directToLogin;
-import static com.example.joboui.login.SignInActivity.checkToLoginUser;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,14 +15,10 @@ import com.example.joboui.clientUi.ClientActivity;
 import com.example.joboui.databinding.ActivityLoginBinding;
 import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding loginBinding;
-    private Timer loginTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,23 +38,15 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        addListener();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        removeListener();
     }
 
-    private void addListener() {
-        loginTimer = new Timer();
-        loginTimer.scheduleAtFixedRate(new TimerTask() {@Override public void run() { checkToLoginUser(LoginActivity.this, getApplication()); }}, 1000, 1000);
-    }
 
-    private void removeListener() {
-        loginTimer.cancel();
-    }
+
 
     private void setWindowColors() {
         getWindow().setStatusBarColor(getColor(R.color.white));
@@ -77,6 +64,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public static void proceed(String role, Activity activity) {
+        System.out.println("======== ROLE IS "+role + "===============");
+
         if (role == null) {
             directToLogin(activity);
         } else {

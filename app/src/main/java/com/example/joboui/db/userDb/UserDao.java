@@ -15,11 +15,12 @@ import androidx.room.Update;
 import com.example.joboui.domain.Domain;
 
 import java.util.List;
+import java.util.Optional;
 
 @Dao
 public interface UserDao {
 
-    String GET_ALL_USER = "SELECT * FROM " + USER_DB;
+    String GET_ALL_USER = "SELECT * FROM " + USER_DB +" LIMIT 1";
     String CLEAR_USER = "DELETE FROM " + USER_DB;
 
 
@@ -40,7 +41,7 @@ public interface UserDao {
     List<Domain.User> getUserObject();
 
     @Query(GET_ALL_USER)
-    LiveData<Domain.User> getUserLiveData ();
+    LiveData<Optional<Domain.User>> getUserLiveData ();
 
 
 }

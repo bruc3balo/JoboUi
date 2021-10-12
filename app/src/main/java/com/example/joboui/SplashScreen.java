@@ -2,13 +2,6 @@ package com.example.joboui;
 
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.login.LoginActivity.proceed;
-import static com.example.joboui.login.SignInActivity.checkToLoginUser;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -17,16 +10,20 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.example.joboui.databinding.ActivitySplashScreenBinding;
 import com.example.joboui.domain.Domain;
@@ -35,16 +32,10 @@ import com.example.joboui.login.LoginActivity;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
-
+@SuppressLint("CustomSplashScreen")
 public class SplashScreen extends AppCompatActivity {
 
-    private boolean goneToLogin;
     public static final int SPLASH_WAIT_TIME = 2000;
-    private boolean original = true;
-    private int count = 0;
     private int locationAskCount = 0;
     private int storageAskCount = 0;
     private ActivitySplashScreenBinding screenBinding;
@@ -55,6 +46,8 @@ public class SplashScreen extends AppCompatActivity {
     public static final int GPS_PERMISSION_CODE = 10;
     public static final int LOCATION_PERMISSION_CODE = 12;
     public static final int STORAGE_PERMISSION_CODE = 11;
+
+    public static boolean isResumed = false;
 
     private final ActivityResultLauncher<Intent> gpsLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == Activity.RESULT_OK) {
@@ -72,7 +65,6 @@ public class SplashScreen extends AppCompatActivity {
             askPermissions();
         }
     });
-    private Timer loginTimer;
 
 
     @Override
@@ -81,13 +73,11 @@ public class SplashScreen extends AppCompatActivity {
 
         GlobalDb.init(getApplication());
 
-
         screenBinding = ActivitySplashScreenBinding.inflate(getLayoutInflater());
         setContentView(screenBinding.getRoot());
 
         setWindowColors();
 
-        goneToLogin = false;
 
     }
 
@@ -102,7 +92,9 @@ public class SplashScreen extends AppCompatActivity {
         super.onResume();
         askPermissions();
         addListener();
+        addLoginListener(SplashScreen.this);
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
@@ -257,17 +249,39 @@ public class SplashScreen extends AppCompatActivity {
         decorView.setSystemUiVisibility(uiOptions);
     }
 
-    private void addListener() {
-        loginTimer = new Timer();
-        loginTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                checkToLoginUser(SplashScreen.this, getApplication());
+    public static void addLoginListener(Activity activity) {
+        userRepository.getUserLive().observe((LifecycleOwner) activity, user -> {
+            if (user.isPresent()) {
+                if (user.get().getRole() != null) {
+                    proceed(user.get().getRole(), activity);
+                } else {
+                    directToLogin(activity);
+                    System.out.println("User has been logged out");
+                }
+            } else {
+                directToLogin(activity);
             }
-        }, 1000, 1000);
+        });
     }
 
-    private void removeListener() {
-        loginTimer.cancel();
+    public static void addLogoutListener(Activity activity) {
+        userRepository.getUserLive().observe((LifecycleOwner) activity, user -> {
+            if (user.isPresent()) {
+                System.out.println(user.get().getUsername() + " logged in");
+            } else {
+                if (isResumed) {
+                    directToLogin(activity);
+                    System.out.println("User has been logged out");
+                }
+            }
+        });
+    }
+
+    public static void addListener() {
+        isResumed = true;
+    }
+
+    public static void removeListener() {
+        isResumed = false;
     }
 }
