@@ -23,7 +23,7 @@ public class GlobalVariables {
     public static final String FRIDAY = "Friday";
     public static final String SATURDAY = "Saturday";
 
-    public static final String API_URL = "https://f636-197-232-244-229.ngrok.io";
+    public static final String API_URL = "https://8ff9-197-232-244-229.ngrok.io";
     public static final String CONTEXT_URL = "/api/v1";
 
     public static final String LOGGED_IN = "logged_in";

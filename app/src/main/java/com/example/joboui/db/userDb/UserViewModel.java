@@ -65,7 +65,7 @@ public class UserViewModel extends AndroidViewModel {
     private MutableLiveData<Models.AppUser> getUserMutableByUsername(String username) {
         MutableLiveData<Models.AppUser> userMutableLiveData = new MutableLiveData<>();
 
-        String url = API_URL + CONTEXT_URL + "/user/all";
+        String url = API_URL + CONTEXT_URL + "/user/all?username="+username;
         RequestQueue queue = Volley.newRequestQueue(application);
 
         ObjectMapper mapper = getObjectMapper();
@@ -96,14 +96,14 @@ public class UserViewModel extends AndroidViewModel {
             }
 
         }, error -> Toast.makeText(application, "Failed to login " + error, Toast.LENGTH_SHORT).show()) {
-            @NonNull
+            /*@NonNull
             @Override
             protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
+               *//* Map<String, String> params = new HashMap<>();
                 params.put("username", username);
-                //todo fix param bug
-                return params;
-            }
+                //todo fix param bug*//*
+                return super.getParams();
+            }*/
 
             @Override
             public Map<String, String> getHeaders() {
