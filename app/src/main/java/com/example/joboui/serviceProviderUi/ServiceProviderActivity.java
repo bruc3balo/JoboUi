@@ -9,6 +9,7 @@ import static com.example.joboui.login.SignInActivity.editSp;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 
 import android.content.Intent;
 import android.os.Build;
@@ -42,6 +43,17 @@ public class ServiceProviderActivity extends AppCompatActivity {
         Toolbar serviceProviderToolbar = serviceProviderBinding.serviceProviderToolbar;
         setSupportActionBar(serviceProviderToolbar);
 
+
+        userRepository.getUserLive().observe(this, new Observer<Domain.User>() {
+            @Override
+            public void onChanged(Domain.User user) {
+                if (user != null) {
+                    serviceProviderToolbar.setTitle(user.getRole());
+                    serviceProviderToolbar.setSubtitle(user.getUsername());
+                }
+            }
+        });
+
         setWindowColors();
 
     }
@@ -49,6 +61,8 @@ public class ServiceProviderActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Logout").setOnMenuItemClickListener(menuItem -> {
+            userRepository.deleteUserDb();
+
             Map<String, Boolean> map = new HashMap<>();
             map.put(LOGGED_IN, false);
             editSp(USER_DB, map, getApplication());

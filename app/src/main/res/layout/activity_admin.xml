@@ -19,7 +19,7 @@
             app:title="@string/admin"
             app:navigationIcon="@drawable/ic_admin"
             android:layout_gravity="center"
-            app:subtitleTextColor="@color/black"
+            app:subtitleTextColor="@color/grey"
             android:background="@color/deep_purple"/>
 
         <ScrollView

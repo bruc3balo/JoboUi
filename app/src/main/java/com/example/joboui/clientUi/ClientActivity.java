@@ -87,6 +87,7 @@ public class ClientActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Logout").setOnMenuItemClickListener(menuItem -> {
+            userRepository.deleteUserDb();
             Map<String, Boolean> map = new HashMap<>();
             map.put(LOGGED_IN, false);
             editSp(USER_DB, map, getApplication());
@@ -151,6 +152,8 @@ public class ClientActivity extends AppCompatActivity {
 
 
     public static void checkToLogoutUser(Activity activity, Application application) {
+
+        //todo use live data instead
         Map<String, ?> map = getSp(USER_DB, application);
 
         if (map == null) {

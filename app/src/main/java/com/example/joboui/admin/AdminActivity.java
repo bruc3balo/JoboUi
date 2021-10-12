@@ -1,6 +1,7 @@
 package com.example.joboui.admin;
 
 import static com.example.joboui.clientUi.ClientActivity.checkToLogoutUser;
+import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.LOGGED_IN;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.SignInActivity.editSp;
@@ -11,12 +12,15 @@ import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 
 import com.example.joboui.R;
 import com.example.joboui.databinding.ActivityAdminBinding;
+import com.example.joboui.domain.Domain;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -40,8 +44,20 @@ public class AdminActivity extends AppCompatActivity {
         adminBinding = ActivityAdminBinding.inflate(getLayoutInflater());
         setContentView(adminBinding.getRoot());
 
-        Toolbar clientToolbar = adminBinding.adminToolbar;
-        setSupportActionBar(clientToolbar);
+        Toolbar adminToolbar = adminBinding.adminToolbar;
+        setSupportActionBar(adminToolbar);
+
+        userRepository.getUserLive().observe(this, new Observer<Domain.User>() {
+            @Override
+            public void onChanged(Domain.User user) {
+                if (user != null) {
+                    adminToolbar.setTitle(user.getRole());
+                    adminToolbar.setSubtitle(user.getUsername());
+                }
+            }
+        });
+
+
 
         setWindowColors();
     }
@@ -49,6 +65,7 @@ public class AdminActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Logout").setOnMenuItemClickListener(menuItem -> {
+            userRepository.deleteUserDb();
             Map<String, Boolean> map = new HashMap<>();
             map.put(LOGGED_IN, false);
             editSp(USER_DB, map, getApplication());

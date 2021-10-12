@@ -62,7 +62,10 @@ public class UserRepository {
 
     @Transaction
     private void clearUser() {
-        userDao.clear();
+      new Thread(() -> {
+          userDao.clear();
+          System.out.println("CLEARING USER DB");
+      }).start();
     }
 
 

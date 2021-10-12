@@ -20,7 +20,7 @@
             app:navigationIcon="@drawable/ic_worker"
             app:title="@string/service_provider"
             android:layout_gravity="center"
-            app:subtitleTextColor="@color/black"
+            app:subtitleTextColor="@color/grey"
             android:background="@color/deep_purple"/>
 
        <ScrollView
