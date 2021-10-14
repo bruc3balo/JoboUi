@@ -1,6 +1,12 @@
 package com.example.joboui.globals;
 
 public class GlobalVariables {
+
+    /*** BASE URL OF API ***/
+    public static final String API_URL = "https://50eb-197-232-244-229.ngrok.io";
+    public static final String CONTEXT_URL = "/api/v1/";
+
+
     public static final String USER_DB = "users";
     public static final int ADMIN_ROLE = 5;
     public static final int CLIENT_ROLE = 1;
@@ -23,11 +29,12 @@ public class GlobalVariables {
     public static final String FRIDAY = "Friday";
     public static final String SATURDAY = "Saturday";
 
-    public static final String API_URL = "https://8ff9-197-232-244-229.ngrok.io";
-    public static final String CONTEXT_URL = "/api/v1";
+
 
     public static final String LOGGED_IN = "logged_in";
     public static final String ACCESS_TOKEN = "access_token";
     public static final String REFRESH_TOKEN = "refresh_token";
     public static final String PASSWORD = "password";
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String CONTENT_TYPE_ME = "Content-Type";
 }

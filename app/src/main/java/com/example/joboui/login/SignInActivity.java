@@ -1,26 +1,13 @@
 package com.example.joboui.login;
 
-import static com.example.joboui.SplashScreen.addListener;
-import static com.example.joboui.SplashScreen.removeListener;
 import static com.example.joboui.globals.GlobalDb.userRepository;
-import static com.example.joboui.globals.GlobalVariables.ACCESS_TOKEN;
-import static com.example.joboui.globals.GlobalVariables.API_URL;
-import static com.example.joboui.globals.GlobalVariables.CONTEXT_URL;
 import static com.example.joboui.globals.GlobalVariables.LOGGED_IN;
-import static com.example.joboui.globals.GlobalVariables.PASSWORD;
-import static com.example.joboui.globals.GlobalVariables.REFRESH_TOKEN;
 import static com.example.joboui.globals.GlobalVariables.USERNAME;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
-import static com.example.joboui.login.LoginActivity.goToAdminPage;
-import static com.example.joboui.login.LoginActivity.goToClientPage;
-import static com.example.joboui.login.LoginActivity.goToServiceProviderPage;
 import static com.example.joboui.login.LoginActivity.proceed;
-import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_JSON;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,35 +17,25 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.auth0.android.jwt.JWT;
 import com.example.joboui.R;
-import com.example.joboui.SplashScreen;
-import com.example.joboui.clientUi.ClientActivity;
 import com.example.joboui.databinding.ActivitySignInBinding;
 import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
-import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Objects;
+import java.util.Optional;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -66,7 +43,6 @@ public class SignInActivity extends AppCompatActivity {
     private ActivitySignInBinding activity_sign_in;
     private Models.UsernameAndPasswordAuthenticationRequest request;
     private UserViewModel userViewModel;
-    private Timer loginTimer;
     boolean oneTime = false;
 
     @Override
@@ -87,25 +63,22 @@ public class SignInActivity extends AppCompatActivity {
                 try {
                     oneTime = false;
                     showPb();
-                    userViewModel.getAccessToken(request).observe(this, map -> {
-                        if (map == null) {
-                            hidePb();
-                        } else {
-                            if (map.isEmpty()) {
-                                hidePb();
-                                Toast.makeText(SignInActivity.this, "Failed to get token", Toast.LENGTH_SHORT).show();
-                            } else {
-                                userViewModel.getUserByUsername(map.get(USERNAME)).observe(SignInActivity.this, appUser -> {
-                                    if (appUser != null) {
-                                        if (appUser.getRole() != null) {
-                                            Toast.makeText(SignInActivity.this, appUser.getUsername(), Toast.LENGTH_SHORT).show();
-                                            proceed(appUser.getRole().getName(), SignInActivity.this);
-                                        } else {
-                                            //todo update role to client // cron does it
-                                        }
+                    userViewModel.getAccessToken(request).observe(this, loginResponse -> {
+                        if (loginResponse.isPresent()) {
+                            String username = Objects.requireNonNull(getSp(USER_DB, getApplication()).get(USERNAME)).toString();
+                            System.out.println("========== GETTING DATA FOR USER " +username + " =====================");
+                            userViewModel.getUserByUsername(username).observe(SignInActivity.this, appUser -> {
+                                if (appUser.isPresent()) {
+                                    if (appUser.get().getRole() != null) {
+                                        Toast.makeText(SignInActivity.this, appUser.get().getUsername(), Toast.LENGTH_SHORT).show();
+                                        proceed(appUser.get().getRole().getName(), SignInActivity.this);
+                                    } else {
+                                        //todo update role to client // cron does it
                                     }
-                                });
-                            }
+                                } else {
+                                    Toast.makeText(SignInActivity.this, "Failed to get user data while logging in", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                     });
                 } catch (JSONException | JsonProcessingException e) {
@@ -115,7 +88,8 @@ public class SignInActivity extends AppCompatActivity {
 
                 try {
                     new Handler().postDelayed(this::hidePb, 5000);
-                }catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
         });
 
@@ -138,7 +112,6 @@ public class SignInActivity extends AppCompatActivity {
         }
         return valid;
     }
-
 
     public static JWT decodeToken(String token) {
         try {
@@ -165,7 +138,6 @@ public class SignInActivity extends AppCompatActivity {
     private void hidePb() {
         activity_sign_in.signInPb.setVisibility(View.GONE);
         activity_sign_in.signInUserButton.setEnabled(true);
-
     }
 
     public static Map<String, ?> getSp(String name, Application application) {
@@ -240,7 +212,6 @@ public class SignInActivity extends AppCompatActivity {
             System.out.println("User not logged in");
         }
     }
-
 
     private void setWindowColors() {
         getWindow().setStatusBarColor(getColor(R.color.deep_purple));

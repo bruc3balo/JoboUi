@@ -1,10 +1,11 @@
 package com.example.joboui.login;
 
 
+import static com.example.joboui.globals.GlobalDb.userApi;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.ACCESS_TOKEN;
-import static com.example.joboui.globals.GlobalVariables.API_URL;
-import static com.example.joboui.globals.GlobalVariables.CONTEXT_URL;
+import static com.example.joboui.globals.GlobalVariables.AUTHORIZATION;
+import static com.example.joboui.globals.GlobalVariables.CONTENT_TYPE_ME;
 import static com.example.joboui.globals.GlobalVariables.FRIDAY;
 import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_ROLE;
@@ -19,18 +20,13 @@ import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.globals.GlobalVariables.WEDNESDAY;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
 import static com.example.joboui.login.SignInActivity.getSp;
-import static com.google.common.net.HttpHeaders.AUTHORIZATION;
-import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
-
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_JSON;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -38,26 +34,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.joboui.R;
 import com.example.joboui.adapters.ListRvAdapter;
 import com.example.joboui.databinding.ActivityServiceProviderAdditionalBinding;
 import com.example.joboui.databinding.WorkingHourPickerBinding;
-import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
 import com.example.joboui.tutorial.TutorialActivity;
@@ -67,18 +54,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 import io.vertx.core.json.JsonObject;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ServiceProviderAdditionalActivity extends AppCompatActivity {
 
@@ -86,6 +74,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
     private final Map<String, String> preferredWorkingHours = new HashMap<>();
     private final ArrayList<String> speciality = new ArrayList<>();
     private Models.UserUpdateForm updateForm;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,10 +86,12 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         Button finishAdditionalInfoButton = serviceProviderAdditionalBinding.finishAdditionalInfoButton;
         finishAdditionalInfoButton.setOnClickListener(view -> {
             if (validateForm()) {
+                showPb();
                 try {
                     updateUser(updateForm);
                 } catch (JSONException | JsonProcessingException e) {
                     e.printStackTrace();
+                    hidePb();
                 }
             }
         });
@@ -158,7 +149,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
+    @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
     private void showDayLayout(TextView dayTv, String day) {
         BottomSheetDialog dialog = new BottomSheetDialog(this);
         WorkingHourPickerBinding binding = WorkingHourPickerBinding.inflate(getLayoutInflater());
@@ -198,7 +189,6 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
             start.setBackground(getDrawable(R.drawable.circle_day_bg_selected));
         }, nowHour[0], nowMinute[0], true).show());
 
-
         ImageButton end = binding.endPicker;
         end.setOnClickListener(view -> new TimePickerDialog(ServiceProviderAdditionalActivity.this, (TimePickerDialog.OnTimeSetListener) (timePicker, hourOfDay, minute) -> {
             endTime[0] = hourOfDay + " : " + minute;
@@ -227,6 +217,15 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         });
     }
 
+    private void showPb() {
+        serviceProviderAdditionalBinding.additionalPb.setVisibility(View.VISIBLE);
+        serviceProviderAdditionalBinding.finishAdditionalInfoButton.setEnabled(false);
+    }
+
+    private void hidePb() {
+        serviceProviderAdditionalBinding.additionalPb.setVisibility(View.GONE);
+        serviceProviderAdditionalBinding.finishAdditionalInfoButton.setEnabled(true);
+    }
 
     private boolean validateForm() {
         boolean valid = false;
@@ -250,51 +249,60 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
     }
 
     private void updateUser(Models.UserUpdateForm form) throws JSONException, JsonProcessingException {
-        Toast.makeText(this, "Sign in ", Toast.LENGTH_SHORT).show();
-        RequestQueue queue = Volley.newRequestQueue(this);
+        Toast.makeText(this, "Updating request", Toast.LENGTH_SHORT).show();
         Optional<Domain.User> repositoryUser = userRepository.getUser();
 
         if (!repositoryUser.isPresent()) {
             return;
         }
 
-        String url = API_URL + CONTEXT_URL + "/user/update/{" + repositoryUser.get().getUsername() + "}";
         ObjectMapper mapper = getObjectMapper();
 
-        String data = mapper.writeValueAsString(form);
-        JSONObject object = new JSONObject(data);
+        Map<String, String> header = new HashMap<>();
+        header.put(CONTENT_TYPE_ME, APPLICATION_JSON);
+        header.put(AUTHORIZATION, "Bearer " + getSp(USER_DB, getApplication()).get(ACCESS_TOKEN));
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, object, response -> {
+        Map<String, String> params = new HashMap<>();
+        params.put(USERNAME, repositoryUser.get().getUsername());
 
-            try {
-                JsonResponse jsonResponse = mapper.readValue(response.toString(), JsonResponse.class);
-                JsonObject userJson = new JsonObject(mapper.writeValueAsString(jsonResponse.getData()));
-                System.out.println("NEW USER : " + userJson);
-                Models.AppUser user = mapper.readValue(userJson.toString(), Models.AppUser.class);
-                userRepository.insert(new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword()));
-                goToTutorialPage();
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Error updating account", Toast.LENGTH_SHORT).show();
-                System.out.println("====================== Error updating account =======================");
-            }
-
-        }, error -> {
-            System.out.println("============================ ERROR SENDING UPDATE REQUEST " + error.getMessage() + "==============================");
-        }) {
+        userApi.updateUser(params, header, form).enqueue(new Callback<JsonResponse>() {
             @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> header = new HashMap<>();
-                header.put(CONTENT_TYPE, APPLICATION_JSON);
-                header.put(AUTHORIZATION, "Bearer " + getSp(USER_DB, getApplication()).get(ACCESS_TOKEN));
-                return header;
+            public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
+
+                try {
+
+                    if (response.body() == null) {
+                        Toast.makeText(ServiceProviderAdditionalActivity.this, "Failed to get response", Toast.LENGTH_SHORT).show();
+                        hidePb();
+                        return;
+                    }
+
+                    if (response.body().getData() == null) {
+                        Toast.makeText(ServiceProviderAdditionalActivity.this, "Failed to get data", Toast.LENGTH_SHORT).show();
+                        hidePb();
+                        return;
+                    }
+
+                    JsonResponse jsonResponse = response.body();
+                    Models.AppUser user = mapper.readValue(jsonResponse.getData().toString(), Models.AppUser.class);
+                    Domain.User appUser = new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword());
+                    userRepository.update(appUser);
+                    goToTutorialPage();
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                    Toast.makeText(ServiceProviderAdditionalActivity.this, "Error updating account", Toast.LENGTH_SHORT).show();
+                    System.out.println("====================== Error updating account =======================");
+                    hidePb();
+                }
             }
-        };
 
-        // Access the RequestQueue through your singleton class.
-        queue.add(jsonObjectRequest);
+            @Override
+            public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
+                System.out.println("============================ ERROR SENDING UPDATE REQUEST " + t.getMessage() + "==============================");
+                hidePb();
+            }
+        });
     }
-
 
     private void setWindowColors() {
         getWindow().setStatusBarColor(getColor(R.color.deep_purple));
@@ -303,7 +311,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
     }
 
     private void goToTutorialPage() {
-        startActivity(new Intent(this, TutorialActivity.class).putExtra(ROLE, LOCAL_SERVICE_PROVIDER_ROLE));
+        startActivity(new Intent(this, TutorialActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK).putExtra(ROLE, LOCAL_SERVICE_PROVIDER_ROLE));
         finish();
     }
 }

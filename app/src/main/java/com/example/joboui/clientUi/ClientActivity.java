@@ -7,15 +7,12 @@ import static com.example.joboui.SplashScreen.removeListener;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.LOGGED_IN;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
-import static com.example.joboui.login.LoginActivity.proceed;
 import static com.example.joboui.login.SignInActivity.clearSp;
-import static com.example.joboui.login.SignInActivity.editSp;
 import static com.example.joboui.login.SignInActivity.getSp;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,23 +25,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
 
 import com.example.joboui.R;
 import com.example.joboui.adapters.ServicesPageGrid;
-import com.example.joboui.admin.AdminActivity;
 import com.example.joboui.databinding.ActivityClientBinding;
 import com.example.joboui.domain.Domain;
-import com.example.joboui.login.LoginActivity;
-import com.example.joboui.login.SignInActivity;
-import com.squareup.okhttp.Call;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ClientActivity extends AppCompatActivity {
     ActivityClientBinding clientBinding;

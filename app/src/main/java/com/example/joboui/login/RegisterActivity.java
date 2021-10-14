@@ -10,7 +10,6 @@ import static com.example.joboui.globals.GlobalVariables.USERNAME;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.SignInActivity.editSp;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
-import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_JSON;
 
@@ -31,10 +30,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+
 import com.example.joboui.R;
 import com.example.joboui.databinding.ActivityRegisterBinding;
 import com.example.joboui.databinding.RoleDialogBinding;
@@ -53,6 +49,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import io.vertx.core.json.JsonObject;
 
@@ -245,99 +242,43 @@ public class RegisterActivity extends AppCompatActivity {
     private void sendRegisterRequest() throws JSONException, JsonProcessingException {
         Toast.makeText(this, "Sending request", Toast.LENGTH_SHORT).show();
         showPb();
-        createUser(newUserForm).observe(this, success -> {
-            if (success) {
-                System.out.println("=========== LOGIN =============");
-                try {
-                    userViewModel.getAccessToken(new Models.UsernameAndPasswordAuthenticationRequest(newUserForm.getUsername(), newUserForm.getPassword())).observe(RegisterActivity.this, map -> {
-                        if (map == null) {
-                            hidePb();
-                        } else {
-                            if (map.isEmpty()) {
-                                hidePb();
-                                Toast.makeText(RegisterActivity.this, "Failed to get token", Toast.LENGTH_SHORT).show();
-                            } else {
-                               saveUserDetails(map.get(USERNAME));
-                            }
-                        }
-                    });
-                } catch (JSONException | JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                System.out.println("=========== NO LOGIN ===========");
-            }
-
-        });
-    }
-
-    private void saveUserDetails (String username) {
-        userViewModel.getUserByUsername(username).observe(RegisterActivity.this, appUser -> {
-            if (appUser != null) {
-                System.out.println("=================================  SUCCESS LOGIN  ======================================");
-                Toast.makeText(RegisterActivity.this, appUser.getUsername(), Toast.LENGTH_SHORT).show();
-                if (appUser.getRole().getName().equals("ROLE_SERVICE_PROVIDER")) {
-                    goToAdditionalInfoActivity();
-                } else {
-                    goToTutorialsPage();
-                }
-            } else {
-                directToLogin(RegisterActivity.this);
-                //todo save tutorial && route to additional info
-                System.out.println("=================================  FAIL LOGIN  ======================================");
-            }
-            hidePb();
-        });
-    }
-
-    private MutableLiveData<Boolean> createUser(Models.NewUserForm form) throws JSONException, JsonProcessingException {
-        Toast.makeText(this, "Creating user "+form.getUsername(), Toast.LENGTH_SHORT).show();
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = API_URL + CONTEXT_URL + "/user/save";
-        ObjectMapper mapper = getObjectMapper();
-
-        String data = mapper.writeValueAsString(form);
-        JSONObject object = new JSONObject(data);
-
-        MutableLiveData<Boolean> success = new MutableLiveData<>();
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, object, response -> {
-
-            try {
-                JsonResponse jsonResponse = mapper.readValue(response.toString(), JsonResponse.class);
-                JsonObject userJson = new JsonObject(mapper.writeValueAsString(jsonResponse.getData()));
-                System.out.println("NEW USER : " + userJson);
-                Models.AppUser user = createdUser = mapper.readValue(userJson.toString(), Models.AppUser.class);
-                //userRepository.insert(new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword()));
-                success.setValue(true);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Error creating account", Toast.LENGTH_SHORT).show();
-                System.out.println("====================== Error creating account =======================");
-                hidePb();
-                success.setValue(false);
-
-            }
-
-        }, error -> {
-            hidePb();
-            System.out.println("============================ ERROR SENDING CREATE REQUEST " + error.getMessage() + "==============================");
-            Toast.makeText(this, "Failed to create user " + newUserForm.getUsername(), Toast.LENGTH_SHORT).show();
-            success.setValue(false);
-        }) {
+        userViewModel.createNewUser(newUserForm).observe(this, new Observer<Optional<Domain.User>>() {
             @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> header = new HashMap<>();
-                header.put(CONTENT_TYPE, APPLICATION_JSON);
-                return header;
+            public void onChanged(Optional<Domain.User> user) {
+                if (user.isPresent()) {
+                    System.out.println("=========== CREATED =============");
+                    try {
+                        userViewModel.getAccessToken(new Models.UsernameAndPasswordAuthenticationRequest(user.get().getUsername(), user.get().getPassword())).observe(RegisterActivity.this, new Observer<Optional<Models.LoginResponse>>() {
+                            @Override
+                            public void onChanged(Optional<Models.LoginResponse> loginResponse) {
+                                if (!loginResponse.isPresent()) {
+                                    System.out.println("=========== LOGIN =============");
+                                    System.out.println("=================================  SUCCESS LOGIN  ======================================");
+                                    Toast.makeText(RegisterActivity.this, user.get().getUsername(), Toast.LENGTH_SHORT).show();
+                                    if (user.get().getRole().equals("ROLE_SERVICE_PROVIDER")) {
+                                        goToAdditionalInfoActivity();
+                                    } else {
+                                        goToTutorialsPage();
+                                    }
+                                    hidePb();
+                                }
+                            }
+                        });
+                    } catch (JSONException | JsonProcessingException e) {
+                        e.printStackTrace();
+                        Toast.makeText(RegisterActivity.this, "Failed to get access token. Try logging in", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    hidePb();
+                    Toast.makeText(RegisterActivity.this, "Failed to create account", Toast.LENGTH_SHORT).show();
+                }
             }
-        };
-
-        // Access the RequestQueue through your singleton class.
-        queue.add(jsonObjectRequest);
-
-        return success;
+        });
     }
+
+
+
 
     private void showPb() {
         activityRegister.registerUserButton.setEnabled(false);
