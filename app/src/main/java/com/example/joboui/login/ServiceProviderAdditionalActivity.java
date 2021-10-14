@@ -1,11 +1,6 @@
 package com.example.joboui.login;
 
 
-import static com.example.joboui.globals.GlobalDb.userApi;
-import static com.example.joboui.globals.GlobalDb.userRepository;
-import static com.example.joboui.globals.GlobalVariables.ACCESS_TOKEN;
-import static com.example.joboui.globals.GlobalVariables.AUTHORIZATION;
-import static com.example.joboui.globals.GlobalVariables.CONTENT_TYPE_ME;
 import static com.example.joboui.globals.GlobalVariables.FRIDAY;
 import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_ROLE;
@@ -15,12 +10,7 @@ import static com.example.joboui.globals.GlobalVariables.SATURDAY;
 import static com.example.joboui.globals.GlobalVariables.SUNDAY;
 import static com.example.joboui.globals.GlobalVariables.THURSDAY;
 import static com.example.joboui.globals.GlobalVariables.TUESDAY;
-import static com.example.joboui.globals.GlobalVariables.USERNAME;
-import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.globals.GlobalVariables.WEDNESDAY;
-import static com.example.joboui.login.SignInActivity.getObjectMapper;
-import static com.example.joboui.login.SignInActivity.getSp;
-import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_JSON;
 
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
@@ -36,8 +26,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,12 +36,11 @@ import com.example.joboui.R;
 import com.example.joboui.adapters.ListRvAdapter;
 import com.example.joboui.databinding.ActivityServiceProviderAdditionalBinding;
 import com.example.joboui.databinding.WorkingHourPickerBinding;
+import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
 import com.example.joboui.tutorial.TutorialActivity;
-import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONException;
@@ -62,11 +52,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
-import io.vertx.core.json.JsonObject;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class ServiceProviderAdditionalActivity extends AppCompatActivity {
 
@@ -87,12 +72,17 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         finishAdditionalInfoButton.setOnClickListener(view -> {
             if (validateForm()) {
                 showPb();
-                try {
-                    updateUser(updateForm);
-                } catch (JSONException | JsonProcessingException e) {
-                    e.printStackTrace();
-                    hidePb();
-                }
+                new ViewModelProvider(this).get(UserViewModel.class).updateExistingUser(updateForm).observe(this, user -> {
+
+                    if (user.isPresent()) {
+                        Toast.makeText(ServiceProviderAdditionalActivity.this, "Successfully updated", Toast.LENGTH_SHORT).show();
+                        goToTutorialPage();
+                    } else {
+                        hidePb();
+                        Toast.makeText(ServiceProviderAdditionalActivity.this, "Failed to update user", Toast.LENGTH_SHORT).show();
+                    }
+
+                });
             }
         });
 
@@ -248,61 +238,6 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         return valid;
     }
 
-    private void updateUser(Models.UserUpdateForm form) throws JSONException, JsonProcessingException {
-        Toast.makeText(this, "Updating request", Toast.LENGTH_SHORT).show();
-        Optional<Domain.User> repositoryUser = userRepository.getUser();
-
-        if (!repositoryUser.isPresent()) {
-            return;
-        }
-
-        ObjectMapper mapper = getObjectMapper();
-
-        Map<String, String> header = new HashMap<>();
-        header.put(CONTENT_TYPE_ME, APPLICATION_JSON);
-        header.put(AUTHORIZATION, "Bearer " + getSp(USER_DB, getApplication()).get(ACCESS_TOKEN));
-
-        Map<String, String> params = new HashMap<>();
-        params.put(USERNAME, repositoryUser.get().getUsername());
-
-        userApi.updateUser(params, header, form).enqueue(new Callback<JsonResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
-
-                try {
-
-                    if (response.body() == null) {
-                        Toast.makeText(ServiceProviderAdditionalActivity.this, "Failed to get response", Toast.LENGTH_SHORT).show();
-                        hidePb();
-                        return;
-                    }
-
-                    if (response.body().getData() == null) {
-                        Toast.makeText(ServiceProviderAdditionalActivity.this, "Failed to get data", Toast.LENGTH_SHORT).show();
-                        hidePb();
-                        return;
-                    }
-
-                    JsonResponse jsonResponse = response.body();
-                    Models.AppUser user = mapper.readValue(jsonResponse.getData().toString(), Models.AppUser.class);
-                    Domain.User appUser = new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword());
-                    userRepository.update(appUser);
-                    goToTutorialPage();
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                    Toast.makeText(ServiceProviderAdditionalActivity.this, "Error updating account", Toast.LENGTH_SHORT).show();
-                    System.out.println("====================== Error updating account =======================");
-                    hidePb();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
-                System.out.println("============================ ERROR SENDING UPDATE REQUEST " + t.getMessage() + "==============================");
-                hidePb();
-            }
-        });
-    }
 
     private void setWindowColors() {
         getWindow().setStatusBarColor(getColor(R.color.deep_purple));

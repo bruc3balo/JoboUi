@@ -38,14 +38,14 @@ public interface UserApi {
     @GET(base + "/numbers")
     Call<JsonResponse> getNumbers();
 
-    @GET(base + "/numbers")
+    @GET(base + "/usernames")
     Call<JsonResponse> getUsernames();
 
-    @POST(base + " /save")
+    @POST(base + "/save")
     Call<JsonResponse> saveUser(@Body NewUserForm newUserForm);
 
     @PUT(base + "/update")
-    Call<JsonResponse> updateUser(@QueryMap Map<String, String> parameters, @HeaderMap Map<String, String> headers, @Body UserUpdateForm updateForm);
+    Call<JsonResponse> updateUser(@Query(USERNAME) String username, @Header(AUTHORIZATION) String header, @Body UserUpdateForm updateForm);
 
 
     //roles

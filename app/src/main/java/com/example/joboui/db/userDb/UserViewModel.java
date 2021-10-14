@@ -4,9 +4,6 @@ package com.example.joboui.db.userDb;
 import static com.example.joboui.globals.GlobalDb.userApi;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.ACCESS_TOKEN;
-import static com.example.joboui.globals.GlobalVariables.API_URL;
-import static com.example.joboui.globals.GlobalVariables.AUTHORIZATION;
-import static com.example.joboui.globals.GlobalVariables.CONTEXT_URL;
 import static com.example.joboui.globals.GlobalVariables.PASSWORD;
 import static com.example.joboui.globals.GlobalVariables.REFRESH_TOKEN;
 import static com.example.joboui.globals.GlobalVariables.USERNAME;
@@ -28,8 +25,10 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.auth0.android.jwt.JWT;
 import com.example.joboui.domain.Domain;
+import com.example.joboui.login.ServiceProviderAdditionalActivity;
 import com.example.joboui.model.Models;
 import com.example.joboui.model.Models.LoginResponse;
+import com.example.joboui.model.Models.UserUpdateForm;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,17 +38,18 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class UserViewModel extends AndroidViewModel {
 
@@ -64,6 +64,7 @@ public class UserViewModel extends AndroidViewModel {
     private MutableLiveData<Optional<Models.AppUser>> getUserMutableByUsername(String username) {
         MutableLiveData<Optional<Models.AppUser>> userMutableLiveData = new MutableLiveData<>();
 
+        ObjectMapper mapper = getObjectMapper();
 
         String header = "Bearer " + Objects.requireNonNull(getSp(USER_DB, application).get(REFRESH_TOKEN)).toString();
 
@@ -79,7 +80,6 @@ public class UserViewModel extends AndroidViewModel {
                     JsonResponse jsonResponse = response.body();
 
 
-
                     if (jsonResponse == null) {
                         userMutableLiveData.setValue(Optional.empty());
                         return;
@@ -93,17 +93,17 @@ public class UserViewModel extends AndroidViewModel {
                         return;
                     }
 
-                    JSONArray userArray = new JSONArray(jsonResponse.getData());
+                    JsonObject userJson = new JsonArray(mapper.writeValueAsString(jsonResponse.getData())).getJsonObject(0);
 
                     //save user to offline db
-                    Models.AppUser user = getObjectMapper().readValue(userArray.get(0).toString(), Models.AppUser.class);
+                    Models.AppUser user = mapper.readValue(userJson.toString(), Models.AppUser.class);
 
                     userRepository.insert(new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword()));
 
                     System.out.println("======== ROLE INSERTED " + user.getRole().getName() + "===============");
 
                     userMutableLiveData.setValue(Optional.of(user));
-                } catch (IOException | JSONException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(application, "Something went wrong", Toast.LENGTH_SHORT).show();
                     userMutableLiveData.setValue(Optional.empty());
@@ -128,9 +128,6 @@ public class UserViewModel extends AndroidViewModel {
 
         Map<String, String> map = new HashMap<>();
         MutableLiveData<Optional<LoginResponse>> mutableLiveData = new MutableLiveData<>();
-
-
-        ObjectMapper mapper = getObjectMapper();
 
         userApi.getToken(request).enqueue(new Callback<LoginResponse>() {
             @Override
@@ -216,11 +213,64 @@ public class UserViewModel extends AndroidViewModel {
         return mutableLiveData;
     }
 
+    private MutableLiveData<Optional<Domain.User>> updateUser(UserUpdateForm form) {
+        MutableLiveData<Optional<Domain.User>> mutableLiveData = new MutableLiveData<>();
+
+        Toast.makeText(application, "Updating request", Toast.LENGTH_SHORT).show();
+        Optional<Domain.User> repositoryUser = userRepository.getUser();
+
+        if (!repositoryUser.isPresent()) {
+            mutableLiveData.setValue(Optional.empty());
+            return mutableLiveData;
+        }
+
+        ObjectMapper mapper = getObjectMapper();
+        String token = "Bearer " + getSp(USER_DB, getApplication()).get(ACCESS_TOKEN); //todo refresh
+
+        userApi.updateUser(repositoryUser.get().getUsername(), token, form).enqueue(new Callback<JsonResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
+
+                try {
+
+                    if (response.body() == null) {
+                        Toast.makeText(application, "Failed to get response", Toast.LENGTH_SHORT).show();
+                        mutableLiveData.setValue(Optional.empty());
+                        return;
+                    }
+
+                    if (response.body().getData() == null) {
+                        Toast.makeText(application, "Failed to get data", Toast.LENGTH_SHORT).show();
+                        mutableLiveData.setValue(Optional.empty());
+                        return;
+                    }
+
+                    JsonResponse jsonResponse = response.body();
+                    Models.AppUser user = mapper.readValue(jsonResponse.getData().toString(), Models.AppUser.class);
+                    Domain.User appUser = new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword());
+                    userRepository.update(appUser);
+                    mutableLiveData.setValue(Optional.of(appUser));
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                    Toast.makeText(application, "Error updating account", Toast.LENGTH_SHORT).show();
+                    System.out.println("====================== Error updating account =======================");
+                    mutableLiveData.setValue(Optional.empty());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
+                System.out.println("============================ ERROR SENDING UPDATE REQUEST " + t.getMessage() + "==============================");
+            }
+        });
+        return mutableLiveData;
+    }
+
 
     private MutableLiveData<List<String>> getUsernames() {
         MutableLiveData<List<String>> mutableLiveData = new MutableLiveData<>();
         List<String> usernames = new ArrayList<>();
-        mutableLiveData.setValue(usernames);
+
 
         ObjectMapper mapper = getObjectMapper();
 
@@ -229,22 +279,35 @@ public class UserViewModel extends AndroidViewModel {
             public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
 
                 if (response.body() == null) {
+                    System.out.println("NO RESPONSE USERS");
                     return;
                 }
 
                 if (response.body().getData() == null) {
+                    System.out.println("NO DATA USERS");
                     return;
                 }
 
 
                 try {
                     JsonResponse jsonResponse = response.body();
+
+
+                    System.out.println("USERNAMES BODY ================= " + mapper.writeValueAsString(response.body().getData()));
+
                     List jsonUsernames = mapper.readValue(new JSONArray(jsonResponse.getData().toString()).toString(), List.class);
+
+                    System.out.println("USERNAMES LIST ================= " + Collections.singletonList(jsonUsernames));
+
                     for (Object name : jsonUsernames) {
+                        System.out.println("ADDING NAME ================= " + name);
+
                         usernames.add(name.toString());
                     }
+                    mutableLiveData.setValue(usernames);
                 } catch (JsonProcessingException | JSONException e) {
                     e.printStackTrace();
+                    mutableLiveData.setValue(usernames);
                 }
             }
 
@@ -252,6 +315,7 @@ public class UserViewModel extends AndroidViewModel {
             public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
                 Toast.makeText(application, t.getMessage(), Toast.LENGTH_SHORT).show();
                 System.out.println("FAILED TO GET USERNAMES");
+                mutableLiveData.setValue(usernames);
             }
         });
 
@@ -261,20 +325,20 @@ public class UserViewModel extends AndroidViewModel {
     private MutableLiveData<List<String>> getPhoneNumbers() {
         MutableLiveData<List<String>> mutableLiveData = new MutableLiveData<>();
         List<String> numbers = new ArrayList<>();
-        mutableLiveData.setValue(numbers);
 
         ObjectMapper mapper = getObjectMapper();
-
 
         userApi.getNumbers().enqueue(new Callback<JsonResponse>() {
             @Override
             public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
 
                 if (response.body() == null) {
+                    System.out.println("NO RESPONSE NUMBERS");
                     return;
                 }
 
                 if (response.body().getData() == null) {
+                    System.out.println("NO DATA NUMBERS");
                     return;
                 }
 
@@ -285,8 +349,10 @@ public class UserViewModel extends AndroidViewModel {
                     for (Object number : jsonNumbers) {
                         numbers.add(number.toString());
                     }
+                    mutableLiveData.setValue(numbers);
                 } catch (JsonProcessingException | JSONException e) {
                     e.printStackTrace();
+                    mutableLiveData.setValue(numbers);
                 }
             }
 
@@ -294,6 +360,7 @@ public class UserViewModel extends AndroidViewModel {
             public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
                 Toast.makeText(application, t.getMessage(), Toast.LENGTH_SHORT).show();
                 System.out.println("FAILED TO GET NUMBERS");
+                mutableLiveData.setValue(numbers);
             }
         });
 
@@ -317,8 +384,12 @@ public class UserViewModel extends AndroidViewModel {
         return getPhoneNumbers();
     }
 
-    public LiveData<Optional<Domain.User>> createNewUser(Models.NewUserForm form) throws JSONException, JsonProcessingException {
+    public LiveData<Optional<Domain.User>> createNewUser(Models.NewUserForm form) {
         return createUser(form);
+    }
+
+    public LiveData<Optional<Domain.User>> updateExistingUser(UserUpdateForm form) {
+        return updateUser(form);
     }
 
 
