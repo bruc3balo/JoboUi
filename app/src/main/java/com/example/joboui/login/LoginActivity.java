@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 
 import com.example.joboui.R;
 import com.example.joboui.admin.AdminActivity;
@@ -68,39 +70,39 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public static void proceed(Activity activity) {
-        Optional<Domain.User> appUser = userRepository.getUser();
-
-
-        if (!appUser.isPresent()) {
-            directToLogin(activity);
-        } else {
-            switch (appUser.get().getRole()) {
-                case "ROLE_CLIENT":
-                    if (appUser.get().isTutorial()) {
-                        goToClientPage(activity);
-                    } else {
-                        goToTutorialsPage(activity);
-                    }
-                    break;
-                case "ROLE_SERVICE_PROVIDER":
-
-                    if (appUser.get().isTutorial()) {
-                        goToServiceProviderPage(activity);
-                    } else {
-                        if (appUser.get().getPreferred_working_hours() == null || appUser.get().getPreferred_working_hours().isEmpty() || appUser.get().getSpecialities() == null || appUser.get().getSpecialities().isEmpty()) {
-                            goToAdditionalInfoActivity(activity);
+        userRepository.getUserLive().observe((LifecycleOwner) activity, appUser -> {
+            if (!appUser.isPresent()) {
+                System.out.println("COULD NOT PROCEED ... user is not present");
+                directToLogin(activity);
+            } else {
+                switch (appUser.get().getRole()) {
+                    case "ROLE_CLIENT":
+                        if (appUser.get().isTutorial()) {
+                            goToClientPage(activity);
                         } else {
                             goToTutorialsPage(activity);
                         }
-                    }
-                    break;
+                        break;
+                    case "ROLE_SERVICE_PROVIDER":
 
-                case "ROLE_ADMIN":
-                case "ROLE_ADMIN_TRAINEE":
-                    goToAdminPage(activity);
-                    break;
+                        if (appUser.get().isTutorial()) {
+                            goToServiceProviderPage(activity);
+                        } else {
+                            if (appUser.get().getPreferred_working_hours() == null || appUser.get().getPreferred_working_hours().isEmpty() || appUser.get().getSpecialities() == null || appUser.get().getSpecialities().isEmpty()) {
+                                goToAdditionalInfoActivity(activity);
+                            } else {
+                                goToTutorialsPage(activity);
+                            }
+                        }
+                        break;
+
+                    case "ROLE_ADMIN":
+                    case "ROLE_ADMIN_TRAINEE":
+                        goToAdminPage(activity);
+                        break;
+                }
             }
-        }
+        });
     }
 
     public static void goToServiceProviderPage(Activity activity) {

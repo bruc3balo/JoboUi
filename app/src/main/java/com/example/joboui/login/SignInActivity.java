@@ -1,12 +1,9 @@
 package com.example.joboui.login;
 
-import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.LOGGED_IN;
 import static com.example.joboui.globals.GlobalVariables.USERNAME;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.LoginActivity.proceed;
-import static com.example.joboui.login.RegisterActivity.goToAdditionalInfoActivity;
-import static com.example.joboui.login.RegisterActivity.goToTutorialsPage;
 
 import android.app.Activity;
 import android.app.Application;
@@ -25,7 +22,6 @@ import com.auth0.android.jwt.JWT;
 import com.example.joboui.R;
 import com.example.joboui.databinding.ActivitySignInBinding;
 import com.example.joboui.db.userDb.UserViewModel;
-import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -67,17 +63,25 @@ public class SignInActivity extends AppCompatActivity {
                             System.out.println("========== GETTING DATA FOR USER " + username + " =====================");
                             userViewModel.getUserByUsername(username).observe(SignInActivity.this, appUser -> {
                                 if (appUser.isPresent()) {
+                                    System.out.println("============== SUCCESSFUL LOGIN ==================");
                                     proceed(SignInActivity.this);
                                 } else {
                                     Toast.makeText(SignInActivity.this, "Failed to get user data while logging in", Toast.LENGTH_SHORT).show();
                                     hidePb();
                                 }
                             });
+                        } else {
+                            Toast.makeText(SignInActivity.this, "Something went wrong , Try again", Toast.LENGTH_SHORT).show();
+                            hidePb();
                         }
                     });
                 } catch (JSONException | JsonProcessingException e) {
                     e.printStackTrace();
                     hidePb();
+                }
+
+                if (!this.isDestroyed()) {
+                    new Handler().postDelayed(this::hidePb,8000);
                 }
             }
         });

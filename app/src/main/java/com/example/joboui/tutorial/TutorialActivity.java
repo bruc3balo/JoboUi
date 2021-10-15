@@ -11,6 +11,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -57,13 +58,29 @@ public class TutorialActivity extends AppCompatActivity {
             if (tutorialViewPager.getCurrentItem() != tutorialList.size() - 1) {
                 tutorialViewPager.setCurrentItem(tutorialViewPager.getCurrentItem() + 1);
             } else {
-                //todo load
-                new ViewModelProvider(this).get(UserViewModel.class).updateExistingUser(new Models.UserUpdateForm(true)).observe(this, user -> proceed(TutorialActivity.this));
+                showPb();
+                new ViewModelProvider(this).get(UserViewModel.class).updateExistingUser(new Models.UserUpdateForm(true)).observe(this, user -> {
+                    if (user.isPresent()) {
+                        proceed(TutorialActivity.this);
+                    } else {
+                        hidePb();
+                    }
+                });
             }
         });
 
+        hidePb();
         setWindowColors();
+    }
 
+    private void showPb() {
+        tutorialBinding.nextButton.setEnabled(false);
+        tutorialBinding.tutorialPb.setVisibility(View.VISIBLE);
+    }
+
+    private void hidePb() {
+        tutorialBinding.tutorialPb.setVisibility(View.GONE);
+        tutorialBinding.nextButton.setEnabled(true);
     }
 
     private void populateTutorials() {

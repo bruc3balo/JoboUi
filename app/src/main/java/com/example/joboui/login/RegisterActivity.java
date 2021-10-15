@@ -280,6 +280,9 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
+        if (!this.isDestroyed()) {
+            new Handler().postDelayed(this::hidePb,8000);
+        }
     }
 
 
@@ -297,10 +300,12 @@ public class RegisterActivity extends AppCompatActivity {
 
     public static void goToAdditionalInfoActivity(Activity activity) {
         activity.startActivity(new Intent(activity, ServiceProviderAdditionalActivity.class));
+        activity.finish();
     }
 
     public static void goToTutorialsPage(Activity activity) {
         activity.startActivity(new Intent(activity, TutorialActivity.class));
+        activity.finish();
     }
 
     private void setWindowColors() {

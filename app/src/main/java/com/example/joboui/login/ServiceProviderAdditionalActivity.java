@@ -71,18 +71,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         Button finishAdditionalInfoButton = serviceProviderAdditionalBinding.finishAdditionalInfoButton;
         finishAdditionalInfoButton.setOnClickListener(view -> {
             if (validateForm()) {
-                showPb();
-                new ViewModelProvider(this).get(UserViewModel.class).updateExistingUser(updateForm).observe(this, user -> {
-
-                    if (user.isPresent()) {
-                        Toast.makeText(ServiceProviderAdditionalActivity.this, "Successfully updated", Toast.LENGTH_SHORT).show();
-                        goToTutorialPage();
-                    } else {
-                        hidePb();
-                        Toast.makeText(ServiceProviderAdditionalActivity.this, "Failed to update user", Toast.LENGTH_SHORT).show();
-                    }
-
-                });
+                sendUpdateRequest();
             }
         });
 
@@ -122,15 +111,32 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
                 specialityField.setError("Item already is list");
                 specialityField.requestFocus();
             } else {
+
                 speciality.add(specialityField.getText().toString());
                 Objects.requireNonNull(specialitiesRv.getAdapter()).notifyItemInserted(speciality.size() - 1);
                 animateButton(addSpecialityButton, Color.GREEN, 300);
+                specialityField.setText("");
             }
         });
 
         setWindowColors();
 
         hidePb();
+    }
+
+    private void sendUpdateRequest() {
+        showPb();
+        new ViewModelProvider(this).get(UserViewModel.class).updateExistingUser(updateForm).observe(this, user -> {
+
+            if (user.isPresent()) {
+                Toast.makeText(ServiceProviderAdditionalActivity.this, "Successfully updated", Toast.LENGTH_SHORT).show();
+                goToTutorialPage();
+            } else {
+                hidePb();
+                Toast.makeText(ServiceProviderAdditionalActivity.this, "Failed to update user", Toast.LENGTH_SHORT).show();
+            }
+
+        });
     }
 
     public static void animateButton(View view, int color, long delay) {
@@ -176,15 +182,24 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
 
         ImageButton start = binding.startPicker;
         start.setOnClickListener(view -> new TimePickerDialog(ServiceProviderAdditionalActivity.this, (TimePickerDialog.OnTimeSetListener) (timePicker, hourOfDay, minute) -> {
-            startTime[0] = hourOfDay + " : " + minute;
-            startTimeTv.setText(startTime[0]);
+            String hour = hourOfDay < 10 ? "0".concat(String.valueOf(hourOfDay)) : String.valueOf(hourOfDay);
+            String min = minute < 10 ? "0".concat(String.valueOf(minute)) : String.valueOf(minute);
+
+            startTime[0] = hour + "^" + min;
+            startTimeTv.setText(hour + min + " hrs");
             start.setBackground(getDrawable(R.drawable.circle_day_bg_selected));
         }, nowHour[0], nowMinute[0], true).show());
 
         ImageButton end = binding.endPicker;
         end.setOnClickListener(view -> new TimePickerDialog(ServiceProviderAdditionalActivity.this, (TimePickerDialog.OnTimeSetListener) (timePicker, hourOfDay, minute) -> {
-            endTime[0] = hourOfDay + " : " + minute;
-            endTimeTv.setText(endTime[0]);
+
+
+            String hour = hourOfDay < 10 ? "0".concat(String.valueOf(hourOfDay)) : String.valueOf(hourOfDay);
+            String min = minute < 10 ? "0".concat(String.valueOf(minute)) : String.valueOf(minute);
+
+
+            endTime[0] = hour + "^" + min;
+            endTimeTv.setText(hour + min + " hrs");
             end.setBackground(getDrawable(R.drawable.circle_day_bg_selected));
         }, nowHour[0], nowMinute[0], true).show());
 
@@ -233,7 +248,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
             String id = serviceProviderAdditionalBinding.idField.getText().toString();
             String bio = serviceProviderAdditionalBinding.bioField.getText().toString();
 
-            updateForm = new Models.UserUpdateForm(id, bio, preferredWorkingHours, speciality, true);
+            updateForm = new Models.UserUpdateForm(id, bio, preferredWorkingHours, speciality);
             valid = true;
         }
 

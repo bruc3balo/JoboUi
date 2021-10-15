@@ -259,6 +259,13 @@ public class Models {
             this.tutorial = tutorial;
         }
 
+        public UserUpdateForm(String id_number, String bio, Map<String, String> preferred_working_hours, List<String> specialities) {
+            this.id_number = id_number;
+            this.bio = bio;
+            this.preferred_working_hours = preferred_working_hours;
+            this.specialities = specialities;
+        }
+
         public UserUpdateForm(String names, String email_address, String password, String role, String phone_number, String id_number, String bio, Map<String, String> preferred_working_hours, List<String> specialities,Boolean tutorial) {
             this.names = names;
             this.email_address = email_address;

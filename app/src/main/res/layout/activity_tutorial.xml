@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".tutorial.TutorialActivity">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -45,5 +44,12 @@
             android:textStyle="bold" />
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/tutorialPb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/deep_purple"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

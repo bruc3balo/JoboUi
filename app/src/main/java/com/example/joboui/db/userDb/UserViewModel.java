@@ -100,10 +100,13 @@ public class UserViewModel extends AndroidViewModel {
 
                     userRepository.insert(new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getTutorial(),user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword()));
 
+                    Thread.sleep(2000);
+
+
                     System.out.println("======== ROLE INSERTED " + user.getRole().getName() + "===============");
 
                     userMutableLiveData.setValue(Optional.of(user));
-                } catch (IOException e) {
+                } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                     Toast.makeText(application, "Something went wrong", Toast.LENGTH_SHORT).show();
                     userMutableLiveData.setValue(Optional.empty());
@@ -198,8 +201,11 @@ public class UserViewModel extends AndroidViewModel {
                     System.out.println("NEW USER : " + mapper.writeValueAsString(user));
 
                     userRepository.insert(user);
+
+                    Thread.sleep(2000);
+
                     mutableLiveData.setValue(Optional.of(user));
-                } catch (JsonProcessingException e) {
+                } catch (JsonProcessingException | InterruptedException e) {
                     e.printStackTrace();
                     mutableLiveData.setValue(Optional.empty());
                 }
@@ -249,11 +255,16 @@ public class UserViewModel extends AndroidViewModel {
                     }
 
                     JsonResponse jsonResponse = response.body();
-                    Models.AppUser user = mapper.readValue(jsonResponse.getData().toString(), Models.AppUser.class);
-                    Domain.User appUser = new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getTutorial(),user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword());
-                    userRepository.update(appUser);
-                    mutableLiveData.setValue(Optional.of(appUser));
-                } catch (JsonProcessingException e) {
+                    Models.AppUser updatedUser = mapper.readValue(new JsonObject(mapper.writeValueAsString(jsonResponse.getData())).toString(), Models.AppUser.class);
+                    Domain.User user = new Domain.User(updatedUser.getId(), updatedUser.getId_number(), updatedUser.getPhone_number(), updatedUser.getBio(), updatedUser.getEmail_address(), updatedUser.getNames(), updatedUser.getUsername(), updatedUser.getRole().getName(), updatedUser.getCreated_at().toString(), updatedUser.getUpdated_at().toString(), updatedUser.getDeleted(), updatedUser.getDisabled(), updatedUser.getTutorial(),updatedUser.getSpecialities(), updatedUser.getPreferred_working_hours(), updatedUser.getLast_known_location(), updatedUser.getPassword());
+
+
+                    userRepository.update(user);
+
+                    Thread.sleep(2000);
+
+                    mutableLiveData.setValue(Optional.of(user));
+                } catch (JsonProcessingException | InterruptedException e) {
                     e.printStackTrace();
                     Toast.makeText(application, "Error updating account", Toast.LENGTH_SHORT).show();
                     System.out.println("====================== Error updating account =======================");
