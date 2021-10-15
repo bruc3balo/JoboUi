@@ -202,6 +202,13 @@ public class UserViewModel extends AndroidViewModel {
 
                     userRepository.insert(user);
 
+                    Map<String,String> map = new HashMap<>();
+
+                    map.put(PASSWORD, form.getPassword());
+                    map.put(USERNAME, form.getUsername());
+
+                    editSp(USER_DB, map, application);
+
                     Thread.sleep(2000);
 
                     mutableLiveData.setValue(Optional.of(user));

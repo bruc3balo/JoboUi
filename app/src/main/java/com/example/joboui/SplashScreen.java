@@ -91,8 +91,7 @@ public class SplashScreen extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         askPermissions();
-        addListener();
-        addLoginListener(SplashScreen.this);
+
     }
 
 
@@ -205,9 +204,11 @@ public class SplashScreen extends AppCompatActivity {
             getGpsPermission();
         } else if (isMapsEnabled()) {
             System.out.println("app gps permission granted");
-            proceed( SplashScreen.this);
+            addListener();
+            addLoginListener(SplashScreen.this);
         } else {
-            proceed(SplashScreen.this);
+            addListener();
+            addLoginListener(SplashScreen.this);
         }
     }
 

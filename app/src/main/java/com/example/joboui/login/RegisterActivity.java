@@ -8,8 +8,10 @@ import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.globals.GlobalVariables.PASSWORD;
 import static com.example.joboui.globals.GlobalVariables.USERNAME;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
+import static com.example.joboui.login.LoginActivity.proceed;
 import static com.example.joboui.login.SignInActivity.editSp;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
+import static com.example.joboui.login.SignInActivity.getSp;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_JSON;
 
@@ -50,6 +52,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import io.vertx.core.json.JsonObject;
@@ -156,7 +159,7 @@ public class RegisterActivity extends AppCompatActivity {
             emailAddressField.requestFocus();
         } else if (!emailAddressField.getText().toString().contains("@")) {
             emailAddressField.setError("Invalid email format");
-            passwordF.requestFocus();
+            emailAddressField.requestFocus();
         } else if (passwordF.getText().toString().length() < 6) {
             passwordF.setError("Min characters 6");
             passwordF.requestFocus();
@@ -243,49 +246,48 @@ public class RegisterActivity extends AppCompatActivity {
     private void sendRegisterRequest() throws JSONException, JsonProcessingException {
         Toast.makeText(this, "Sending request", Toast.LENGTH_SHORT).show();
         showPb();
-        userViewModel.createNewUser(newUserForm).observe(this, new Observer<Optional<Domain.User>>() {
-            @Override
-            public void onChanged(Optional<Domain.User> user) {
-                if (user.isPresent()) {
-                    System.out.println("=========== CREATED =============");
-                    try {
-                        userViewModel.getAccessToken(new Models.UsernameAndPasswordAuthenticationRequest(user.get().getUsername(), user.get().getPassword())).observe(RegisterActivity.this, new Observer<Optional<Models.LoginResponse>>() {
-                            @Override
-                            public void onChanged(Optional<Models.LoginResponse> loginResponse) {
-                                if (!loginResponse.isPresent()) {
-                                    System.out.println("=========== LOGIN =============");
-                                    System.out.println("=================================  SUCCESS LOGIN  ======================================");
-                                    Toast.makeText(RegisterActivity.this, user.get().getUsername(), Toast.LENGTH_SHORT).show();
-                                    if (user.get().getRole().equals("ROLE_SERVICE_PROVIDER")) {
-                                        goToAdditionalInfoActivity(RegisterActivity.this);
-                                    } else {
-                                        goToTutorialsPage(RegisterActivity.this);
-                                    }
-                                    hidePb();
-                                } else {
-                                    Toast.makeText(RegisterActivity.this, "Failed to sign you in. Sign in to continue", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                    //todo redirect to sign in page
-                                }
-                            }
-                        });
-                    } catch (JSONException | JsonProcessingException e) {
-                        e.printStackTrace();
-                        Toast.makeText(RegisterActivity.this, "Failed to get access token. Try logging in", Toast.LENGTH_SHORT).show();
-                    }
-
-                } else {
-                    hidePb();
-                    Toast.makeText(RegisterActivity.this, "Failed to create account", Toast.LENGTH_SHORT).show();
-                }
+        userViewModel.createNewUser(newUserForm).observe(this, user -> {
+            if (user.isPresent()) {
+                System.out.println("ACCOUNT CREATION SUCCESS");
+                logInNewUser();
+            } else {
+                hidePb();
+                Toast.makeText(RegisterActivity.this, "Failed to create account", Toast.LENGTH_SHORT).show();
             }
         });
         if (!this.isDestroyed()) {
-            new Handler().postDelayed(this::hidePb,8000);
+            new Handler().postDelayed(this::hidePb, 8000);
         }
     }
 
 
+    private void logInNewUser() {
+        try {
+            Thread.sleep(2000);
+
+            Map<String, ?> map = getSp(USER_DB, getApplication());
+            Models.UsernameAndPasswordAuthenticationRequest request = new Models.UsernameAndPasswordAuthenticationRequest(Objects.requireNonNull(map.get(USERNAME)).toString(), Objects.requireNonNull(map.get(PASSWORD)).toString());
+            userViewModel.getAccessToken(new Models.UsernameAndPasswordAuthenticationRequest(request.getUsername(), request.getPassword())).observe(RegisterActivity.this, loginResponse -> {
+                if (loginResponse.isPresent()) {
+                    System.out.println("=================================  SUCCESS LOGIN  ======================================");
+                    Toast.makeText(RegisterActivity.this, request.getUsername(), Toast.LENGTH_SHORT).show();
+                    System.out.println("============== SUCCESSFUL LOGIN ==================");
+                    hidePb();
+                    proceed(RegisterActivity.this);
+                } else {
+                    hidePb();
+                    Toast.makeText(RegisterActivity.this, "Failed to sign you in. Sign in to continue", Toast.LENGTH_SHORT).show();
+                    finish();
+                    System.out.println("No login response for " + request.getUsername());
+                    //todo redirect to sign in page
+                }
+            });
+        } catch (JSONException | JsonProcessingException | InterruptedException e) {
+            e.printStackTrace();
+            Toast.makeText(RegisterActivity.this, "Failed to get access token. Try logging in", Toast.LENGTH_SHORT).show();
+            System.out.println("error while getting response ");
+        }
+    }
 
 
     private void showPb() {
@@ -299,12 +301,12 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public static void goToAdditionalInfoActivity(Activity activity) {
-        activity.startActivity(new Intent(activity, ServiceProviderAdditionalActivity.class));
+        activity.startActivity(new Intent(activity, ServiceProviderAdditionalActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         activity.finish();
     }
 
     public static void goToTutorialsPage(Activity activity) {
-        activity.startActivity(new Intent(activity, TutorialActivity.class));
+        activity.startActivity(new Intent(activity, TutorialActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         activity.finish();
     }
 

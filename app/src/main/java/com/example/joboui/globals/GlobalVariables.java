@@ -3,7 +3,7 @@ package com.example.joboui.globals;
 public class GlobalVariables {
 
     /*** BASE URL OF API ***/
-    public static final String API_URL = "https://dfb9-197-232-244-229.ngrok.io";
+    public static final String API_URL = "https://7cad-197-232-244-229.ngrok.io";
     public static final String CONTEXT_URL = "/api/v1/";
 
 

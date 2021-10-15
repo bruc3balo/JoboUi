@@ -2,6 +2,7 @@ package com.example.joboui.login;
 
 import static com.example.joboui.SplashScreen.directToLogin;
 import static com.example.joboui.globals.GlobalDb.userRepository;
+import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.login.RegisterActivity.goToAdditionalInfoActivity;
 import static com.example.joboui.login.RegisterActivity.goToTutorialsPage;
 
@@ -88,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (appUser.get().isTutorial()) {
                             goToServiceProviderPage(activity);
                         } else {
-                            if (appUser.get().getPreferred_working_hours() == null || appUser.get().getPreferred_working_hours().isEmpty() || appUser.get().getSpecialities() == null || appUser.get().getSpecialities().isEmpty()) {
+                            if (appUser.get().getPreferred_working_hours().equals(HY) || appUser.get().getSpecialities().equals(HY)) {
                                 goToAdditionalInfoActivity(activity);
                             } else {
                                 goToTutorialsPage(activity);
