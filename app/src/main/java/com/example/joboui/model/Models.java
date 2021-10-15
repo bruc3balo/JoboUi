@@ -224,6 +224,7 @@ public class Models {
     }
 
     public static class UserUpdateForm {
+
         private String names;
 
         private String email_address;
@@ -238,6 +239,8 @@ public class Models {
 
         private String bio;
 
+        private Boolean tutorial;
+
         private Map<String, String> preferred_working_hours;
 
         private List<String> specialities;
@@ -246,14 +249,17 @@ public class Models {
 
         }
 
-        public UserUpdateForm(String id_number, String bio, Map<String, String> preferred_working_hours, List<String> specialities) {
+
+
+        public UserUpdateForm(String id_number, String bio, Map<String, String> preferred_working_hours, List<String> specialities,Boolean tutorial) {
             this.id_number = id_number;
             this.bio = bio;
             this.preferred_working_hours = preferred_working_hours;
             this.specialities = specialities;
+            this.tutorial = tutorial;
         }
 
-        public UserUpdateForm(String names, String email_address, String password, String role, String phone_number, String id_number, String bio, Map<String, String> preferred_working_hours, List<String> specialities) {
+        public UserUpdateForm(String names, String email_address, String password, String role, String phone_number, String id_number, String bio, Map<String, String> preferred_working_hours, List<String> specialities,Boolean tutorial) {
             this.names = names;
             this.email_address = email_address;
             this.password = password;
@@ -263,6 +269,19 @@ public class Models {
             this.bio = bio;
             this.preferred_working_hours = preferred_working_hours;
             this.specialities = specialities;
+            this.tutorial = tutorial;
+        }
+
+        public UserUpdateForm(Boolean tutorial) {
+            this.tutorial = tutorial;
+        }
+
+        public Boolean getTutorial() {
+            return tutorial;
+        }
+
+        public void setTutorial(Boolean tutorial) {
+            this.tutorial = tutorial;
         }
 
         public String getNames() {
@@ -418,11 +437,13 @@ public class Models {
 
         private Boolean deleted;
 
+        private Boolean tutorial;
+
         public AppUser() {
 
         }
 
-        public AppUser(Long id, String names, String username, String id_number, String email_address, String phone_number, String password, String bio, String last_known_location, Date created_at, Date updated_at, AppRole role, String preferred_working_hours, String specialities, Boolean disabled, Boolean deleted) {
+        public AppUser(Long id, String names, String username, String id_number, String email_address, String phone_number, String password, String bio, String last_known_location, Date created_at, Date updated_at, AppRole role, String preferred_working_hours, String specialities, Boolean disabled, Boolean deleted, Boolean tutorial) {
             this.id = id;
             this.names = names;
             this.username = username;
@@ -439,6 +460,7 @@ public class Models {
             this.specialities = specialities;
             this.disabled = disabled;
             this.deleted = deleted;
+            this.tutorial = tutorial;
         }
 
         public Long getId() {
@@ -479,6 +501,14 @@ public class Models {
 
         public void setEmail_address(String email_address) {
             this.email_address = email_address;
+        }
+
+        public Boolean getTutorial() {
+            return tutorial;
+        }
+
+        public void setTutorial(Boolean tutorial) {
+            this.tutorial = tutorial;
         }
 
         public String getPhone_number() {

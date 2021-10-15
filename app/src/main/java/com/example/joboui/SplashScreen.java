@@ -205,9 +205,9 @@ public class SplashScreen extends AppCompatActivity {
             getGpsPermission();
         } else if (isMapsEnabled()) {
             System.out.println("app gps permission granted");
-            proceed(userRepository.getUser().map(Domain.User::getRole).orElse(null), SplashScreen.this);
+            proceed( SplashScreen.this);
         } else {
-            proceed(userRepository.getUser().map(Domain.User::getRole).orElse(null), SplashScreen.this);
+            proceed(SplashScreen.this);
         }
     }
 
@@ -253,7 +253,7 @@ public class SplashScreen extends AppCompatActivity {
         userRepository.getUserLive().observe((LifecycleOwner) activity, user -> {
             if (user.isPresent()) {
                 if (user.get().getRole() != null) {
-                    proceed(user.get().getRole(), activity);
+                    proceed(activity);
                 } else {
                     directToLogin(activity);
                     System.out.println("User has been logged out");

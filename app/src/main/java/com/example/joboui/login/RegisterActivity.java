@@ -13,6 +13,7 @@ import static com.example.joboui.login.SignInActivity.getObjectMapper;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_JSON;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -256,11 +257,15 @@ public class RegisterActivity extends AppCompatActivity {
                                     System.out.println("=================================  SUCCESS LOGIN  ======================================");
                                     Toast.makeText(RegisterActivity.this, user.get().getUsername(), Toast.LENGTH_SHORT).show();
                                     if (user.get().getRole().equals("ROLE_SERVICE_PROVIDER")) {
-                                        goToAdditionalInfoActivity();
+                                        goToAdditionalInfoActivity(RegisterActivity.this);
                                     } else {
-                                        goToTutorialsPage();
+                                        goToTutorialsPage(RegisterActivity.this);
                                     }
                                     hidePb();
+                                } else {
+                                    Toast.makeText(RegisterActivity.this, "Failed to sign you in. Sign in to continue", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                    //todo redirect to sign in page
                                 }
                             }
                         });
@@ -290,12 +295,12 @@ public class RegisterActivity extends AppCompatActivity {
         activityRegister.registerUserButton.setEnabled(true);
     }
 
-    private void goToAdditionalInfoActivity() {
-        startActivity(new Intent(this, ServiceProviderAdditionalActivity.class));
+    public static void goToAdditionalInfoActivity(Activity activity) {
+        activity.startActivity(new Intent(activity, ServiceProviderAdditionalActivity.class));
     }
 
-    private void goToTutorialsPage() {
-        startActivity(new Intent(this, TutorialActivity.class));
+    public static void goToTutorialsPage(Activity activity) {
+        activity.startActivity(new Intent(activity, TutorialActivity.class));
     }
 
     private void setWindowColors() {

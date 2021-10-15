@@ -1,6 +1,11 @@
 package com.example.joboui.tutorial;
 
+import static com.example.joboui.globals.GlobalDb.userRepository;
+import static com.example.joboui.login.LoginActivity.proceed;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
@@ -13,10 +18,14 @@ import com.example.joboui.R;
 import com.example.joboui.adapters.TutorialVpAdapter;
 import com.example.joboui.clientUi.ClientActivity;
 import com.example.joboui.databinding.ActivityTutorialBinding;
+import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.domain.Domain;
+import com.example.joboui.login.SignInActivity;
+import com.example.joboui.model.Models;
 import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import me.relex.circleindicator.CircleIndicator3;
 
@@ -24,7 +33,6 @@ public class TutorialActivity extends AppCompatActivity {
 
     private ActivityTutorialBinding tutorialBinding;
     private final ArrayList<Domain.TutorialModel> tutorialList = new ArrayList<>();
-    private boolean isServiceProvider = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +41,6 @@ public class TutorialActivity extends AppCompatActivity {
         setContentView(tutorialBinding.getRoot());
 
         populateTutorials();
-
-        isServiceProvider = getIntent().getExtras() != null;
 
         ViewPager2 tutorialViewPager = tutorialBinding.tutorialViewPager;
         TutorialVpAdapter tutorialVpAdapter = new TutorialVpAdapter(this, tutorialList);
@@ -51,7 +57,8 @@ public class TutorialActivity extends AppCompatActivity {
             if (tutorialViewPager.getCurrentItem() != tutorialList.size() - 1) {
                 tutorialViewPager.setCurrentItem(tutorialViewPager.getCurrentItem() + 1);
             } else {
-                goToMainPage();
+                //todo load
+                new ViewModelProvider(this).get(UserViewModel.class).updateExistingUser(new Models.UserUpdateForm(true)).observe(this, user -> proceed(TutorialActivity.this));
             }
         });
 
@@ -67,33 +74,9 @@ public class TutorialActivity extends AppCompatActivity {
     }
 
     private void setWindowColors() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getWindow().setStatusBarColor(getColor(R.color.white));
-            getWindow().setNavigationBarColor(getColor(R.color.white));
-        } else {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.white));
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.white));
-        }
+        getWindow().setStatusBarColor(getColor(R.color.white));
+        getWindow().setNavigationBarColor(getColor(R.color.white));
 
     }
 
-    private void goToMainPage() {
-        if (isServiceProvider) {
-            Toast.makeText(TutorialActivity.this, "Finish Service Provider", Toast.LENGTH_SHORT).show();
-            goToServiceProviderPage();
-        } else {
-            Toast.makeText(TutorialActivity.this, "Finish Client", Toast.LENGTH_SHORT).show();
-            goToClientPage();
-        }
-    }
-
-    private void goToClientPage() {
-        startActivity(new Intent(this, ClientActivity.class));
-        finish();
-    }
-
-    private void goToServiceProviderPage() {
-        startActivity(new Intent(this, ServiceProviderActivity.class));
-        finish();
-    }
 }

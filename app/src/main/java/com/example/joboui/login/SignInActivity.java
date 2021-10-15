@@ -5,6 +5,8 @@ import static com.example.joboui.globals.GlobalVariables.LOGGED_IN;
 import static com.example.joboui.globals.GlobalVariables.USERNAME;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.LoginActivity.proceed;
+import static com.example.joboui.login.RegisterActivity.goToAdditionalInfoActivity;
+import static com.example.joboui.login.RegisterActivity.goToTutorialsPage;
 
 import android.app.Activity;
 import android.app.Application;
@@ -17,7 +19,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.auth0.android.jwt.JWT;
@@ -35,7 +36,6 @@ import org.json.JSONException;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -43,7 +43,6 @@ public class SignInActivity extends AppCompatActivity {
     private ActivitySignInBinding activity_sign_in;
     private Models.UsernameAndPasswordAuthenticationRequest request;
     private UserViewModel userViewModel;
-    boolean oneTime = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,22 +60,17 @@ public class SignInActivity extends AppCompatActivity {
         signInUserButton.setOnClickListener(view -> {
             if (validateForm(usernameF, passwordF)) {
                 try {
-                    oneTime = false;
                     showPb();
                     userViewModel.getAccessToken(request).observe(this, loginResponse -> {
                         if (loginResponse.isPresent()) {
                             String username = Objects.requireNonNull(getSp(USER_DB, getApplication()).get(USERNAME)).toString();
-                            System.out.println("========== GETTING DATA FOR USER " +username + " =====================");
+                            System.out.println("========== GETTING DATA FOR USER " + username + " =====================");
                             userViewModel.getUserByUsername(username).observe(SignInActivity.this, appUser -> {
                                 if (appUser.isPresent()) {
-                                    if (appUser.get().getRole() != null) {
-                                        Toast.makeText(SignInActivity.this, appUser.get().getUsername(), Toast.LENGTH_SHORT).show();
-                                        proceed(appUser.get().getRole().getName(), SignInActivity.this);
-                                    } else {
-                                        //todo update role to client // cron does it
-                                    }
+                                    proceed(SignInActivity.this);
                                 } else {
                                     Toast.makeText(SignInActivity.this, "Failed to get user data while logging in", Toast.LENGTH_SHORT).show();
+                                    hidePb();
                                 }
                             });
                         }
@@ -84,11 +78,6 @@ public class SignInActivity extends AppCompatActivity {
                 } catch (JSONException | JsonProcessingException e) {
                     e.printStackTrace();
                     hidePb();
-                }
-
-                try {
-                    new Handler().postDelayed(this::hidePb, 5000);
-                } catch (Exception ignored) {
                 }
             }
         });
@@ -207,7 +196,7 @@ public class SignInActivity extends AppCompatActivity {
         }
 
         if (loggedIn) {
-            proceed(userRepository.getUser().map(Domain.User::getRole).orElse(null), activity);
+            proceed(activity);
         } else {
             System.out.println("User not logged in");
         }

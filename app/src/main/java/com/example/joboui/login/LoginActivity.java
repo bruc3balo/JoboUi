@@ -1,6 +1,9 @@
 package com.example.joboui.login;
 
 import static com.example.joboui.SplashScreen.directToLogin;
+import static com.example.joboui.globals.GlobalDb.userRepository;
+import static com.example.joboui.login.RegisterActivity.goToAdditionalInfoActivity;
+import static com.example.joboui.login.RegisterActivity.goToTutorialsPage;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,7 +16,10 @@ import com.example.joboui.R;
 import com.example.joboui.admin.AdminActivity;
 import com.example.joboui.clientUi.ClientActivity;
 import com.example.joboui.databinding.ActivityLoginBinding;
+import com.example.joboui.domain.Domain;
 import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
+
+import java.util.Optional;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -46,8 +52,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-
-
     private void setWindowColors() {
         getWindow().setStatusBarColor(getColor(R.color.white));
         getWindow().setNavigationBarColor(getColor(R.color.white));
@@ -63,18 +67,32 @@ public class LoginActivity extends AppCompatActivity {
         // finish();
     }
 
-    public static void proceed(String role, Activity activity) {
-        System.out.println("======== ROLE IS "+role + "===============");
+    public static void proceed(Activity activity) {
+        Optional<Domain.User> appUser = userRepository.getUser();
 
-        if (role == null) {
+
+        if (!appUser.isPresent()) {
             directToLogin(activity);
         } else {
-            switch (role) {
+            switch (appUser.get().getRole()) {
                 case "ROLE_CLIENT":
-                    goToClientPage(activity);
+                    if (appUser.get().isTutorial()) {
+                        goToClientPage(activity);
+                    } else {
+                        goToTutorialsPage(activity);
+                    }
                     break;
                 case "ROLE_SERVICE_PROVIDER":
-                    goToServiceProviderPage(activity);
+
+                    if (appUser.get().isTutorial()) {
+                        goToServiceProviderPage(activity);
+                    } else {
+                        if (appUser.get().getPreferred_working_hours() == null || appUser.get().getPreferred_working_hours().isEmpty() || appUser.get().getSpecialities() == null || appUser.get().getSpecialities().isEmpty()) {
+                            goToAdditionalInfoActivity(activity);
+                        } else {
+                            goToTutorialsPage(activity);
+                        }
+                    }
                     break;
 
                 case "ROLE_ADMIN":

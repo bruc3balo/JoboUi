@@ -129,6 +129,8 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         });
 
         setWindowColors();
+
+        hidePb();
     }
 
     public static void animateButton(View view, int color, long delay) {
@@ -231,7 +233,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
             String id = serviceProviderAdditionalBinding.idField.getText().toString();
             String bio = serviceProviderAdditionalBinding.bioField.getText().toString();
 
-            updateForm = new Models.UserUpdateForm(id, bio, preferredWorkingHours, speciality);
+            updateForm = new Models.UserUpdateForm(id, bio, preferredWorkingHours, speciality, true);
             valid = true;
         }
 

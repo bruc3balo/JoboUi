@@ -31,6 +31,7 @@ public class Domain {
         private String updated_at;
         private boolean is_deleted;
         private boolean is_disabled;
+        private boolean tutorial;
         private String specialities;
         private String preferred_working_hours;
         private String last_known_location;
@@ -40,7 +41,7 @@ public class Domain {
         public User() {
         }
 
-        public User(@NotNull Long id, String id_number, String phone_number, String bio, String email_address, String names, String username, String role, String createdAt, String updatedAt, boolean is_deleted, boolean is_disabled, String specialities, String preferred_working_hours, String last_known_location, String password) {
+        public User(@NotNull Long id, String id_number, String phone_number, String bio, String email_address, String names, String username, String role, String createdAt, String updatedAt, boolean is_deleted, boolean is_disabled, boolean tutorial,String specialities, String preferred_working_hours, String last_known_location, String password) {
             this.id = id;
             this.id_number = id_number;
             this.phone_number = phone_number;
@@ -53,6 +54,7 @@ public class Domain {
             this.updated_at = updatedAt;
             this.is_deleted = is_deleted;
             this.is_disabled = is_disabled;
+            this.tutorial = tutorial;
             this.specialities = specialities;
             this.preferred_working_hours = preferred_working_hours;
             this.last_known_location = last_known_location;
@@ -94,6 +96,13 @@ public class Domain {
             this.bio = bio;
         }
 
+        public boolean isTutorial() {
+            return tutorial;
+        }
+
+        public void setTutorial(boolean tutorial) {
+            this.tutorial = tutorial;
+        }
 
         public String getEmail_address() {
             return email_address;
