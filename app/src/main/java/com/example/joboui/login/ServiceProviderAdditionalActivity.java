@@ -1,6 +1,7 @@
 package com.example.joboui.login;
 
 
+import static com.example.joboui.SplashScreen.directToLogin;
 import static com.example.joboui.globals.GlobalVariables.FRIDAY;
 import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.globals.GlobalVariables.MONDAY;
@@ -71,6 +72,9 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
             }
         });
 
+        Button logoutB = serviceProviderAdditionalBinding.logoutB;
+        logoutB.setOnClickListener(view -> directToLogin(ServiceProviderAdditionalActivity.this));
+
         TextView sun = serviceProviderAdditionalBinding.su;
         sun.setOnClickListener(view -> showDayLayout(sun, SUNDAY));
 
@@ -121,17 +125,6 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
             menu.show();
         });
 
-     /*   specialityDropDown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                Toast.makeText(ServiceProviderAdditionalActivity.this, "Select a speciality", Toast.LENGTH_SHORT).show();
-            }
-        });*/
 
         setWindowColors();
 

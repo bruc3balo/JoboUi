@@ -80,4 +80,5 @@
     <string name="removeitembutton">Remove Item</string>
     <string name="select_a_speciality">Select a speciality</string>
     <string name="pick_a_speciality">Pick a speciality</string>
+    <string name="logout">Logout</string>
 </resources>
