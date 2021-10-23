@@ -12,24 +12,37 @@ import com.bumptech.glide.Glide;
 import com.example.joboui.R;
 import com.example.joboui.domain.Domain;
 
-import java.util.ArrayList;
-
 public class ServicesPageGrid extends BaseAdapter {
-    private final ArrayList<Domain.Services> serviceList;
+    public static final Domain.Services[] serviceList = new Domain.Services[]{
+            new Domain.Services(R.drawable.ic_plumbing,"Plumbing"),
+            new Domain.Services(R.drawable.ic_electrician,"Electrical"),
+            new Domain.Services(R.drawable.ic_mechanic,"Mechanic"),
 
-    public ServicesPageGrid(ArrayList<Domain.Services> serviceList) {
-        this.serviceList = serviceList;
+            new Domain.Services(R.drawable.ic_laundry,"Laundry"),
+            new Domain.Services(R.drawable.ic_gardening,"Gardening"),
+            new Domain.Services(R.drawable.ic_cleaning,"Cleaning"),
+
+            new Domain.Services(R.drawable.ic_painting,"Paint Job"),
+            new Domain.Services(R.drawable.ic_moving_,"Moving"),
+            new Domain.Services(R.drawable.ic_general_repair,"General repais"),
+
+    };
+
+    public ServicesPageGrid() {
+
     }
 
     @Override
     public int getCount() {
-        return serviceList.size();
+        return serviceList.length;
     }
 
     @Override
-    public Object getItem(int position) {
-        return serviceList.get(position);
+    public Domain.Services getItem(int position) {
+        return serviceList[position];
     }
+
+
 
     @Override
     public long getItemId(int position) {
@@ -45,12 +58,12 @@ public class ServicesPageGrid extends BaseAdapter {
         }
 
 
-        System.out.println("Size is "+serviceList.size());
+        System.out.println("Size is "+serviceList.length);
 
         TextView title = convertView.findViewById(R.id.title_row);
-        title.setText(serviceList.get(position).getServiceTitle());
+        title.setText(serviceList[position].getServiceTitle());
         ImageView icon = convertView.findViewById(R.id.icon_row);
-        Glide.with(parent.getContext()).load(serviceList.get(position).getServiceImageUrl()).into(icon);
+        Glide.with(parent.getContext()).load(serviceList[position].getImageDrawable()).into(icon);
 
         return convertView;
     }

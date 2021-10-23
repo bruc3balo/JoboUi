@@ -13,12 +13,18 @@ import static com.example.joboui.login.SignInActivity.getSp;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
+import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,13 +37,13 @@ import com.example.joboui.adapters.ServicesPageGrid;
 import com.example.joboui.databinding.ActivityClientBinding;
 import com.example.joboui.domain.Domain;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Map;
 
 public class ClientActivity extends AppCompatActivity {
     ActivityClientBinding clientBinding;
     ServicesPageGrid servicesPageGridAdapter;
-    private final ArrayList<Domain.Services> serviceList = new ArrayList<>();
     private Domain.User me;
 
     @SuppressLint("SetTextI18n")
@@ -51,9 +57,9 @@ public class ClientActivity extends AppCompatActivity {
         setSupportActionBar(clientToolbar);
 
         GridView servicesGrid = clientBinding.servicesGrid;
-        servicesPageGridAdapter = new ServicesPageGrid(serviceList);
+        servicesPageGridAdapter = new ServicesPageGrid();
         servicesGrid.setAdapter(servicesPageGridAdapter);
-        servicesGrid.setOnItemClickListener((adapterView, view, position, id) -> Toast.makeText(ClientActivity.this, "" + position, Toast.LENGTH_SHORT).show());
+        servicesGrid.setOnItemClickListener((adapterView, view, position, id) -> Toast.makeText(ClientActivity.this, servicesPageGridAdapter.getItem(position).getServiceTitle(), Toast.LENGTH_SHORT).show());
 
         SearchView clientSearch = clientBinding.clientSearch;
         clientSearch.setOnQueryTextFocusChangeListener((view, hasFocus) -> {
@@ -66,14 +72,48 @@ public class ClientActivity extends AppCompatActivity {
         userRepository.getUserLive().observe(this, user -> {
             if (user.isPresent()) {
                 me = user.get();
-                clientBinding.welcomeText.setText("Good Morning " + me.getUsername());
+                clientBinding.welcomeText.setText(getWelcomeGreeting(me.getUsername()));
             }
         });
 
-
-        addDummyServices();
         setWindowColors();
 
+    }
+
+    private SpannableStringBuilder getWelcomeGreeting(String username) {
+        String welcome;
+        int hour;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            hour = LocalDateTime.now().getHour();
+
+        } else {
+            hour = Calendar.getInstance().getTime().getHours();
+        }
+
+        Toast.makeText(this, String.valueOf(hour), Toast.LENGTH_SHORT).show();
+
+        if (hour < 12) {
+            welcome = "Good Morning ";
+        } else if (hour > 12 && hour < 16) {
+            welcome = "Good Afternoon ";
+        } else if (hour > 16 && hour < 24) {
+            welcome = "Good Evening ";
+        } else {
+            welcome = "Hello ";
+        }
+
+        ForegroundColorSpan foregroundColorSpanRed = new ForegroundColorSpan(getColor(R.color.bright_purple));
+        StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+
+        SpannableStringBuilder welcomeText = new SpannableStringBuilder(welcome.concat(username));
+
+        int end = welcome.length() + username.length();
+        welcomeText.setSpan(foregroundColorSpanRed, welcome.length(), end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        welcomeText.setSpan(boldSpan, welcome.length(), end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+
+        return welcomeText;
     }
 
 
@@ -102,21 +142,14 @@ public class ClientActivity extends AppCompatActivity {
 
     private void showSearch(TextView tv, SearchView search) {
         tv.setVisibility(View.GONE);
-        search.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        //search.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
     }
 
     private void hideSearch(TextView tv, SearchView search) {
         tv.setVisibility(View.VISIBLE);
-        search.setLayoutParams(new LinearLayout.LayoutParams(300, LinearLayout.LayoutParams.WRAP_CONTENT));
+        // search.setLayoutParams(new LinearLayout.LayoutParams(300, LinearLayout.LayoutParams.WRAP_CONTENT));
     }
 
-    private void addDummyServices() {
-        Domain.Services services = new Domain.Services("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia2.s-nbcnews.com%2Fi%2Fnewscms%2F2016_10%2F1002361%2Fcleaning-products-stock-today-160307-tease_4097ed238bc46047a15831a86dd47267.jpg&f=1&nofb=1", "Cleaning");
-        for (int i = 0; i <= 12; i++) {
-            serviceList.add(services);
-            updateList();
-        }
-    }
 
     private void updateList() {
         servicesPageGridAdapter.notifyDataSetChanged();

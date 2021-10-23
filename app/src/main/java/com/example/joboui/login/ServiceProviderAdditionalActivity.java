@@ -125,7 +125,6 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
             menu.show();
         });
 
-
         setWindowColors();
 
         hidePb();
@@ -261,7 +260,6 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
 
         return valid;
     }
-
 
     private void setWindowColors() {
         getWindow().setStatusBarColor(getColor(R.color.deep_purple));

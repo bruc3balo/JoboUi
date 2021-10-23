@@ -68,7 +68,7 @@
 
                    <TextView
                        android:id="@+id/introText"
-                       android:layout_weight="1"
+                       android:layout_weight="2"
                        android:layout_width="0dp"
                        android:layout_height="match_parent"
                        android:layout_gravity="center_vertical"
@@ -81,9 +81,10 @@
 
                    <androidx.appcompat.widget.SearchView
                        android:id="@+id/clientSearch"
-                       android:layout_width="100dp"
+                       android:layout_width="0dp"
+                       android:layout_weight="0.5"
                        android:layout_height="match_parent"
-                       android:layout_gravity="center"
+                       android:layout_gravity="center|end"
                        app:queryHint="@string/search"
                        app:defaultQueryHint="@string/search"
                        android:src="@drawable/ic_bell_notification"

@@ -1,16 +1,16 @@
 package com.example.joboui.domain;
 
+import android.graphics.drawable.Drawable;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.example.joboui.globals.GlobalVariables;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class Domain {
 
@@ -238,22 +238,22 @@ public class Domain {
     }
 
     public static class Services {
-        private String serviceImageUrl;
+        private int imageDrawable;
         private String serviceTitle;
         private String serviceDescription;
 
-        public Services(String serviceImageUrl, String serviceTitle) {
-            this.serviceImageUrl = serviceImageUrl;
+        public Services(int imageDrawable, String serviceTitle) {
+            this.imageDrawable = imageDrawable;
             this.serviceTitle = serviceTitle;
         }
 
 
-        public String getServiceImageUrl() {
-            return serviceImageUrl;
+        public int getImageDrawable() {
+            return imageDrawable;
         }
 
-        public void setServiceImageUrl(String serviceImageUrl) {
-            this.serviceImageUrl = serviceImageUrl;
+        public void setImageDrawable(int imageDrawable) {
+            this.imageDrawable = imageDrawable;
         }
 
         public String getServiceTitle() {
