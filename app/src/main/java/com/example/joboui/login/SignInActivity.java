@@ -106,6 +106,16 @@ public class SignInActivity extends AppCompatActivity {
         return valid;
     }
 
+    private void showPb() {
+        activity_sign_in.signInUserButton.setEnabled(false);
+        activity_sign_in.signInPb.setVisibility(View.VISIBLE);
+    }
+
+    private void hidePb() {
+        activity_sign_in.signInPb.setVisibility(View.GONE);
+        activity_sign_in.signInUserButton.setEnabled(true);
+    }
+
     public static JWT decodeToken(String token) {
         try {
             return new JWT(token);
@@ -121,16 +131,6 @@ public class SignInActivity extends AppCompatActivity {
         mapper = mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper = mapper.findAndRegisterModules();
         return mapper;
-    }
-
-    private void showPb() {
-        activity_sign_in.signInUserButton.setEnabled(false);
-        activity_sign_in.signInPb.setVisibility(View.VISIBLE);
-    }
-
-    private void hidePb() {
-        activity_sign_in.signInPb.setVisibility(View.GONE);
-        activity_sign_in.signInUserButton.setEnabled(true);
     }
 
     public static Map<String, ?> getSp(String name, Application application) {

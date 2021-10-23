@@ -3,14 +3,11 @@ package com.example.joboui.globals;
 public class GlobalVariables {
 
     /*** BASE URL OF API ***/
-    public static final String API_URL = "https://ac06-197-232-244-229.ngrok.io";
+    public static final String API_URL = "https://024f-197-232-244-229.ngrok.io";
     public static final String CONTEXT_URL = "/api/v1/";
 
 
     public static final String USER_DB = "users";
-    public static final int ADMIN_ROLE = 5;
-    public static final int CLIENT_ROLE = 1;
-    public static final int LOCAL_SERVICE_PROVIDER_ROLE = 2;
     public static final String UID = "uid";
     public static final String EMAIL_ADDRESS = "emailAddress";
     public static final String USERNAME = "username";

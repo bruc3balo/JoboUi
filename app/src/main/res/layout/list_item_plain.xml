@@ -2,9 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/edit_text_field_white_thin"
     android:orientation="horizontal"
     android:layout_gravity="center"
     android:gravity="center"
@@ -13,8 +12,7 @@
 
     <TextView
         android:id="@+id/itemText"
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginStart="10dp"
@@ -26,17 +24,5 @@
         android:textColor="@color/black"
         android:textStyle="bold" />
 
-    <ImageButton
-        android:id="@+id/removeItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/removeitembutton"
-        android:src="@drawable/ic_cancel"
-        app:tint="@android:color/holo_red_dark"
-        tools:targetApi="ice_cream_sandwich" />
 
 </LinearLayout>

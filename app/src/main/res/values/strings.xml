@@ -78,4 +78,6 @@
     <string name="id_number">3. Identity Number</string>
     <string name="username">Username</string>
     <string name="removeitembutton">Remove Item</string>
+    <string name="select_a_speciality">Select a speciality</string>
+    <string name="pick_a_speciality">Pick a speciality</string>
 </resources>

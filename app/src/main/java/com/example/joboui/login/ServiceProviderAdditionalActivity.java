@@ -3,9 +3,7 @@ package com.example.joboui.login;
 
 import static com.example.joboui.globals.GlobalVariables.FRIDAY;
 import static com.example.joboui.globals.GlobalVariables.HY;
-import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_ROLE;
 import static com.example.joboui.globals.GlobalVariables.MONDAY;
-import static com.example.joboui.globals.GlobalVariables.ROLE;
 import static com.example.joboui.globals.GlobalVariables.SATURDAY;
 import static com.example.joboui.globals.GlobalVariables.SUNDAY;
 import static com.example.joboui.globals.GlobalVariables.THURSDAY;
@@ -14,20 +12,22 @@ import static com.example.joboui.globals.GlobalVariables.WEDNESDAY;
 
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
+import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,13 +37,8 @@ import com.example.joboui.adapters.ListRvAdapter;
 import com.example.joboui.databinding.ActivityServiceProviderAdditionalBinding;
 import com.example.joboui.databinding.WorkingHourPickerBinding;
 import com.example.joboui.db.userDb.UserViewModel;
-import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
-import com.example.joboui.tutorial.TutorialActivity;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-
-import org.json.JSONException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -51,7 +46,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 public class ServiceProviderAdditionalActivity extends AppCompatActivity {
 
@@ -59,6 +53,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
     private final Map<String, String> preferredWorkingHours = new HashMap<>();
     private final ArrayList<String> speciality = new ArrayList<>();
     private Models.UserUpdateForm updateForm;
+    private final ArrayList<String> allSpecialities = new ArrayList<>();
 
 
     @Override
@@ -67,6 +62,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         serviceProviderAdditionalBinding = ActivityServiceProviderAdditionalBinding.inflate(getLayoutInflater());
         setContentView(serviceProviderAdditionalBinding.getRoot());
 
+        allSpecialities.add("CLEANING");
 
         Button finishAdditionalInfoButton = serviceProviderAdditionalBinding.finishAdditionalInfoButton;
         finishAdditionalInfoButton.setOnClickListener(view -> {
@@ -101,23 +97,41 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         specialitiesRv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         specialitiesRv.setAdapter(new ListRvAdapter(this, speciality));
 
-        EditText specialityField = serviceProviderAdditionalBinding.specialityField;
-        ImageButton addSpecialityButton = serviceProviderAdditionalBinding.addSpecialityButton;
-        addSpecialityButton.setOnClickListener(view -> {
-            if (specialityField.getText().toString().isEmpty()) {
-                specialityField.setError("Cannot be empty");
-                specialityField.requestFocus();
-            } else if (speciality.contains(specialityField.getText().toString())) {
-                specialityField.setError("Item already is list");
-                specialityField.requestFocus();
-            } else {
+        Button pickSpeciality = serviceProviderAdditionalBinding.specialityButton;
+        pickSpeciality.setOnClickListener(view -> {
+            PopupMenu menu = new PopupMenu(ServiceProviderAdditionalActivity.this, view);
+            menu.getMenu().add("CANCEL").setTitle("CANCEL").setOnMenuItemClickListener(menuItem -> {
+                menu.dismiss();
+                return false;
+            }).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            allSpecialities.forEach(p-> menu.getMenu().add(p).setTitle(p).setIcon(R.drawable.right).setOnMenuItemClickListener(menuItem -> {
 
-                speciality.add(specialityField.getText().toString());
-                Objects.requireNonNull(specialitiesRv.getAdapter()).notifyItemInserted(speciality.size() - 1);
-                animateButton(addSpecialityButton, Color.GREEN, 300);
-                specialityField.setText("");
-            }
+                String item = menuItem.getTitle().toString();
+
+                if (speciality.contains(item)) {
+                    Toast.makeText(ServiceProviderAdditionalActivity.this, "Item already is list", Toast.LENGTH_SHORT).show();
+                } else {
+                    speciality.add(item);
+                    Objects.requireNonNull(specialitiesRv.getAdapter()).notifyItemInserted(speciality.size() - 1);
+                    Toast.makeText(ServiceProviderAdditionalActivity.this, item + " added", Toast.LENGTH_SHORT).show();
+                    System.out.println(item + " added");
+                }
+                return false;
+            }).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS));
+            menu.show();
         });
+
+     /*   specialityDropDown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                Toast.makeText(ServiceProviderAdditionalActivity.this, "Select a speciality", Toast.LENGTH_SHORT).show();
+            }
+        });*/
 
         setWindowColors();
 
@@ -263,7 +277,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
     }
 
     private void goToTutorialPage() {
-        startActivity(new Intent(this, TutorialActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK).putExtra(ROLE, LOCAL_SERVICE_PROVIDER_ROLE));
+       //todo  startActivity(new Intent(this, TutorialActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK).putExtra(ROLE, LOCAL_SERVICE_PROVIDER_ROLE));
         finish();
     }
 }
