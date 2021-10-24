@@ -24,8 +24,7 @@ public class ServicesPageGrid extends BaseAdapter {
 
             new Domain.Services(R.drawable.ic_painting,"Paint Job"),
             new Domain.Services(R.drawable.ic_moving_,"Moving"),
-            new Domain.Services(R.drawable.ic_general_repair,"General repais"),
-
+            new Domain.Services(R.drawable.ic_general_repair,"General repairs"),
     };
 
     public ServicesPageGrid() {
