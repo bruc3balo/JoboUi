@@ -2,6 +2,7 @@ package com.example.joboui.login;
 
 
 import static com.example.joboui.SplashScreen.directToLogin;
+import static com.example.joboui.globals.GlobalDb.serviceRepository;
 import static com.example.joboui.globals.GlobalVariables.FRIDAY;
 import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.globals.GlobalVariables.MONDAY;
@@ -18,17 +19,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,6 +36,7 @@ import com.example.joboui.adapters.ListRvAdapter;
 import com.example.joboui.databinding.ActivityServiceProviderAdditionalBinding;
 import com.example.joboui.databinding.WorkingHourPickerBinding;
 import com.example.joboui.db.userDb.UserViewModel;
+import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
@@ -45,8 +44,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public class ServiceProviderAdditionalActivity extends AppCompatActivity {
 
@@ -54,7 +55,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
     private final Map<String, String> preferredWorkingHours = new HashMap<>();
     private final ArrayList<String> speciality = new ArrayList<>();
     private Models.UserUpdateForm updateForm;
-    private final ArrayList<String> allSpecialities = new ArrayList<>();
+    private final ArrayList<Domain.Services> allSpecialities = new ArrayList<>();
 
 
     @Override
@@ -63,7 +64,6 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         serviceProviderAdditionalBinding = ActivityServiceProviderAdditionalBinding.inflate(getLayoutInflater());
         setContentView(serviceProviderAdditionalBinding.getRoot());
 
-        allSpecialities.add("CLEANING");
 
         Button finishAdditionalInfoButton = serviceProviderAdditionalBinding.finishAdditionalInfoButton;
         finishAdditionalInfoButton.setOnClickListener(view -> {
@@ -108,7 +108,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
                 menu.dismiss();
                 return false;
             }).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            allSpecialities.forEach(p-> menu.getMenu().add(p).setTitle(p).setIcon(R.drawable.right).setOnMenuItemClickListener(menuItem -> {
+            allSpecialities.forEach(p-> menu.getMenu().add(p.getName()).setTitle(p.getName()).setIcon(R.drawable.right).setOnMenuItemClickListener(menuItem -> {
 
                 String item = menuItem.getTitle().toString();
 
@@ -128,6 +128,11 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         setWindowColors();
 
         hidePb();
+
+        try {
+            serviceRepository.updateServices();
+            getServices();
+        } catch (Exception ignored) { }
     }
 
     private void sendUpdateRequest() {
@@ -151,6 +156,17 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
             new Handler().postDelayed(() -> view.setBackgroundTintList(null), delay);
         } catch (Exception ignored) {
         }
+    }
+
+    private void getServices() {
+        serviceRepository.getServiceLive().observe(this, services -> {
+            if (services.isEmpty()) {
+                Toast.makeText(ServiceProviderAdditionalActivity.this, "Failed to get services", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            allSpecialities.clear();
+            allSpecialities.addAll(services);
+        });
     }
 
     @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})

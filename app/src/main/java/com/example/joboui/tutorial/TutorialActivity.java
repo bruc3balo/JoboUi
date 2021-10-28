@@ -1,32 +1,23 @@
 package com.example.joboui.tutorial;
 
-import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.login.LoginActivity.proceed;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.joboui.R;
 import com.example.joboui.adapters.TutorialVpAdapter;
-import com.example.joboui.clientUi.ClientActivity;
 import com.example.joboui.databinding.ActivityTutorialBinding;
 import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.domain.Domain;
-import com.example.joboui.login.SignInActivity;
 import com.example.joboui.model.Models;
-import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import me.relex.circleindicator.CircleIndicator3;
 

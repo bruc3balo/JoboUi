@@ -24,8 +24,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.example.joboui.databinding.ActivitySplashScreenBinding;
+import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.globals.GlobalDb;
 import com.example.joboui.login.LoginActivity;
@@ -259,6 +262,15 @@ public class SplashScreen extends AppCompatActivity {
             }
 
             if (user.get().getRole() != null) {
+
+                new ViewModelProvider((ViewModelStoreOwner) activity).get(UserViewModel.class).refreshToken();
+
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 proceed(activity);
             } else {
                 directToLogin(activity);

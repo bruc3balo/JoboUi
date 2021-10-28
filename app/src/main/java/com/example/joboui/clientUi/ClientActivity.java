@@ -4,6 +4,7 @@ import static com.example.joboui.SplashScreen.addListener;
 import static com.example.joboui.SplashScreen.addLogoutListener;
 import static com.example.joboui.SplashScreen.directToLogin;
 import static com.example.joboui.SplashScreen.removeListener;
+import static com.example.joboui.globals.GlobalDb.serviceRepository;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.LOGGED_IN;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
@@ -16,7 +17,6 @@ import android.app.Application;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -36,6 +36,7 @@ import com.example.joboui.R;
 import com.example.joboui.adapters.ServicesPageGrid;
 import com.example.joboui.databinding.ActivityClientBinding;
 import com.example.joboui.domain.Domain;
+import com.example.joboui.login.ServiceProviderAdditionalActivity;
 
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -57,9 +58,9 @@ public class ClientActivity extends AppCompatActivity {
         setSupportActionBar(clientToolbar);
 
         GridView servicesGrid = clientBinding.servicesGrid;
-        servicesPageGridAdapter = new ServicesPageGrid();
+        servicesPageGridAdapter = new ServicesPageGrid(ClientActivity.this);
         servicesGrid.setAdapter(servicesPageGridAdapter);
-        servicesGrid.setOnItemClickListener((adapterView, view, position, id) -> Toast.makeText(ClientActivity.this, servicesPageGridAdapter.getItem(position).getServiceTitle(), Toast.LENGTH_SHORT).show());
+        servicesGrid.setOnItemClickListener((adapterView, view, position, id) -> Toast.makeText(ClientActivity.this, servicesPageGridAdapter.getItem(position).getName(), Toast.LENGTH_SHORT).show());
 
         SearchView clientSearch = clientBinding.clientSearch;
         clientSearch.setOnQueryTextFocusChangeListener((view, hasFocus) -> {
@@ -183,4 +184,6 @@ public class ClientActivity extends AppCompatActivity {
         getWindow().setNavigationBarColor(getColor(R.color.purple));
 
     }
+
+
 }

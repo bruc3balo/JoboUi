@@ -3,7 +3,13 @@ package com.example.joboui.model;
 
 import static com.example.joboui.globals.GlobalVariables.HY;
 
+import androidx.annotation.NonNull;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -688,6 +694,151 @@ public class Models {
 
         public void setName(String name) {
             this.name = name;
+        }
+    }
+
+    public static class ServiceRequestForm {
+
+        private String description;
+
+        private String name;
+
+        public ServiceRequestForm() {
+
+        }
+
+        public ServiceRequestForm(String description, String name) {
+            this.description = description;
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public static class ServiceUpdateForm {
+
+        private String name;
+
+        private Boolean disabled;
+
+        private String description;
+
+        public ServiceUpdateForm() {
+        }
+
+        public ServiceUpdateForm(String name, Boolean disabled, String description) {
+            this.name = name;
+            this.disabled = disabled;
+            this.description = description;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Boolean getDisabled() {
+            return disabled;
+        }
+
+        public void setDisabled(Boolean disabled) {
+            this.disabled = disabled;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+    }
+
+    public static class ServicesModel {
+
+        private Long id;
+        private String name;
+        private String description;
+        private Boolean disabled;
+        private Date created_at;
+        private Date updated_at;
+
+
+
+        public ServicesModel(String name) {
+            this.name = name;
+        }
+
+
+        public ServicesModel() {
+
+        }
+
+        @NonNull
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(@NonNull Long id) {
+            this.id = id;
+        }
+
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public Boolean getDisabled() {
+            return disabled;
+        }
+
+        public void setDisabled(Boolean disabled) {
+            this.disabled = disabled;
+        }
+
+        public Date getCreated_at() {
+            return created_at;
+        }
+
+        public void setCreated_at(Date created_at) {
+            this.created_at = created_at;
+        }
+
+        public Date getUpdated_at() {
+            return updated_at;
+        }
+
+        public void setUpdated_at(Date updated_at) {
+            this.updated_at = updated_at;
         }
     }
 

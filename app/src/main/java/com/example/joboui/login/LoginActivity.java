@@ -1,6 +1,7 @@
 package com.example.joboui.login;
 
 import static com.example.joboui.SplashScreen.directToLogin;
+import static com.example.joboui.globals.GlobalDb.serviceRepository;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.login.RegisterActivity.goToAdditionalInfoActivity;
@@ -75,33 +76,35 @@ public class LoginActivity extends AppCompatActivity {
             if (!appUser.isPresent()) {
                 System.out.println("COULD NOT PROCEED ... user is not present");
                 directToLogin(activity);
-            } else {
-                switch (appUser.get().getRole()) {
-                    case "ROLE_CLIENT":
-                        if (appUser.get().isTutorial()) {
-                            goToClientPage(activity);
+                return;
+            }
+
+
+            switch (appUser.get().getRole()) {
+                case "ROLE_CLIENT":
+                    if (appUser.get().isTutorial()) {
+                        goToClientPage(activity);
+                    } else {
+                        goToTutorialsPage(activity);
+                    }
+                    break;
+                case "ROLE_SERVICE_PROVIDER":
+
+                    if (appUser.get().isTutorial()) {
+                        goToServiceProviderPage(activity);
+                    } else {
+                        if (appUser.get().getPreferred_working_hours().equals(HY) || appUser.get().getSpecialities().equals(HY)) {
+                            goToAdditionalInfoActivity(activity);
                         } else {
                             goToTutorialsPage(activity);
                         }
-                        break;
-                    case "ROLE_SERVICE_PROVIDER":
+                    }
+                    break;
 
-                        if (appUser.get().isTutorial()) {
-                            goToServiceProviderPage(activity);
-                        } else {
-                            if (appUser.get().getPreferred_working_hours().equals(HY) || appUser.get().getSpecialities().equals(HY)) {
-                                goToAdditionalInfoActivity(activity);
-                            } else {
-                                goToTutorialsPage(activity);
-                            }
-                        }
-                        break;
-
-                    case "ROLE_ADMIN":
-                    case "ROLE_ADMIN_TRAINEE":
-                        goToAdminPage(activity);
-                        break;
-                }
+                case "ROLE_ADMIN":
+                case "ROLE_ADMIN_TRAINEE":
+                    goToAdminPage(activity);
+                    break;
             }
         });
     }

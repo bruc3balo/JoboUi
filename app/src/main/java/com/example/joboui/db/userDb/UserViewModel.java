@@ -25,7 +25,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.auth0.android.jwt.JWT;
 import com.example.joboui.domain.Domain;
-import com.example.joboui.login.ServiceProviderAdditionalActivity;
 import com.example.joboui.model.Models;
 import com.example.joboui.model.Models.LoginResponse;
 import com.example.joboui.model.Models.UserUpdateForm;
@@ -66,7 +65,7 @@ public class UserViewModel extends AndroidViewModel {
 
         ObjectMapper mapper = getObjectMapper();
 
-        String header = "Bearer " + Objects.requireNonNull(getSp(USER_DB, application).get(REFRESH_TOKEN)).toString();
+                String header = "Bearer " + Objects.requireNonNull(getSp(USER_DB, application).get(REFRESH_TOKEN)).toString();
 
         System.out.println("headers " + header);
 
@@ -386,6 +385,13 @@ public class UserViewModel extends AndroidViewModel {
         });
 
         return mutableLiveData;
+    }
+
+    public void refreshToken() {
+        Map<String,?> map = getSp(USER_DB,application);
+        String username = Objects.requireNonNull(map.get(USERNAME)).toString();
+        String password = Objects.requireNonNull(getSp(USER_DB, application).get(PASSWORD)).toString();
+        accessToken(new Models.UsernameAndPasswordAuthenticationRequest(username,password));
     }
 
     //expose

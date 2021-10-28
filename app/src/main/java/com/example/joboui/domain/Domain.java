@@ -1,9 +1,8 @@
 package com.example.joboui.domain;
 
-import android.graphics.drawable.Drawable;
-
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.example.joboui.globals.GlobalVariables;
@@ -201,6 +200,7 @@ public class Domain {
         }
     }
 
+    //todo entity
     public static class TutorialModel {
         private String imageId;
         private String explanation;
@@ -237,39 +237,84 @@ public class Domain {
         }
     }
 
+    @Entity(tableName = GlobalVariables.SERVICE_DB)
     public static class Services {
-        private int imageDrawable;
-        private String serviceTitle;
-        private String serviceDescription;
+        @PrimaryKey
+        @NotNull
+        private Long id;
+        private String name;
+        private String description;
+        private Boolean disabled;
+        private String created_at;
+        private String updated_at;
 
-        public Services(int imageDrawable, String serviceTitle) {
-            this.imageDrawable = imageDrawable;
-            this.serviceTitle = serviceTitle;
+        public Services(@NotNull Long id, String name, String description, Boolean disabled, String created_at, String updated_at) {
+            this.id = id;
+            this.name = name;
+            this.description = description;
+            this.disabled = disabled;
+            this.created_at = created_at;
+            this.updated_at = updated_at;
+        }
+
+        @Ignore
+        public Services(String name) {
+            this.name = name;
+        }
+
+        @Ignore
+        public Services() {
+
+        }
+
+        @NonNull
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(@NonNull Long id) {
+            this.id = id;
         }
 
 
-        public int getImageDrawable() {
-            return imageDrawable;
+        public String getName() {
+            return name;
         }
 
-        public void setImageDrawable(int imageDrawable) {
-            this.imageDrawable = imageDrawable;
+        public void setName(String name) {
+            this.name = name;
         }
 
-        public String getServiceTitle() {
-            return serviceTitle;
+        public String getDescription() {
+            return description;
         }
 
-        public void setServiceTitle(String serviceTitle) {
-            this.serviceTitle = serviceTitle;
+        public void setDescription(String description) {
+            this.description = description;
         }
 
-        public String getServiceDescription() {
-            return serviceDescription;
+        public Boolean getDisabled() {
+            return disabled;
         }
 
-        public void setServiceDescription(String serviceDescription) {
-            this.serviceDescription = serviceDescription;
+        public void setDisabled(Boolean disabled) {
+            this.disabled = disabled;
+        }
+
+        public String getCreated_at() {
+            return created_at;
+        }
+
+        public void setCreated_at(String created_at) {
+            this.created_at = created_at;
+        }
+
+        public String getUpdated_at() {
+            return updated_at;
+        }
+
+        public void setUpdated_at(String updated_at) {
+            this.updated_at = updated_at;
         }
     }
 

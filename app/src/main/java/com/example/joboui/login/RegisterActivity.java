@@ -1,19 +1,11 @@
 package com.example.joboui.login;
 
-import static com.example.joboui.SplashScreen.directToLogin;
-import static com.example.joboui.globals.GlobalDb.userRepository;
-import static com.example.joboui.globals.GlobalVariables.API_URL;
-import static com.example.joboui.globals.GlobalVariables.CONTEXT_URL;
 import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.globals.GlobalVariables.PASSWORD;
 import static com.example.joboui.globals.GlobalVariables.USERNAME;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.LoginActivity.proceed;
-import static com.example.joboui.login.SignInActivity.editSp;
-import static com.example.joboui.login.SignInActivity.getObjectMapper;
 import static com.example.joboui.login.SignInActivity.getSp;
-
-import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_JSON;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -29,8 +21,6 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 
@@ -38,24 +28,16 @@ import com.example.joboui.R;
 import com.example.joboui.databinding.ActivityRegisterBinding;
 import com.example.joboui.databinding.RoleDialogBinding;
 import com.example.joboui.db.userDb.UserViewModel;
-import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
 import com.example.joboui.tutorial.TutorialActivity;
 import com.example.joboui.utils.AppRolesEnum;
-import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-
-import io.vertx.core.json.JsonObject;
 
 public class RegisterActivity extends AppCompatActivity {
 
