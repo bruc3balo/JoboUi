@@ -43,6 +43,7 @@ import com.example.joboui.login.ServiceProviderAdditionalActivity;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.Optional;
 
 public class ClientActivity extends AppCompatActivity {
     ActivityClientBinding clientBinding;
@@ -65,7 +66,8 @@ public class ClientActivity extends AppCompatActivity {
         servicesGrid.setOnItemClickListener((adapterView, view, position, id) -> {
             //Toast.makeText(ClientActivity.this, servicesPageGridAdapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
             Bundle bundle = new Bundle();
-            bundle.putSerializable(SERVICE_DB,servicesPageGridAdapter.getItem(position));
+            Optional<Domain.Services> service = servicesPageGridAdapter.getItem(position);
+            bundle.putSerializable(SERVICE_DB, service.orElse(null));
             startActivity(new Intent(ClientActivity.this,ServiceRequestActivity.class).putExtras(bundle));
         });
 

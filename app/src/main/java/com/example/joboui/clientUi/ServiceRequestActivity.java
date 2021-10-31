@@ -1,6 +1,7 @@
 package com.example.joboui.clientUi;
 
 import static com.example.joboui.adapters.RequestPagerAdapter.mainTitles;
+import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.SERVICE_DB;
 
 import android.content.Intent;
@@ -14,22 +15,28 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.Observer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.joboui.R;
 import com.example.joboui.adapters.RequestPagerAdapter;
 import com.example.joboui.databinding.ActivityServiceReuestBinding;
 import com.example.joboui.domain.Domain;
+import com.example.joboui.model.Models;
+import com.example.joboui.model.Models.JobRequestForm;
+
+import java.util.Optional;
 
 public class ServiceRequestActivity extends AppCompatActivity {
 
     private ActivityServiceReuestBinding binding;
-    private Domain.Services service;
+    public static Domain.Services service;
     private Button nextButton;
     private boolean onBackPressed = false;
     private ViewPager2 pager2;
     private RequestPagerAdapter adapter;
     public static String speciality;
+    public static JobRequestForm jobRequestForm = new JobRequestForm();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +54,8 @@ public class ServiceRequestActivity extends AppCompatActivity {
             service = (Domain.Services) intent.getSerializableExtra(SERVICE_DB);
             toolbar.setSubtitle(service.getName());
             speciality = service.getName();
+            jobRequestForm.setSpecialities(service.getName());
+            userRepository.getUserLive().observe(this, user -> user.ifPresent(value -> jobRequestForm.setClient_id(value.getId_number())));
         }
 
         nextButton = binding.nextButton;
@@ -59,7 +68,6 @@ public class ServiceRequestActivity extends AppCompatActivity {
         pager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
-                Toast.makeText(ServiceRequestActivity.this, "Page changed", Toast.LENGTH_SHORT).show();
                 super.onPageSelected(position);
             }
         });
@@ -89,7 +97,7 @@ public class ServiceRequestActivity extends AppCompatActivity {
 
     private void goNext () {
         //todo
-        if (pager2.getCurrentItem() < mainTitles.length) {
+        if (pager2.getCurrentItem() < mainTitles.length - 1) {
             pager2.setCurrentItem(pager2.getCurrentItem() + 1);
         } else {
             Toast.makeText(ServiceRequestActivity.this, "Are you sure ?", Toast.LENGTH_SHORT).show();

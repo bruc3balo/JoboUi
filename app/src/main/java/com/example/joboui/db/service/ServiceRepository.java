@@ -144,12 +144,17 @@ public class ServiceRepository {
 
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
+                } finally {
+                    if (!servicesList.isEmpty()) {
+                        try {
+                            clearService();
+                        } catch (Exception ignored) {} finally {
+                            servicesList.forEach(s -> insert(s));
+                        }
+                    }
                 }
 
-                if (!servicesList.isEmpty()) {
-                    clearService();
-                    servicesList.forEach(s -> insert(s));
-                }
+
             }
 
             @Override

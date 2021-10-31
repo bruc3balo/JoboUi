@@ -1,5 +1,10 @@
 package com.example.joboui.utils;
 
+import android.graphics.Typeface;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -59,6 +64,15 @@ public class DataOps {
             // Collections.addAll(specialities, a);
             return workingHoursMap;
         }
+    }
+
+    public static SpannableString getBoldSpannable(String normal , String bold) {
+        StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+        int end = normal.length() + bold.length();
+
+        SpannableString farmNameFormatted = new SpannableString(normal.concat(bold));
+        farmNameFormatted.setSpan(boldSpan, normal.length(), end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return farmNameFormatted;
     }
 
 }

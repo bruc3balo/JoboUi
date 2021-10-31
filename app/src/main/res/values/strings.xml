@@ -89,4 +89,6 @@
     <string name="time">Time</string>
     <string name="as_soon_as_possible">As soon as possible</string>
     <string name="scheduled">Scheduled</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

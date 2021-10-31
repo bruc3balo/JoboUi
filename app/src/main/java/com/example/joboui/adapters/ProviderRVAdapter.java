@@ -3,6 +3,8 @@ package com.example.joboui.adapters;
 
 import static com.example.joboui.clientUi.ServiceRequestActivity.speciality;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
+import static com.example.joboui.utils.DataOps.getBoldSpannable;
+import static com.example.joboui.utils.DataOps.getMapFromString;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -21,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.example.joboui.R;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
+import com.example.joboui.utils.DataOps;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.jetbrains.annotations.NotNull;
@@ -62,16 +65,27 @@ public class ProviderRVAdapter extends RecyclerView.Adapter<ProviderRVAdapter.Vi
             Glide.with(mContext).load(mContext.getDrawable(p)).into(holder.providerImage);
         }
 
-        holder.name.setText(userList.get(position).getNames());
-        holder.bio.setText(userList.get(position).getBio());
-        holder.rating.setText("0");
+        String nameLabel = "Name : ";
+        holder.name.setText(getBoldSpannable(nameLabel,userList.get(position).getNames()));
 
-        try {
+        String bioLabel = "Bio : ";
+        holder.bio.setText(getBoldSpannable(bioLabel,userList.get(position).getBio()));
+
+        String ratingLabel = "Rating : ";
+        holder.rating.setText(getBoldSpannable(ratingLabel,"0"));
+
+        StringBuilder workingHours = new StringBuilder();
+        getMapFromString(user.getPreferred_working_hours()).forEach((d, t) -> workingHours.append(d).append("=").append(t).append("\n"));
+
+        String workingHoursLabel = "Working hours : ";
+        holder.workingHours.setText(getBoldSpannable(workingHoursLabel,workingHours.toString()));
+
+    /*    try {
             System.out.println(getObjectMapper().writeValueAsString(user));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
+*/
     }
 
     @Override
@@ -81,7 +95,7 @@ public class ProviderRVAdapter extends RecyclerView.Adapter<ProviderRVAdapter.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView providerImage;
-        TextView name, bio,rating;
+        TextView name, bio, rating, workingHours;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -90,6 +104,7 @@ public class ProviderRVAdapter extends RecyclerView.Adapter<ProviderRVAdapter.Vi
             name = itemView.findViewById(R.id.name);
             bio = itemView.findViewById(R.id.bio);
             rating = itemView.findViewById(R.id.rating);
+            workingHours = itemView.findViewById(R.id.workingHours);
 
             itemView.setOnClickListener(this);
         }

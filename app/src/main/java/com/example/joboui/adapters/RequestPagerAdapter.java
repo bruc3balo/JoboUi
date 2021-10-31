@@ -35,13 +35,13 @@ public class RequestPagerAdapter extends FragmentStateAdapter {
         switch (position) {
             default:
             case 0:
-                return new LocationRequest(services);
+                return new LocationRequest();
 
             case 1:
-                return new DetailsFragment(services);
+                return new DetailsFragment();
 
             case 2:
-                return new ProviderChoosing(services);
+                return new ProviderChoosing();
         }
     }
 

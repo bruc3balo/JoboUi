@@ -42,25 +42,34 @@
                     android:text="Name"
                     android:layout_gravity="center"
                     android:gravity="center_vertical"
-                    android:textStyle="bold"/>
+                    android:textColor="@color/purple"/>
 
                 <TextView
                     android:id="@+id/bio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Bio"
+                    android:textColor="@color/purple"
                     android:layout_gravity="center"
-                    android:gravity="center_vertical"
-                    android:textStyle="bold"/>
+                    android:gravity="center_vertical" />
 
                 <TextView
                     android:id="@+id/rating"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Rating"
+                    android:textColor="@color/purple"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical" />
+
+                <TextView
+                    android:id="@+id/workingHours"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Working hours"
                     android:layout_gravity="center"
                     android:gravity="center_vertical"
-                    android:textStyle="bold"/>
+                    android:textColor="@color/purple"/>
 
 
             </LinearLayout>

@@ -22,22 +22,29 @@ import com.example.joboui.utils.MyLinkedMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public class ServicesPageGrid extends BaseAdapter {
 
-    private final ArrayList<Domain.Services> serviceList = new ArrayList<>();
+    private final Set<Domain.Services> serviceList = new HashSet<>();
+
+    //todo solve bug
 
     public ServicesPageGrid(LifecycleOwner lifecycleOwner) {
         try {
             serviceRepository.updateServices();
-        } catch (Exception ignored) { } finally {
+        } catch (Exception ignored) {
+        } finally {
             serviceRepository.getServiceLive().observe(lifecycleOwner, services -> {
                 if (!services.isEmpty()) {
-                    serviceList.clear();
                     serviceList.addAll(services);
+                    System.out.println("THE SIZE IS " + services.size());
                     notifyDataSetChanged();
                 }
             });
@@ -50,8 +57,8 @@ public class ServicesPageGrid extends BaseAdapter {
     }
 
     @Override
-    public Domain.Services getItem(int position) {
-        return serviceList.get(position);
+    public Optional<Domain.Services> getItem(int position) {
+        return serviceList.stream().filter(i -> Integer.valueOf(i.getId().toString()).equals(position)).findFirst();
     }
 
     @Override
@@ -66,19 +73,23 @@ public class ServicesPageGrid extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_row, null);
         }
+        Optional<Domain.Services> service = serviceList.stream().filter(i -> Integer.valueOf(i.getId().toString()).equals(position)).findFirst();
 
+        if (service.isPresent()) {
 
-        System.out.println("Size is " + serviceList.size());
+            System.out.println("Size is " + serviceList.size());
 
-        TextView title = convertView.findViewById(R.id.title_row);
-        title.setText(serviceList.get(position).getName());
-        ImageView icon = convertView.findViewById(R.id.icon_row);
-        Glide.with(parent.getContext()).load(getServiceDrawables().get(serviceList.get(position).getName())).into(icon);
+            TextView title = convertView.findViewById(R.id.title_row);
+            title.setText(service.get().getName());
+            ImageView icon = convertView.findViewById(R.id.icon_row);
+            Glide.with(parent.getContext()).load(getServiceDrawables().get(service.get().getName())).into(icon);
+
+        }
 
         return convertView;
     }
 
-    public static MyLinkedMap<String, Integer> getServiceDrawables () {
+    public static MyLinkedMap<String, Integer> getServiceDrawables() {
 
         MyLinkedMap<String, Integer> map = new MyLinkedMap<>();
 

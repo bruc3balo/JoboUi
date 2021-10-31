@@ -844,4 +844,71 @@ public class Models {
         }
     }
 
+    public static class JobRequestForm {
+
+        private String local_service_provider_id;
+
+        private String client_id;
+
+        private String job_location;
+
+        private String specialities;
+
+        private String scheduled_at;
+
+        private String job_description;
+
+        public JobRequestForm() {
+
+        }
+
+        public String getLocal_service_provider_id() {
+            return local_service_provider_id;
+        }
+
+        public void setLocal_service_provider_id(String local_service_provider_id) {
+            this.local_service_provider_id = local_service_provider_id;
+        }
+
+        public String getClient_id() {
+            return client_id;
+        }
+
+        public void setClient_id(String client_id) {
+            this.client_id = client_id;
+        }
+
+        public String getJob_location() {
+            return job_location;
+        }
+
+        public void setJob_location(String job_location) {
+            this.job_location = job_location;
+        }
+
+        public String getSpecialities() {
+            return specialities;
+        }
+
+        public void setSpecialities(String specialities) {
+            this.specialities = specialities;
+        }
+
+        public String getScheduled_at() {
+            return scheduled_at;
+        }
+
+        public void setScheduled_at(String scheduled_at) {
+            this.scheduled_at = scheduled_at;
+        }
+
+        public String getJob_description() {
+            return job_description;
+        }
+
+        public void setJob_description(String job_description) {
+            this.job_description = job_description;
+        }
+    }
+
 }

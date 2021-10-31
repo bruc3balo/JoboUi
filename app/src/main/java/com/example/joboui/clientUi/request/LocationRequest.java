@@ -1,6 +1,8 @@
 package com.example.joboui.clientUi.request;
 
 import static com.example.joboui.SplashScreen.LOCATION_PERMISSION_CODE;
+import static com.example.joboui.clientUi.ServiceRequestActivity.jobRequestForm;
+import static com.example.joboui.login.SignInActivity.getObjectMapper;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -32,6 +34,7 @@ import com.example.joboui.R;
 import com.example.joboui.databinding.FragmentLocationRequestBinding;
 import com.example.joboui.db.LocationsViewModel;
 import com.example.joboui.domain.Domain;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -59,15 +62,11 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
     private MapView mapView;
     private GoogleMap mMap;
     private FragmentLocationRequestBinding binding;
-    private Domain.Services services;
 
     public LocationRequest() {
         // Required empty public constructor
     }
 
-    public LocationRequest( Domain.Services services) {
-        this.services = services;
-    }
 
 
     @Override
@@ -159,6 +158,11 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
                 LatLng lat = new LatLng(address.get().getLatitude(), address.get().getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lat, 15));
                 addMarkerToMap(mMap,lat);
+                try {
+                    jobRequestForm.setJob_location(getObjectMapper().writeValueAsString(lat));
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
 
             return false;
@@ -217,6 +221,11 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
             Address address = addresses.get(0);
             Snackbar.make(binding.getRoot(), address.getAddressLine(0), Snackbar.LENGTH_LONG).show();
             binding.locationPickedTv.setText(address.getAddressLine(0));
+            try {
+                jobRequestForm.setJob_location(getObjectMapper().writeValueAsString(new LatLng(marker.getPosition().latitude,marker.getPosition().longitude)));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
             return address.getAddressLine(0);
         } catch (IOException | IllegalArgumentException e) {
             Toast.makeText(requireActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -231,6 +240,12 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
             Address address = addresses.get(0);
             Snackbar.make(binding.getRoot(), address.getAddressLine(0), Snackbar.LENGTH_LONG).show();
             binding.locationPickedTv.setText(address.getAddressLine(0));
+            try {
+                jobRequestForm.setJob_location(getObjectMapper().writeValueAsString(latLng));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+
             return address.getAddressLine(0);
         } catch (IOException | IllegalArgumentException e) {
             Toast.makeText(requireActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
