@@ -44,6 +44,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,8 +54,8 @@ import java.util.Optional;
 public class ServiceProviderAdditionalActivity extends AppCompatActivity {
 
     private ActivityServiceProviderAdditionalBinding serviceProviderAdditionalBinding;
-    private final Map<String, String> preferredWorkingHours = new HashMap<>();
-    private final ArrayList<String> speciality = new ArrayList<>();
+    private final LinkedHashMap<String, String> preferredWorkingHours = new LinkedHashMap<>();
+    private final LinkedList<String> speciality = new LinkedList<>();
     private Models.UserUpdateForm updateForm;
     private final ArrayList<Domain.Services> allSpecialities = new ArrayList<>();
 

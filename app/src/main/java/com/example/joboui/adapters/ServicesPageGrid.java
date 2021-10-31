@@ -18,9 +18,11 @@ import androidx.lifecycle.Observer;
 import com.bumptech.glide.Glide;
 import com.example.joboui.R;
 import com.example.joboui.domain.Domain;
+import com.example.joboui.utils.MyLinkedMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +33,7 @@ public class ServicesPageGrid extends BaseAdapter {
     public ServicesPageGrid(LifecycleOwner lifecycleOwner) {
         try {
             serviceRepository.updateServices();
+        } catch (Exception ignored) { } finally {
             serviceRepository.getServiceLive().observe(lifecycleOwner, services -> {
                 if (!services.isEmpty()) {
                     serviceList.clear();
@@ -38,7 +41,7 @@ public class ServicesPageGrid extends BaseAdapter {
                     notifyDataSetChanged();
                 }
             });
-        } catch (Exception ignored) { }
+        }
     }
 
     @Override
@@ -50,7 +53,6 @@ public class ServicesPageGrid extends BaseAdapter {
     public Domain.Services getItem(int position) {
         return serviceList.get(position);
     }
-
 
     @Override
     public long getItemId(int position) {
@@ -76,10 +78,9 @@ public class ServicesPageGrid extends BaseAdapter {
         return convertView;
     }
 
+    public static MyLinkedMap<String, Integer> getServiceDrawables () {
 
-    public static Map<String, Integer> getServiceDrawables() {
-
-        Map<String, Integer> map = new HashMap<>();
+        MyLinkedMap<String, Integer> map = new MyLinkedMap<>();
 
         map.put(PLUMBING, R.drawable.ic_plumbing);
         map.put(ELECTRICAL, R.drawable.ic_electrician);
@@ -93,8 +94,8 @@ public class ServicesPageGrid extends BaseAdapter {
         map.put(MOVING, R.drawable.ic_moving_);
         map.put(GENERAL_REPAIRS, R.drawable.ic_general_repair);
 
+
         return map;
     }
-
 
 }

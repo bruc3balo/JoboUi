@@ -238,7 +238,7 @@ public class Domain {
     }
 
     @Entity(tableName = GlobalVariables.SERVICE_DB)
-    public static class Services {
+    public static class Services implements Serializable{
         @PrimaryKey
         @NotNull
         private Long id;

@@ -15,7 +15,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,9 +41,9 @@ public class Models {
 
         private String bio = HY;
 
-        private Map<String, String> preferred_working_hours = new HashMap<>();
+        private LinkedHashMap<String, String> preferred_working_hours = new LinkedHashMap<>();
 
-        private List<String> specialities = new ArrayList<>();
+        private LinkedList<String> specialities = new LinkedList<>();
 
         private String role;
 
@@ -119,7 +121,7 @@ public class Models {
             return preferred_working_hours;
         }
 
-        public void setPreferred_working_hours(Map<String, String> preferred_working_hours) {
+        public void setPreferred_working_hours(LinkedHashMap<String, String> preferred_working_hours) {
             this.preferred_working_hours = preferred_working_hours;
         }
 
@@ -127,7 +129,7 @@ public class Models {
             return specialities;
         }
 
-        public void setSpecialities(List<String> specialities) {
+        public void setSpecialities(LinkedList<String> specialities) {
             this.specialities = specialities;
         }
 
@@ -247,9 +249,9 @@ public class Models {
 
         private Boolean tutorial;
 
-        private Map<String, String> preferred_working_hours;
+        private LinkedHashMap<String, String> preferred_working_hours;
 
-        private List<String> specialities;
+        private LinkedList<String> specialities;
 
         public UserUpdateForm() {
 
@@ -257,7 +259,7 @@ public class Models {
 
 
 
-        public UserUpdateForm(String id_number, String bio, Map<String, String> preferred_working_hours, List<String> specialities,Boolean tutorial) {
+        public UserUpdateForm(String id_number, String bio, LinkedHashMap<String, String> preferred_working_hours, LinkedList<String> specialities,Boolean tutorial) {
             this.id_number = id_number;
             this.bio = bio;
             this.preferred_working_hours = preferred_working_hours;
@@ -265,14 +267,14 @@ public class Models {
             this.tutorial = tutorial;
         }
 
-        public UserUpdateForm(String id_number, String bio, Map<String, String> preferred_working_hours, List<String> specialities) {
+        public UserUpdateForm(String id_number, String bio, LinkedHashMap<String, String> preferred_working_hours, LinkedList<String> specialities) {
             this.id_number = id_number;
             this.bio = bio;
             this.preferred_working_hours = preferred_working_hours;
             this.specialities = specialities;
         }
 
-        public UserUpdateForm(String names, String email_address, String password, String role, String phone_number, String id_number, String bio, Map<String, String> preferred_working_hours, List<String> specialities,Boolean tutorial) {
+        public UserUpdateForm(String names, String email_address, String password, String role, String phone_number, String id_number, String bio, LinkedHashMap<String, String> preferred_working_hours, LinkedList<String> specialities,Boolean tutorial) {
             this.names = names;
             this.email_address = email_address;
             this.password = password;
@@ -353,19 +355,19 @@ public class Models {
             this.bio = bio;
         }
 
-        public Map<String, String> getPreferred_working_hours() {
+        public LinkedHashMap<String, String> getPreferred_working_hours() {
             return preferred_working_hours;
         }
 
-        public void setPreferred_working_hours(Map<String, String> preferred_working_hours) {
+        public void setPreferred_working_hours(LinkedHashMap<String, String> preferred_working_hours) {
             this.preferred_working_hours = preferred_working_hours;
         }
 
-        public List<String> getSpecialities() {
+        public LinkedList<String> getSpecialities() {
             return specialities;
         }
 
-        public void setSpecialities(List<String> specialities) {
+        public void setSpecialities(LinkedList<String> specialities) {
             this.specialities = specialities;
         }
     }

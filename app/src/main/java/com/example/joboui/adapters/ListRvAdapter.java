@@ -16,15 +16,16 @@ import com.example.joboui.R;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder> {
 
-    private ArrayList<String> list;
+    private LinkedList<String> list;
     private ItemClickListener mClickListener;
     private Context mContext;
 
 
-    public ListRvAdapter(Context context, ArrayList<String> list) {
+    public ListRvAdapter(Context context, LinkedList<String> list) {
         this.list = list;
         this.mContext = context;
     }

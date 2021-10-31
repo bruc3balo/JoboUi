@@ -134,11 +134,13 @@ public class ServiceRepository {
                             Domain.Services service = new Services(ser.getId(), ser.getName(), ser.getDescription(), ser.getDisabled(), ser.getCreated_at().toString(), ser.getUpdated_at().toString());
                             servicesList.add(service);
 
-                            servicesMutable.setValue(Optional.of(servicesList));
+
                         } catch (JsonProcessingException e) {
                             e.printStackTrace();
                         }
                     }
+
+                    servicesMutable.setValue(Optional.of(servicesList));
 
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
@@ -158,7 +160,6 @@ public class ServiceRepository {
         });
 
     }
-
 
     //Used Methods
     public void insert(Domain.Services services) {

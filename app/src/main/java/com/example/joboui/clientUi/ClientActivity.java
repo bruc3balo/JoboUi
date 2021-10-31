@@ -7,6 +7,7 @@ import static com.example.joboui.SplashScreen.removeListener;
 import static com.example.joboui.globals.GlobalDb.serviceRepository;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.LOGGED_IN;
+import static com.example.joboui.globals.GlobalVariables.SERVICE_DB;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.SignInActivity.clearSp;
 import static com.example.joboui.login.SignInActivity.getSp;
@@ -14,6 +15,7 @@ import static com.example.joboui.login.SignInActivity.getSp;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,7 +62,12 @@ public class ClientActivity extends AppCompatActivity {
         GridView servicesGrid = clientBinding.servicesGrid;
         servicesPageGridAdapter = new ServicesPageGrid(ClientActivity.this);
         servicesGrid.setAdapter(servicesPageGridAdapter);
-        servicesGrid.setOnItemClickListener((adapterView, view, position, id) -> Toast.makeText(ClientActivity.this, servicesPageGridAdapter.getItem(position).getName(), Toast.LENGTH_SHORT).show());
+        servicesGrid.setOnItemClickListener((adapterView, view, position, id) -> {
+            //Toast.makeText(ClientActivity.this, servicesPageGridAdapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(SERVICE_DB,servicesPageGridAdapter.getItem(position));
+            startActivity(new Intent(ClientActivity.this,ServiceRequestActivity.class).putExtras(bundle));
+        });
 
         SearchView clientSearch = clientBinding.clientSearch;
         clientSearch.setOnQueryTextFocusChangeListener((view, hasFocus) -> {

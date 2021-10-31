@@ -3,12 +3,14 @@ package com.example.joboui.db.userDb;
 import static com.example.joboui.globals.GlobalVariables.API_URL;
 import static com.example.joboui.globals.GlobalVariables.AUTHORIZATION;
 import static com.example.joboui.globals.GlobalVariables.CONTEXT_URL;
+import static com.example.joboui.globals.GlobalVariables.SPECIALITIES;
 import static com.example.joboui.globals.GlobalVariables.USERNAME;
 
 import com.example.joboui.model.Models;
 import com.example.joboui.model.Models.*;
 import com.example.joboui.utils.JsonResponse;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -39,6 +41,9 @@ public interface UserApi {
 
     @GET(base + "/usernames")
     Call<JsonResponse> getUsernames();
+
+    @GET(base + "/providers")
+    Call<JsonResponse> getProviders(@QueryMap HashMap<String,String> parameters,@Header(AUTHORIZATION) String token);
 
     @POST(base + "/save")
     Call<JsonResponse> saveUser(@Body NewUserForm newUserForm);
