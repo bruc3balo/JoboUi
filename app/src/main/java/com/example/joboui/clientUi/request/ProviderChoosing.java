@@ -26,10 +26,13 @@ import com.example.joboui.adapters.ProviderRVAdapter;
 import com.example.joboui.clientUi.ServiceRequestActivity;
 import com.example.joboui.databinding.FragmentProviderChoosingBinding;
 import com.example.joboui.databinding.YesNoInfoLayoutBinding;
+import com.example.joboui.db.job.JobViewModel;
 import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
+import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.w3c.dom.Text;
@@ -74,10 +77,10 @@ public class ProviderChoosing extends Fragment {
         }
 
         adapter.setClickListener((view, position) -> {
-            jobRequestForm.setLocal_service_provider_id(providerList.get(position).getId().toString());
-            if (jobRequestForm.getLocal_service_provider_id() == null) {
+            jobRequestForm.setLocal_service_provider_username(providerList.get(position).getUsername());
+            if (jobRequestForm.getLocal_service_provider_username() == null) {
                 Toast.makeText(requireContext(), "You need to pick a service provider", Toast.LENGTH_SHORT).show();
-            } else if (jobRequestForm.getClient_id() == null) {
+            } else if (jobRequestForm.getClient_username() == null) {
                 Toast.makeText(requireContext(), "We had a problem getting your data", Toast.LENGTH_SHORT).show();
             } else if (jobRequestForm.getJob_location() == null) {
                 Toast.makeText(requireContext(), "Pick a location for the job", Toast.LENGTH_SHORT).show();
@@ -106,14 +109,43 @@ public class ProviderChoosing extends Fragment {
         Button no = binding.noButton;
         Button yes = binding.yesButton;
         yes.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Sending your request", Toast.LENGTH_SHORT).show();
+            addJobRequest();
             d.dismiss();
-            requireActivity().finish();
         });
 
 
         no.setOnClickListener(v -> d.dismiss());
 
+
+    }
+
+
+    private void addJobRequest() {
+        Toast.makeText(requireContext(), "Sending your request", Toast.LENGTH_SHORT).show();
+
+        System.out.println(new Gson().toJson(jobRequestForm));
+
+        new ViewModelProvider(this).get(JobViewModel.class).sendJobRequestLive(jobRequestForm).observe(getViewLifecycleOwner(), jsonResponse -> {
+            if (!jsonResponse.isPresent()) {
+                Toast.makeText(requireContext(), "Failed to get response", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            JsonResponse response = jsonResponse.get();
+
+            if (response.isHas_error() && !response.isSuccess()) {
+                Toast.makeText(requireContext(), response.getApi_code_description(), Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (response.getData() == null) {
+                Toast.makeText(requireContext(), "Failed to get data from server", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Toast.makeText(requireContext(), "Request successfully created", Toast.LENGTH_SHORT).show();
+            requireActivity().finish();
+        });
 
     }
 

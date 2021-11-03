@@ -27,18 +27,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.joboui.R;
 import com.example.joboui.adapters.ServicesPageGrid;
 import com.example.joboui.databinding.ActivityClientBinding;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.login.ServiceProviderAdditionalActivity;
+import com.google.android.material.navigation.NavigationView;
 
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -46,9 +51,12 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ClientActivity extends AppCompatActivity {
-    ActivityClientBinding clientBinding;
-    ServicesPageGrid servicesPageGridAdapter;
+    private ActivityClientBinding clientBinding;
+    private ServicesPageGrid servicesPageGridAdapter;
     private Domain.User me;
+    private DrawerLayout drawerLayout;
+    private boolean backPressed = false;
+
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -79,15 +87,67 @@ public class ClientActivity extends AppCompatActivity {
                 hideSearch(clientBinding.introText, clientSearch);
             }
         });
-        userRepository.getUserLive().observe(this, user -> {
-            if (user.isPresent()) {
-                me = user.get();
-                clientBinding.welcomeText.setText(getWelcomeGreeting(me.getUsername()));
+
+
+        drawerLayout = clientBinding.getRoot();
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
             }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
+        NavigationView clientDrawer = clientBinding.clientNavigation;
+
+        ImageView openDrawer = clientBinding.openDrawer;
+        openDrawer.setOnClickListener(v -> openDrawer(drawerLayout));
+
+        View view = clientDrawer.getHeaderView(0);
+
+        clientDrawer.setNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                default:
+                case R.id.myJobs:
+                    closeDrawer(drawerLayout);
+                    goToMyJobs();
+                    break;
+
+            }
+
+            return false;
         });
 
         setWindowColors();
 
+        userRepository.getUserLive().observe(this, user -> {
+            if (user.isPresent()) {
+                me = user.get();
+                clientBinding.welcomeText.setText(getWelcomeGreeting(me.getUsername()));
+                TextView username = view.findViewById(R.id.username);
+                username.setText(me.getUsername());
+                TextView email = view.findViewById(R.id.emailAddress);
+                email.setText(me.getEmail_address());
+            }
+        });
+
+    }
+
+    private void goToMyJobs () {
+        startActivity(new Intent(ClientActivity.this,MyJobs.class));
     }
 
     private SpannableStringBuilder getWelcomeGreeting(String username) {
@@ -127,6 +187,7 @@ public class ClientActivity extends AppCompatActivity {
     }
 
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Logout").setOnMenuItemClickListener(menuItem -> {
@@ -135,6 +196,21 @@ public class ClientActivity extends AppCompatActivity {
             return false;
         }).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (isDrawerOpen(clientBinding.getRoot())) {
+            closeDrawer(clientBinding.getRoot());
+        } else {
+            if (!backPressed) {
+                backPressed = true;
+                Toast.makeText(this, "Press again to exit", Toast.LENGTH_SHORT).show();
+            } else {
+                super.onBackPressed();
+            }
+        }
     }
 
     @Override
@@ -192,6 +268,20 @@ public class ClientActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(getColor(R.color.purple));
         getWindow().setNavigationBarColor(getColor(R.color.purple));
 
+    }
+
+    public static void closeDrawer(DrawerLayout drawerLayout) {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+            drawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    public static void openDrawer(DrawerLayout drawerLayout) {
+        if (!drawerLayout.isDrawerOpen(GravityCompat.START))
+            drawerLayout.openDrawer(GravityCompat.START);
+    }
+
+    public static boolean isDrawerOpen(DrawerLayout drawerLayout) {
+        return drawerLayout.isDrawerOpen(GravityCompat.START);
     }
 
 

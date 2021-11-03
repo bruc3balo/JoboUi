@@ -32,9 +32,10 @@ import java.util.Set;
 
 public class ServicesPageGrid extends BaseAdapter {
 
-    private final Set<Domain.Services> serviceList = new HashSet<>();
+    private final MyLinkedMap<Integer, Domain.Services> serviceList = new MyLinkedMap<>();
 
     //todo solve bug
+    //todo send request
 
     public ServicesPageGrid(LifecycleOwner lifecycleOwner) {
         try {
@@ -42,10 +43,16 @@ public class ServicesPageGrid extends BaseAdapter {
         } catch (Exception ignored) {
         } finally {
             serviceRepository.getServiceLive().observe(lifecycleOwner, services -> {
-                if (!services.isEmpty()) {
-                    serviceList.addAll(services);
-                    System.out.println("THE SIZE IS " + services.size());
-                    notifyDataSetChanged();
+                if (services.isPresent()) {
+                    if (!services.get().isEmpty()) {
+                        serviceList.clear();
+                        notifyDataSetChanged();
+                        services.get().forEach(s -> {
+                            serviceList.put(services.get().indexOf(s), s);
+                        });
+                        System.out.println("THE SIZE IS " + services.get().size());
+                        notifyDataSetChanged();
+                    }
                 }
             });
         }
@@ -58,7 +65,7 @@ public class ServicesPageGrid extends BaseAdapter {
 
     @Override
     public Optional<Domain.Services> getItem(int position) {
-        return serviceList.stream().filter(i -> Integer.valueOf(i.getId().toString()).equals(position)).findFirst();
+        return Optional.of(serviceList.getValue(position));
     }
 
     @Override
@@ -73,18 +80,17 @@ public class ServicesPageGrid extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_row, null);
         }
-        Optional<Domain.Services> service = serviceList.stream().filter(i -> Integer.valueOf(i.getId().toString()).equals(position)).findFirst();
 
-        if (service.isPresent()) {
 
-            System.out.println("Size is " + serviceList.size());
+        System.out.println("Size is " + serviceList.size());
 
-            TextView title = convertView.findViewById(R.id.title_row);
-            title.setText(service.get().getName());
-            ImageView icon = convertView.findViewById(R.id.icon_row);
-            Glide.with(parent.getContext()).load(getServiceDrawables().get(service.get().getName())).into(icon);
+        String name = serviceList.getValue(position).getName();
 
-        }
+        TextView title = convertView.findViewById(R.id.title_row);
+        title.setText(name);
+        ImageView icon = convertView.findViewById(R.id.icon_row);
+        Glide.with(parent.getContext()).load(getServiceDrawables().get(name)).into(icon);
+
 
         return convertView;
     }

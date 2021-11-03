@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -846,9 +847,9 @@ public class Models {
 
     public static class JobRequestForm {
 
-        private String local_service_provider_id;
+        private String local_service_provider_username;
 
-        private String client_id;
+        private String client_username;
 
         private String job_location;
 
@@ -858,24 +859,26 @@ public class Models {
 
         private String job_description;
 
+        private String job_price_range;
+
         public JobRequestForm() {
 
         }
 
-        public String getLocal_service_provider_id() {
-            return local_service_provider_id;
+        public String getLocal_service_provider_username() {
+            return local_service_provider_username;
         }
 
-        public void setLocal_service_provider_id(String local_service_provider_id) {
-            this.local_service_provider_id = local_service_provider_id;
+        public void setLocal_service_provider_username(String local_service_provider_username) {
+            this.local_service_provider_username = local_service_provider_username;
         }
 
-        public String getClient_id() {
-            return client_id;
+        public String getClient_username() {
+            return client_username;
         }
 
-        public void setClient_id(String client_id) {
-            this.client_id = client_id;
+        public void setClient_username(String client_username) {
+            this.client_username = client_username;
         }
 
         public String getJob_location() {
@@ -909,6 +912,244 @@ public class Models {
         public void setJob_description(String job_description) {
             this.job_description = job_description;
         }
+
+        public String getJob_price_range() {
+            return job_price_range;
+        }
+
+        public void setJob_price_range(String job_price_range) {
+            this.job_price_range = job_price_range;
+        }
     }
+
+    public static class JobUpdateForm {
+
+        private String job_location;
+
+        private String scheduled_at;
+
+        private Boolean completed_at;
+
+        private String job_price_range;
+
+        private String job_price;
+
+        private Integer job_status;
+
+        public JobUpdateForm() {
+        }
+
+        public JobUpdateForm(String job_location, String scheduled_at, Boolean completed_at, String job_price_range, String job_price, Integer job_status) {
+            this.job_location = job_location;
+            this.scheduled_at = scheduled_at;
+            this.completed_at = completed_at;
+            this.job_price_range = job_price_range;
+            this.job_price = job_price;
+            this.job_status = job_status;
+        }
+
+        public String getJob_location() {
+            return job_location;
+        }
+
+        public void setJob_location(String job_location) {
+            this.job_location = job_location;
+        }
+
+        public String getScheduled_at() {
+            return scheduled_at;
+        }
+
+        public void setScheduled_at(String scheduled_at) {
+            this.scheduled_at = scheduled_at;
+        }
+
+        public Boolean getCompleted_at() {
+            return completed_at;
+        }
+
+        public void setCompleted_at(Boolean completed_at) {
+            this.completed_at = completed_at;
+        }
+
+        public String getJob_price_range() {
+            return job_price_range;
+        }
+
+        public void setJob_price_range(String job_price_range) {
+            this.job_price_range = job_price_range;
+        }
+
+        public String getJob_price() {
+            return job_price;
+        }
+
+        public void setJob_price(String job_price) {
+            this.job_price = job_price;
+        }
+
+        public Integer getJob_status() {
+            return job_status;
+        }
+
+        public void setJob_status(Integer job_status) {
+            this.job_status = job_status;
+        }
+    }
+
+    public static class Job {
+
+        private Long id;
+
+        private String local_service_provider_username;
+
+        private String client_username;
+
+        private String job_location;
+
+        private String specialities;
+
+        private String created_at;
+
+        private String updated_at;
+
+        private String scheduled_at;
+
+        private String completed_at;
+
+        private String job_price_range;
+
+        private BigDecimal job_price;
+
+        private String job_description;
+
+        private Integer job_status;
+
+        public Job() {
+
+        }
+
+        public Job(Long id, String local_service_provider_username, String client_username, String job_location, String specialities, String created_at, String updated_at, String scheduled_at, String completed_at, String job_price_range, BigDecimal job_price, String job_description, Integer job_status) {
+            this.id = id;
+            this.local_service_provider_username = local_service_provider_username;
+            this.client_username = client_username;
+            this.job_location = job_location;
+            this.specialities = specialities;
+            this.created_at = created_at;
+            this.updated_at = updated_at;
+            this.scheduled_at = scheduled_at;
+            this.completed_at = completed_at;
+            this.job_price_range = job_price_range;
+            this.job_price = job_price;
+            this.job_description = job_description;
+            this.job_status = job_status;
+        }
+
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String    getLocal_service_provider_username() {
+            return local_service_provider_username;
+        }
+
+        public void setLocal_service_provider_username(String local_service_provider_username) {
+            this.local_service_provider_username = local_service_provider_username;
+        }
+
+        public String getClient_username() {
+            return client_username;
+        }
+
+        public void setClient_username(String client_username) {
+            this.client_username = client_username;
+        }
+
+        public String getJob_location() {
+            return job_location;
+        }
+
+        public void setJob_location(String job_location) {
+            this.job_location = job_location;
+        }
+
+        public String getSpecialities() {
+            return specialities;
+        }
+
+        public void setSpecialities(String specialities) {
+            this.specialities = specialities;
+        }
+
+        public String getCreated_at() {
+            return created_at;
+        }
+
+        public void setCreated_at(String created_at) {
+            this.created_at = created_at;
+        }
+
+        public String getUpdated_at() {
+            return updated_at;
+        }
+
+        public void setUpdated_at(String updated_at) {
+            this.updated_at = updated_at;
+        }
+
+        public String getScheduled_at() {
+            return scheduled_at;
+        }
+
+        public void setScheduled_at(String scheduled_at) {
+            this.scheduled_at = scheduled_at;
+        }
+
+        public String getCompleted_at() {
+            return completed_at;
+        }
+
+        public void setCompleted_at(String completed_at) {
+            this.completed_at = completed_at;
+        }
+
+        public String getJob_price_range() {
+            return job_price_range;
+        }
+
+        public void setJob_price_range(String job_price_range) {
+            this.job_price_range = job_price_range;
+        }
+
+        public BigDecimal getJob_price() {
+            return job_price;
+        }
+
+        public void setJob_price(BigDecimal job_price) {
+            this.job_price = job_price;
+        }
+
+        public String getJob_description() {
+            return job_description;
+        }
+
+        public void setJob_description(String job_description) {
+            this.job_description = job_description;
+        }
+
+        public Integer getJob_status() {
+            return job_status;
+        }
+
+        public void setJob_status(Integer job_status) {
+            this.job_status = job_status;
+        }
+    }
+
 
 }

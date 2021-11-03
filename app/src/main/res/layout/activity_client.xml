@@ -1,134 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".clientUi.ClientActivity">
 
-    <LinearLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:padding="10dp"
-            android:id="@+id/clientToolbar"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-           <LinearLayout
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:orientation="vertical">
+            <androidx.appcompat.widget.Toolbar
+                android:padding="10dp"
+                android:id="@+id/clientToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white">
 
-               <LinearLayout
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:layout_gravity="center"
-                   android:gravity="center_vertical"
-                   android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                   <ImageButton
-                       android:layout_width="50dp"
-                       android:layout_height="50dp"
-                       android:layout_gravity="center"
-                       android:src="@drawable/ic_menu_circle"
-                       android:background="@android:color/transparent"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-                   <TextView
-                       android:id="@+id/welcomeText"
-                       android:layout_weight="1"
-                       android:layout_width="0dp"
-                       android:layout_height="wrap_content"
-                       android:layout_gravity="center_vertical"
-                       android:gravity="center_vertical"
-                       android:textColor="@color/deep_purple"
-                       android:textSize="18sp"
-                       android:fontFamily="@font/roboto_medium"
-                       android:text="@string/good_morning_wafula"/>
+                        <ImageButton
+                            android:id="@+id/openDrawer"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_menu_circle"
+                            android:background="@android:color/transparent"/>
 
-                   <ImageButton
-                       android:layout_width="50dp"
-                       android:layout_height="50dp"
-                       android:layout_gravity="center"
-                       android:src="@drawable/ic_bell_notification"
-                       android:background="@android:color/transparent"/>
+                        <TextView
+                            android:id="@+id/welcomeText"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/deep_purple"
+                            android:textSize="18sp"
+                            android:fontFamily="@font/roboto_medium"
+                            android:text="@string/good_morning_wafula"/>
 
-               </LinearLayout>
+                        <ImageButton
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_bell_notification"
+                            android:background="@android:color/transparent"/>
 
-               <LinearLayout
-                   android:padding="10dp"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:layout_gravity="center"
-                   android:gravity="center_vertical"
-                   android:orientation="horizontal">
+                    </LinearLayout>
 
-                   <TextView
-                       android:id="@+id/introText"
-                       android:layout_weight="2"
-                       android:layout_width="0dp"
-                       android:layout_height="match_parent"
-                       android:layout_gravity="center_vertical"
-                       android:gravity="center_vertical"
-                       android:textColor="@color/deep_purple"
-                       android:textSize="15sp"
-                       android:textStyle="bold"
-                       android:fontFamily="@font/roboto_medium"
-                       android:text="@string/what_service"/>
+                    <LinearLayout
+                        android:padding="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-                   <androidx.appcompat.widget.SearchView
-                       android:id="@+id/clientSearch"
-                       android:layout_width="0dp"
-                       android:layout_weight="0.5"
-                       android:layout_height="match_parent"
-                       android:layout_gravity="center|end"
-                       app:queryHint="@string/search"
-                       app:defaultQueryHint="@string/search"
-                       android:src="@drawable/ic_bell_notification"
-                       android:background="@drawable/search_bg"/>
+                        <TextView
+                            android:id="@+id/introText"
+                            android:layout_weight="2"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/deep_purple"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/roboto_medium"
+                            android:text="@string/what_service"/>
 
-               </LinearLayout>
+                        <androidx.appcompat.widget.SearchView
+                            android:id="@+id/clientSearch"
+                            android:layout_width="0dp"
+                            android:layout_weight="0.5"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center|end"
+                            app:queryHint="@string/search"
+                            app:defaultQueryHint="@string/search"
+                            android:src="@drawable/ic_bell_notification"
+                            android:background="@drawable/search_bg"/>
 
-           </LinearLayout>
+                    </LinearLayout>
 
-        </androidx.appcompat.widget.Toolbar>
+                </LinearLayout>
 
-         <LinearLayout
-             android:background="@color/lgrey"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:orientation="vertical">
+            </androidx.appcompat.widget.Toolbar>
 
-             <TextView
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:layout_gravity="top|center_vertical"
-                 android:gravity="center_vertical"
-                 android:textColor="@color/deep_purple"
-                 android:textSize="15sp"
-                 android:textStyle="bold"
-                 android:layout_margin="15dp"
-                 android:fontFamily="@font/roboto_medium"
-                 android:text="@string/select_service"/>
+            <LinearLayout
+                android:background="@color/lgrey"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-
-                 <GridView
-                     android:id="@+id/servicesGrid"
-                     android:layout_margin="10dp"
-                     android:horizontalSpacing="10dp"
-                     android:verticalSpacing="10dp"
-                     android:layout_height="match_parent"
-                     android:layout_width="match_parent"
-                     android:layout_gravity="center"
-                     android:numColumns="3"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|center_vertical"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/deep_purple"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_margin="15dp"
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="@string/select_service"/>
 
 
+                <GridView
+                    android:id="@+id/servicesGrid"
+                    android:layout_margin="10dp"
+                    android:horizontalSpacing="10dp"
+                    android:verticalSpacing="10dp"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center"
+                    android:numColumns="3"/>
 
-         </LinearLayout>
 
-    </LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/clientNavigation"
+        app:menu="@menu/client_drawer"
+        app:headerLayout="@layout/client_header"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>

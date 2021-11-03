@@ -91,4 +91,20 @@
     <string name="scheduled">Scheduled</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="my_jobs">My Jobs</string>
+    <string name="parties">Parties</string>
+    <string name="location">Location</string>
+    <string name="price">Price</string>
+    <string name="job_description">Job Description</string>
+    <string name="status">Status</string>
+    <string name="job_description_label">Job description : </string>
+    <string name="client_label">Client : </string>
+    <string name="service_provider_label">Service Provider : </string>
+    <string name="job_status_label">Job status : </string>
+    <string name="location_label">Location : </string>
+    <string name="speciality_label">Speciality : </string>
+    <string name="price_label">Price : </string>
+    <string name="price_range_label">Price Range : </string>
+    <string name="createdat_label">Created at : </string>
+    <string name="completedat_label">Completed at : </string>
 </resources>

@@ -41,6 +41,7 @@ import retrofit2.Response;
 
 public class ServiceRepository {
     private final ServiceDao serviceDao;
+    private final MutableLiveData<Optional<List<Services>>> servicesMutable = new MutableLiveData<>();
 
     //methods are to store just one users data, not many
     //to be used to cache
@@ -48,7 +49,7 @@ public class ServiceRepository {
     public ServiceRepository(Application application) {
         ServiceDB database = ServiceDB.getInstance(application);
         serviceDao = database.serviceDao();
-
+        servicesMutable.setValue(Optional.of(serviceDao.getServicesList()));
     }
 
     //Abstraction layer for encapsulation
@@ -96,7 +97,6 @@ public class ServiceRepository {
     }
 
     public void updateServices() {
-        MutableLiveData<Optional<List<Services>>> servicesMutable = new MutableLiveData<>();
 
         List<Domain.Services> servicesList = new ArrayList<>();
         Map<String, String> parameters = new HashMap<>();
@@ -110,13 +110,13 @@ public class ServiceRepository {
                 JsonResponse jsonResponse = response.body();
 
                 if (jsonResponse == null) {
-                    servicesMutable.setValue(Optional.empty());
+                    //servicesMutable.setValue(Optional.empty());
                     System.out.println("FAILED TO GET SERVICE RESPONSE");
                     return;
                 }
 
                 if (jsonResponse.getData() == null) {
-                    servicesMutable.setValue(Optional.empty());
+                   // servicesMutable.setValue(Optional.empty());
                     System.out.println("FAILED TO GET SERVICE DATA");
                     return;
                 }
@@ -134,13 +134,11 @@ public class ServiceRepository {
                             Domain.Services service = new Services(ser.getId(), ser.getName(), ser.getDescription(), ser.getDisabled(), ser.getCreated_at().toString(), ser.getUpdated_at().toString());
                             servicesList.add(service);
 
-
                         } catch (JsonProcessingException e) {
                             e.printStackTrace();
                         }
                     }
 
-                    servicesMutable.setValue(Optional.of(servicesList));
 
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
@@ -148,23 +146,25 @@ public class ServiceRepository {
                     if (!servicesList.isEmpty()) {
                         try {
                             clearService();
-                        } catch (Exception ignored) {} finally {
+                        } catch (Exception ignored) {
+                        } finally {
                             servicesList.forEach(s -> insert(s));
                         }
                     }
                 }
 
-
+                servicesMutable.setValue(Optional.of(servicesList));
             }
 
             @Override
             public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
                 System.out.println(t.getMessage());
-                servicesMutable.setValue(Optional.empty());
+                //servicesMutable.setValue(Optional.empty());
             }
         });
 
     }
+
 
     //Used Methods
     public void insert(Domain.Services services) {
@@ -192,8 +192,8 @@ public class ServiceRepository {
         }
     }
 
-    public LiveData<List<Domain.Services>> getServiceLive() {
-        return serviceDao.getServiceListLiveData();
+    public LiveData<Optional<List<Domain.Services>>> getServiceLive() {
+        return servicesMutable;
     }
 
     public Optional<Domain.Services> getServiceByName(String name) {

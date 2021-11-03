@@ -5,6 +5,9 @@ import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.SERVICE_DB;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Lifecycle;
@@ -37,6 +41,7 @@ public class ServiceRequestActivity extends AppCompatActivity {
     private RequestPagerAdapter adapter;
     public static String speciality;
     public static JobRequestForm jobRequestForm = new JobRequestForm();
+    private int currentPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +60,8 @@ public class ServiceRequestActivity extends AppCompatActivity {
             toolbar.setSubtitle(service.getName());
             speciality = service.getName();
             jobRequestForm.setSpecialities(service.getName());
-            userRepository.getUserLive().observe(this, user -> user.ifPresent(value -> jobRequestForm.setClient_id(value.getId_number())));
+
+            userRepository.getUserLive().observe(this, user -> user.ifPresent(value -> jobRequestForm.setClient_username(value.getUsername())));
         }
 
         nextButton = binding.nextButton;
@@ -68,20 +74,35 @@ public class ServiceRequestActivity extends AppCompatActivity {
         pager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
+                currentPosition = position;
+                if (position == mainTitles.length - 1) {
+                    nextButton.setText("Finish");
+                } else {
+                    nextButton.setText("Next");
+                }
+                invalidateOptionsMenu();
                 super.onPageSelected(position);
             }
         });
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         menu.add("BACK").setIcon(R.drawable.ic_back).setOnMenuItemClickListener(item -> {
-            goPrevious();
+            if (!(currentPosition == 0)) {
+                goPrevious();
+            }
             return false;
-        }).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.add("NEXT").setIcon(R.drawable.ic_forward).setOnMenuItemClickListener(item -> {
-           goNext();
+        }).setIconTintList(currentPosition == 0 ? ColorStateList.valueOf(Color.GRAY) : ColorStateList.valueOf(Color.WHITE)).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add("NEXT").setIcon(R.drawable.ic_forward).setIconTintList(currentPosition == mainTitles.length - 1 ? ColorStateList.valueOf(Color.GRAY) : ColorStateList.valueOf(Color.WHITE)).setOnMenuItemClickListener(item -> {
+
+            if (!(currentPosition == mainTitles.length - 1)) {
+                goNext();
+            }
+
             return false;
         }).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return super.onCreateOptionsMenu(menu);

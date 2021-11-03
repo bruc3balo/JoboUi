@@ -80,7 +80,12 @@ public class DetailsFragment extends Fragment {
                 jobRequestForm.setScheduled_at(ASAP);
             } else if (checkedId == binding.schedules.getId()) {
                 binding.scheduledTimeTv.setVisibility(View.VISIBLE);
-                Calendar c = Calendar.getInstance();
+                final Calendar cldr = Calendar.getInstance();
+                int dayM = cldr.get(Calendar.DAY_OF_MONTH);
+                final int monthM = cldr.get(Calendar.MONTH);
+                int yearM = cldr.get(Calendar.YEAR);
+                int hr = cldr.get(Calendar.HOUR);
+                int min = cldr.get(Calendar.MINUTE);
 
                 final int[] hourS = {0};
                 final int[] minS = {0};
@@ -94,13 +99,14 @@ public class DetailsFragment extends Fragment {
                     scheduledDate.set(yearS[0],monthS[0],dayS[0], hourS[0], minS[0]);
                     binding.scheduledTimeTv.setText(scheduledDate.getTime().toString());
                     jobRequestForm.setScheduled_at(scheduledDate.getTime().toString());
-                },c.getTime().getHours(),c.getTime().getMinutes(),true);
+                },hr,min,true);
+
                 DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
                     yearS[0] = year;
                     monthS[0] = month + 1;
                     dayS[0] = dayOfMonth;
                     timePickerDialog.show();
-                }, c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDay());
+                }, yearM, monthM, dayM);
 
                 datePickerDialog.show();
                 datePickerDialog.setOnCancelListener(dialog -> {
@@ -114,6 +120,7 @@ public class DetailsFragment extends Fragment {
             }
         });
 
+        binding.asap.setChecked(true);
 
         return binding.getRoot();
     }

@@ -26,7 +26,6 @@ public class LocationsViewModel extends AndroidViewModel {
         MutableLiveData<List<Address>> suggestions = new MutableLiveData<>();
 
         try {
-
             suggestions.setValue(geocoder.getFromLocationName(query, 10));
         } catch (IOException e) {
             e.printStackTrace();

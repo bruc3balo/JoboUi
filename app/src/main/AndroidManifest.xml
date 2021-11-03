@@ -23,6 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JoboUi">
         <activity
+            android:name=".clientUi.MyJobs"
+            android:exported="true" />
+        <activity
             android:name=".clientUi.ServiceRequestActivity"
             android:exported="true" />
         <!--

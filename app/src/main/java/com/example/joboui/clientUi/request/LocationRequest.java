@@ -35,6 +35,7 @@ import com.example.joboui.databinding.FragmentLocationRequestBinding;
 import com.example.joboui.db.LocationsViewModel;
 import com.example.joboui.domain.Domain;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -43,7 +44,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -52,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -140,6 +149,7 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
         return binding.getRoot();
     }
 
+
     private void showSuggestions(View anchor) {
         PopupMenu menu = new PopupMenu(requireActivity(), anchor);
         menu.getMenu().add("CANCEL").setTitle("CANCEL").setOnMenuItemClickListener(menuItem -> {
@@ -158,11 +168,7 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
                 LatLng lat = new LatLng(address.get().getLatitude(), address.get().getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lat, 15));
                 addMarkerToMap(mMap,lat);
-                try {
-                    jobRequestForm.setJob_location(getObjectMapper().writeValueAsString(lat));
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
+                jobRequestForm.setJob_location(new Gson().toJson(lat));
             }
 
             return false;
@@ -249,6 +255,21 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
             return address.getAddressLine(0);
         } catch (IOException | IllegalArgumentException e) {
             Toast.makeText(requireActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            return null;
+        }
+    }
+
+    public static Address getAddressFromLocation (Context context,LatLng latLng) {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            if (!addresses.isEmpty()) {
+                return addresses.get(0);
+            } else {
+               return null;
+            }
+        } catch (IOException | IllegalArgumentException e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
             return null;
         }
     }

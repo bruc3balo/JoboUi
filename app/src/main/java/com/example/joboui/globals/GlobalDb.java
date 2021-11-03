@@ -6,6 +6,7 @@ import static com.example.joboui.globals.GlobalVariables.CONTEXT_URL;
 import android.annotation.SuppressLint;
 import android.app.Application;
 
+import com.example.joboui.db.job.JobApi;
 import com.example.joboui.db.service.ServiceApi;
 import com.example.joboui.db.service.ServiceRepository;
 import com.example.joboui.db.userDb.UserApi;
@@ -24,6 +25,7 @@ public class GlobalDb extends Application {
     public static UserRepository userRepository;
     public static ServiceRepository serviceRepository;
     public static UserApi userApi;
+    public static JobApi jobApi;
     public static ServiceApi serviceApi;
     public static Application application;
     public GlobalDb() {
@@ -38,6 +40,7 @@ public class GlobalDb extends Application {
             //instance for interface
             userApi = retrofit.create(UserApi.class);
             serviceApi = retrofit.create(ServiceApi.class);
+            jobApi = retrofit.create(JobApi.class);
             userRepository = new UserRepository(application);
             serviceRepository = new ServiceRepository(application);
             initialized = true;

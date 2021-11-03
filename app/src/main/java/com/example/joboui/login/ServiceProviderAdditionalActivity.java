@@ -110,7 +110,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
                 menu.dismiss();
                 return false;
             }).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            allSpecialities.forEach(p-> menu.getMenu().add(p.getName()).setTitle(p.getName()).setIcon(R.drawable.right).setOnMenuItemClickListener(menuItem -> {
+            allSpecialities.forEach(p -> menu.getMenu().add(p.getName()).setTitle(p.getName()).setIcon(R.drawable.right).setOnMenuItemClickListener(menuItem -> {
 
                 String item = menuItem.getTitle().toString();
 
@@ -134,7 +134,8 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         try {
             serviceRepository.updateServices();
             getServices();
-        } catch (Exception ignored) { }
+        } catch (Exception ignored) {
+        }
     }
 
     private void sendUpdateRequest() {
@@ -162,12 +163,16 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
 
     private void getServices() {
         serviceRepository.getServiceLive().observe(this, services -> {
-            if (services.isEmpty()) {
-                Toast.makeText(ServiceProviderAdditionalActivity.this, "Failed to get services", Toast.LENGTH_SHORT).show();
-                return;
+            if (services.isPresent()) {
+                if (services.get().isEmpty()) {
+                    Toast.makeText(ServiceProviderAdditionalActivity.this, "Failed to get services", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                allSpecialities.clear();
+                allSpecialities.addAll(services.get());
             }
-            allSpecialities.clear();
-            allSpecialities.addAll(services);
+
         });
     }
 
@@ -286,7 +291,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
     }
 
     private void goToTutorialPage() {
-       //todo  startActivity(new Intent(this, TutorialActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK).putExtra(ROLE, LOCAL_SERVICE_PROVIDER_ROLE));
+        //todo  startActivity(new Intent(this, TutorialActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK).putExtra(ROLE, LOCAL_SERVICE_PROVIDER_ROLE));
         finish();
     }
 }
