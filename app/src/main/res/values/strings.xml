@@ -107,4 +107,9 @@
     <string name="price_range_label">Price Range : </string>
     <string name="createdat_label">Created at : </string>
     <string name="completedat_label">Completed at : </string>
+    <string name="check_verification">Check verification status</string>
+    <string name="change_mobile_number">Change Mobile Number</string>
+    <string name="send_otp">Send Verification Message</string>
+    <string name="check_otp">Confirm OTP</string>
+    <string name="enter_password_received_from_sms">Enter digits received from sms</string>
 </resources>

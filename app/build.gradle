@@ -47,6 +47,18 @@ android {
 
 dependencies {
 
+    //safety net
+
+    implementation 'com.google.android.gms:play-services-safetynet:17.0.1'
+
+
+    //firebase
+    implementation platform('com.google.firebase:firebase-bom:29.0.0')
+
+    // Declare the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-auth'
+
     implementation 'com.google.android.libraries.places:places:2.5.0'
 
 

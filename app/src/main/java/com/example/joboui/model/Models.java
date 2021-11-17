@@ -4,18 +4,10 @@ package com.example.joboui.model;
 import static com.example.joboui.globals.GlobalVariables.HY;
 
 import androidx.annotation.NonNull;
-import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -248,7 +240,7 @@ public class Models {
 
         private String bio;
 
-        private Boolean tutorial;
+        private Boolean verified;
 
         private LinkedHashMap<String, String> preferred_working_hours;
 
@@ -258,14 +250,17 @@ public class Models {
 
         }
 
+        public UserUpdateForm(String phone_number, Boolean verified) {
+            this.phone_number = phone_number;
+            this.verified = verified;
+        }
 
-
-        public UserUpdateForm(String id_number, String bio, LinkedHashMap<String, String> preferred_working_hours, LinkedList<String> specialities,Boolean tutorial) {
+        public UserUpdateForm(String id_number, String bio, LinkedHashMap<String, String> preferred_working_hours, LinkedList<String> specialities, Boolean verified) {
             this.id_number = id_number;
             this.bio = bio;
             this.preferred_working_hours = preferred_working_hours;
             this.specialities = specialities;
-            this.tutorial = tutorial;
+            this.verified = verified;
         }
 
         public UserUpdateForm(String id_number, String bio, LinkedHashMap<String, String> preferred_working_hours, LinkedList<String> specialities) {
@@ -275,7 +270,7 @@ public class Models {
             this.specialities = specialities;
         }
 
-        public UserUpdateForm(String names, String email_address, String password, String role, String phone_number, String id_number, String bio, LinkedHashMap<String, String> preferred_working_hours, LinkedList<String> specialities,Boolean tutorial) {
+        public UserUpdateForm(String names, String email_address, String password, String role, String phone_number, String id_number, String bio, LinkedHashMap<String, String> preferred_working_hours, LinkedList<String> specialities,Boolean verified) {
             this.names = names;
             this.email_address = email_address;
             this.password = password;
@@ -285,19 +280,19 @@ public class Models {
             this.bio = bio;
             this.preferred_working_hours = preferred_working_hours;
             this.specialities = specialities;
-            this.tutorial = tutorial;
+            this.verified = verified;
         }
 
-        public UserUpdateForm(Boolean tutorial) {
-            this.tutorial = tutorial;
+        public UserUpdateForm(Boolean verified) {
+            this.verified = verified;
         }
 
-        public Boolean getTutorial() {
-            return tutorial;
+        public Boolean getVerified() {
+            return verified;
         }
 
-        public void setTutorial(Boolean tutorial) {
-            this.tutorial = tutorial;
+        public void setVerified(Boolean verified) {
+            this.verified = verified;
         }
 
         public String getNames() {
@@ -412,54 +407,41 @@ public class Models {
 
         private String names;
 
-
         private String username;
 
-
         private String id_number;
-
 
         private String email_address;
 
         private String phone_number;
 
-
         private String password;
-
 
         private String bio;
 
-
         private String last_known_location;
-
 
         private Date created_at;
 
-
         private Date updated_at;
-
 
         private AppRole role;
 
-
         private String preferred_working_hours;
-
 
         private String specialities;
 
-
         private Boolean disabled;
-
 
         private Boolean deleted;
 
-        private Boolean tutorial;
+        private Boolean verified;
 
         public AppUser() {
 
         }
 
-        public AppUser(Long id, String names, String username, String id_number, String email_address, String phone_number, String password, String bio, String last_known_location, Date created_at, Date updated_at, AppRole role, String preferred_working_hours, String specialities, Boolean disabled, Boolean deleted, Boolean tutorial) {
+        public AppUser(Long id, String names, String username, String id_number, String email_address, String phone_number, String password, String bio, String last_known_location, Date created_at, Date updated_at, AppRole role, String preferred_working_hours, String specialities, Boolean disabled, Boolean deleted, Boolean verified) {
             this.id = id;
             this.names = names;
             this.username = username;
@@ -476,7 +458,7 @@ public class Models {
             this.specialities = specialities;
             this.disabled = disabled;
             this.deleted = deleted;
-            this.tutorial = tutorial;
+            this.verified = verified;
         }
 
         public Long getId() {
@@ -519,12 +501,12 @@ public class Models {
             this.email_address = email_address;
         }
 
-        public Boolean getTutorial() {
-            return tutorial;
+        public Boolean getVerified() {
+            return verified;
         }
 
-        public void setTutorial(Boolean tutorial) {
-            this.tutorial = tutorial;
+        public void setVerified(Boolean verified) {
+            this.verified = verified;
         }
 
         public String getPhone_number() {

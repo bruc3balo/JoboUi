@@ -29,7 +29,7 @@ import com.example.joboui.databinding.ActivityRegisterBinding;
 import com.example.joboui.databinding.RoleDialogBinding;
 import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.model.Models;
-import com.example.joboui.tutorial.TutorialActivity;
+import com.example.joboui.tutorial.VerificationActivity;
 import com.example.joboui.utils.AppRolesEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -154,11 +154,12 @@ public class RegisterActivity extends AppCompatActivity {
         } else if (!phoneNumberField.getText().toString().startsWith("+254")) {
             phoneNumberField.setError("Must start with +254");
             phoneNumberField.setText("+254");
+            phoneNumberField.setSelection(4);
             phoneNumberField.requestFocus();
         } else if (phoneNumberField.getText().toString().length() < 12) {
             phoneNumberField.setError("Invalid phone number");
             phoneNumberField.requestFocus();
-        } else if (phoneNumberList.contains(phoneNumberField.getText().toString())) {
+        } else if (phoneNumberList.contains(phoneNumberField.getText().toString())|| phoneNumberList.contains(phoneNumberField.getText().toString().replace("+",""))) {
             phoneNumberField.setError("Phone number already added");
             phoneNumberField.requestFocus();
         } else {
@@ -287,8 +288,8 @@ public class RegisterActivity extends AppCompatActivity {
         activity.finish();
     }
 
-    public static void goToTutorialsPage(Activity activity) {
-        activity.startActivity(new Intent(activity, TutorialActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+    public static void goToVerificationPage(Activity activity) {
+        activity.startActivity(new Intent(activity, VerificationActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         activity.finish();
     }
 

@@ -5,7 +5,6 @@ import static com.example.joboui.globals.GlobalDb.userApi;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.ACCESS_TOKEN;
 import static com.example.joboui.globals.GlobalVariables.PAGE_NO;
-import static com.example.joboui.globals.GlobalVariables.PAGE_SIZE;
 import static com.example.joboui.globals.GlobalVariables.PASSWORD;
 import static com.example.joboui.globals.GlobalVariables.REFRESH_TOKEN;
 import static com.example.joboui.globals.GlobalVariables.SPECIALITIES;
@@ -33,7 +32,6 @@ import com.example.joboui.model.Models.LoginResponse;
 import com.example.joboui.model.Models.UserUpdateForm;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONArray;
@@ -101,7 +99,7 @@ public class UserViewModel extends AndroidViewModel {
                     //save user to offline db
                     Models.AppUser user = mapper.readValue(userJson.toString(), Models.AppUser.class);
 
-                    userRepository.insert(new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getTutorial(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword()));
+                    userRepository.insert(new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getVerified(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword()));
 
                     Thread.sleep(2000);
 
@@ -242,6 +240,13 @@ public class UserViewModel extends AndroidViewModel {
         userApi.saveUser(form).enqueue(new Callback<JsonResponse>() {
             @Override
             public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
+
+                if (response.code() == 409) {
+                    Toast.makeText(application, "Account already created . Login", Toast.LENGTH_SHORT).show();
+                    mutableLiveData.setValue(Optional.empty());
+                    return;
+                }
+
                 if (response.body() == null) {
                     mutableLiveData.setValue(Optional.empty());
                     return;
@@ -255,7 +260,7 @@ public class UserViewModel extends AndroidViewModel {
                 JsonResponse jsonResponse = response.body();
                 try {
                     Models.AppUser createdUser = mapper.readValue(new JsonObject(mapper.writeValueAsString(jsonResponse.getData())).toString(), Models.AppUser.class);
-                    Domain.User user = new Domain.User(createdUser.getId(), createdUser.getId_number(), createdUser.getPhone_number(), createdUser.getBio(), createdUser.getEmail_address(), createdUser.getNames(), createdUser.getUsername(), createdUser.getRole().getName(), createdUser.getCreated_at().toString(), createdUser.getUpdated_at().toString(), createdUser.getDeleted(), createdUser.getDisabled(), createdUser.getTutorial(), createdUser.getSpecialities(), createdUser.getPreferred_working_hours(), createdUser.getLast_known_location(), createdUser.getPassword());
+                    Domain.User user = new Domain.User(createdUser.getId(), createdUser.getId_number(), createdUser.getPhone_number(), createdUser.getBio(), createdUser.getEmail_address(), createdUser.getNames(), createdUser.getUsername(), createdUser.getRole().getName(), createdUser.getCreated_at().toString(), createdUser.getUpdated_at().toString(), createdUser.getDeleted(), createdUser.getDisabled(), createdUser.getVerified(), createdUser.getSpecialities(), createdUser.getPreferred_working_hours(), createdUser.getLast_known_location(), createdUser.getPassword());
 
                     System.out.println("NEW USER : " + mapper.writeValueAsString(user));
 
@@ -322,7 +327,7 @@ public class UserViewModel extends AndroidViewModel {
 
                     JsonResponse jsonResponse = response.body();
                     Models.AppUser updatedUser = mapper.readValue(new JsonObject(mapper.writeValueAsString(jsonResponse.getData())).toString(), Models.AppUser.class);
-                    Domain.User user = new Domain.User(updatedUser.getId(), updatedUser.getId_number(), updatedUser.getPhone_number(), updatedUser.getBio(), updatedUser.getEmail_address(), updatedUser.getNames(), updatedUser.getUsername(), updatedUser.getRole().getName(), updatedUser.getCreated_at().toString(), updatedUser.getUpdated_at().toString(), updatedUser.getDeleted(), updatedUser.getDisabled(), updatedUser.getTutorial(), updatedUser.getSpecialities(), updatedUser.getPreferred_working_hours(), updatedUser.getLast_known_location(), updatedUser.getPassword());
+                    Domain.User user = new Domain.User(updatedUser.getId(), updatedUser.getId_number(), updatedUser.getPhone_number(), updatedUser.getBio(), updatedUser.getEmail_address(), updatedUser.getNames(), updatedUser.getUsername(), updatedUser.getRole().getName(), updatedUser.getCreated_at().toString(), updatedUser.getUpdated_at().toString(), updatedUser.getDeleted(), updatedUser.getDisabled(), updatedUser.getVerified(), updatedUser.getSpecialities(), updatedUser.getPreferred_working_hours(), updatedUser.getLast_known_location(), updatedUser.getPassword());
 
 
                     userRepository.update(user);
@@ -425,8 +430,15 @@ public class UserViewModel extends AndroidViewModel {
                 try {
                     JsonResponse jsonResponse = response.body();
                     List jsonNumbers = mapper.readValue(new JSONArray(jsonResponse.getData().toString()).toString(), List.class);
+
+
+                    System.out.println("NUMBERS DATA"+jsonResponse.getData().toString());
+
+
                     for (Object number : jsonNumbers) {
+
                         numbers.add(number.toString());
+
                     }
                     mutableLiveData.setValue(numbers);
                 } catch (JsonProcessingException | JSONException e) {

@@ -43,14 +43,13 @@ public interface UserApi {
     Call<JsonResponse> getUsernames();
 
     @GET(base + "/providers")
-    Call<JsonResponse> getProviders(@QueryMap HashMap<String,String> parameters,@Header(AUTHORIZATION) String token);
+    Call<JsonResponse> getProviders(@QueryMap HashMap<String, String> parameters, @Header(AUTHORIZATION) String token);
 
     @POST(base + "/save")
     Call<JsonResponse> saveUser(@Body NewUserForm newUserForm);
 
     @PUT(base + "/update")
     Call<JsonResponse> updateUser(@Query(USERNAME) String username, @Header(AUTHORIZATION) String header, @Body UserUpdateForm updateForm);
-
 
     //roles
     @POST(base + "saveRole")

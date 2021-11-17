@@ -1,11 +1,10 @@
 package com.example.joboui.login;
 
 import static com.example.joboui.SplashScreen.directToLogin;
-import static com.example.joboui.globals.GlobalDb.serviceRepository;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.login.RegisterActivity.goToAdditionalInfoActivity;
-import static com.example.joboui.login.RegisterActivity.goToTutorialsPage;
+import static com.example.joboui.login.RegisterActivity.goToVerificationPage;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,16 +13,12 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 
 import com.example.joboui.R;
 import com.example.joboui.admin.AdminActivity;
 import com.example.joboui.clientUi.ClientActivity;
 import com.example.joboui.databinding.ActivityLoginBinding;
-import com.example.joboui.domain.Domain;
 import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
-
-import java.util.Optional;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -82,21 +77,21 @@ public class LoginActivity extends AppCompatActivity {
 
             switch (appUser.get().getRole()) {
                 case "ROLE_CLIENT":
-                    if (appUser.get().isTutorial()) {
+                    if (appUser.get().isVerified()) {
                         goToClientPage(activity);
                     } else {
-                        goToTutorialsPage(activity);
+                        goToVerificationPage(activity);
                     }
                     break;
                 case "ROLE_SERVICE_PROVIDER":
 
-                    if (appUser.get().isTutorial()) {
+                    if (appUser.get().isVerified()) {
                         goToServiceProviderPage(activity);
                     } else {
                         if (appUser.get().getPreferred_working_hours().equals(HY) || appUser.get().getSpecialities().equals(HY)) {
                             goToAdditionalInfoActivity(activity);
                         } else {
-                            goToTutorialsPage(activity);
+                            goToVerificationPage(activity);
                         }
                     }
                     break;

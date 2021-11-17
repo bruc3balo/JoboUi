@@ -29,8 +29,8 @@ public class UserRepository {
     private void insertUser(Domain.User user) {
         new Thread(() -> {
             try {
-                /*clearUser();
-                Thread.sleep(1500);*/
+                clearUser();
+                Thread.sleep(1500);
                 userDao.insert(user);
                 System.out.println(user.getUsername() + " inserted");
             } catch (Exception e) {
@@ -47,6 +47,12 @@ public class UserRepository {
                 System.out.println(user.getUsername() + " updated");
             } catch (Exception e) {
                 System.out.println(user.getUsername() + " inserted instead");
+                clearUser();
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
                 insertUser(user);
             }
         }).start();

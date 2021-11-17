@@ -57,7 +57,7 @@
             android:name=".login.ServiceProviderAdditionalActivity"
             android:exported="true" />
         <activity
-            android:name=".tutorial.TutorialActivity"
+            android:name=".tutorial.VerificationActivity"
             android:exported="true" />
         <activity
             android:name=".login.RegisterActivity"

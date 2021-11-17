@@ -1,35 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".tutorial.TutorialActivity">
+    tools:context=".tutorial.VerificationActivity">
 
     <LinearLayout
+        android:gravity="center"
+        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/tutorialViewPager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:layout_weight="1" />
-
-        <me.relex.circleindicator.CircleIndicator3
-            android:id="@+id/tutorialIndicator"
-            android:layout_width="match_parent"
-            android:layout_gravity="center"
-            app:ci_drawable_unselected="@drawable/black_dot"
-            app:ci_drawable="@drawable/purple_dot"
-            android:layout_height="wrap_content" />
-
         <Button
-            android:id="@+id/nextButton"
+            android:id="@+id/sendOPT"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -38,7 +23,127 @@
             android:layout_marginEnd="25dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/login_bg_button"
-            android:text="@string/next"
+            android:text="@string/send_otp"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+
+        <LinearLayout
+            android:id="@+id/optLayout"
+            android:padding="10dp"
+            android:layout_margin="15dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:inputType="number"
+                android:layout_weight="1"
+                android:padding="15dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:id="@+id/otp"
+                android:hint="@string/enter_password_received_from_sms"
+                android:background="@drawable/edit_text_field_white_thin"/>
+
+
+            <RelativeLayout
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="15dp"
+                android:gravity="center"
+                android:layout_gravity="center">
+
+                <ProgressBar
+                    android:id="@+id/timeOut"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:elevation="12dp"
+                    style="@style/CircularDeterminateProgressBar"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:indeterminateOnly="false"/>
+
+                <ImageButton
+                    android:id="@+id/confirmOTP"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/circle_day_bg_selected"
+                    android:backgroundTint="@color/white"
+                    android:rotation="0"
+                    android:src="@android:drawable/ic_menu_send"
+                    android:text="@string/check_otp"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility="visible"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/changeNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/login_bg_button"
+            android:text="@string/change_mobile_number"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/checkStatusB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/login_bg_button"
+            android:text="@string/check_verification"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/logoutB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="10dp"
+            android:backgroundTint="@color/red"
+            android:background="@drawable/login_bg_button"
+            android:text="@string/logout"
             android:textColor="@color/white"
             android:textSize="15sp"
             android:textStyle="bold" />

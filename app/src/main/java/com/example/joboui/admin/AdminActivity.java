@@ -7,6 +7,7 @@ import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.SignInActivity.clearSp;
 
+import android.app.Application;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,18 +48,21 @@ public class AdminActivity extends AppCompatActivity {
         });
 
 
-
         setWindowColors();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Logout").setOnMenuItemClickListener(menuItem -> {
-            userRepository.deleteUserDb();
-            clearSp(USER_DB, getApplication());
+            logout(getApplication());
             return false;
         }).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    public static void logout(Application application) {
+        userRepository.deleteUserDb();
+        clearSp(USER_DB, application);
     }
 
     @Override
