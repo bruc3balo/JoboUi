@@ -3,7 +3,7 @@ package com.example.joboui.globals;
 public class GlobalVariables {
 
     /*** BASE URL OF API ***/
-    public static final String API_URL = "https://2d7e-197-232-244-229.ngrok.io";
+    public static final String API_URL = "https://e43c-197-232-244-229.ngrok.io";
     public static final String CONTEXT_URL = "/api/v1/";
     public static final String PAGE_NO = "pageNo";
     public static final String PAGE_SIZE = "pageSize";
@@ -47,7 +47,7 @@ public class GlobalVariables {
     public static final String GENERAL_REPAIRS = "General repairs";
 
     //job
-    public static final String LOCAL_SERVICE_PROVIDER_USERNAME = "localServiceProviderUsername";
+    public static final String LOCAL_SERVICE_PROVIDER_USERNAME = "local_service_provider_username";
     public static final String CLIENT_USERNAME = "client_username";
     public static final String CLIENT_ID = "client_id";
     public static final String LOCAL_SERVICE_PROVIDER_ID = "local_service_provider_id";

@@ -4,42 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".serviceProviderUi.ServiceProviderActivity">
-
+    tools:context=".serviceProviderUi.pages.JobRequests">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/serviceProviderToolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:titleTextColor="@color/white"
-            app:navigationIcon="@drawable/ic_worker"
-            app:title="@string/service_provider"
             android:layout_gravity="center"
             app:subtitleTextColor="@color/grey"
-            android:background="@color/deep_purple"/>
+            app:titleTextColor="@color/white"
+            app:title="Job requests"
+            app:navigationIcon="@drawable/ic_back"
+            android:background="@color/purple"/>
 
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-
-        <GridView
-            android:id="@+id/serviceProviderGrid"
-            android:layout_margin="10dp"
-            android:horizontalSpacing="10dp"
-            android:verticalSpacing="10dp"
-            android:layout_height="match_parent"
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:numColumns="2"/>
+            android:layout_margin="5dp"
+            android:id="@+id/myJobsRv"/>
 
-    </GridLayout>
 
     </LinearLayout>
 

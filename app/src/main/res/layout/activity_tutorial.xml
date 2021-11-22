@@ -3,7 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".tutorial.VerificationActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            app:title="Verify you phone number"
+            app:titleTextColor="@color/white"
+            android:background="@color/purple"/>
+
 
     <LinearLayout
         android:gravity="center"
@@ -13,20 +29,34 @@
         android:orientation="vertical">
 
 
-        <Button
+
+        <TextView
             android:id="@+id/sendOPT"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/login_bg_button"
-            android:text="@string/send_otp"
-            android:textColor="@color/white"
+            android:layout_margin="35dp"
+            android:gravity="center"
+            android:text="@string/to_be_filled"
+            android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="bold" />
+
+
+
+        <TextView
+            android:id="@+id/status"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="35dp"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/grey"
+            android:textSize="15sp"
+            android:textStyle="normal" />
+
 
 
         <LinearLayout
@@ -37,13 +67,12 @@
             android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <EditText
                 android:inputType="number"
-                android:layout_weight="1"
                 android:padding="15dp"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
@@ -51,7 +80,6 @@
                 android:id="@+id/otp"
                 android:hint="@string/enter_password_received_from_sms"
                 android:background="@drawable/edit_text_field_white_thin"/>
-
 
             <RelativeLayout
                 android:layout_width="70dp"
@@ -102,54 +130,12 @@
         </LinearLayout>
 
 
-        <Button
-            android:id="@+id/changeNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/login_bg_button"
-            android:text="@string/change_mobile_number"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/checkStatusB"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/login_bg_button"
-            android:text="@string/check_verification"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/logoutB"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="@color/red"
-            android:background="@drawable/login_bg_button"
-            android:text="@string/logout"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+
 
     </LinearLayout>
-
+    </LinearLayout>
     <ProgressBar
         android:id="@+id/tutorialPb"
         android:layout_width="wrap_content"

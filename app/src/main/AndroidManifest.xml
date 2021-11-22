@@ -14,6 +14,9 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
     <application
         android:allowBackup="false"
@@ -22,6 +25,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.JoboUi">
+        <activity
+            android:name=".serviceProviderUi.pages.ChatActivity"
+            android:exported="true" />
+        <activity
+            android:name=".serviceProviderUi.pages.NegotiationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".serviceProviderUi.pages.JobRequests"
+            android:exported="true"
+            android:label="@string/title_activity_job_requests"
+            android:theme="@style/Theme.JoboUi.NoActionBar" />
         <activity
             android:name=".clientUi.MyJobs"
             android:exported="true" />
@@ -82,6 +96,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".broadcast.SMSBroadcastReceiver"
+            android:exported="true"
+            android:permission="com.google.android.gms.auth.api.phone.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVE" />
+            </intent-filter>
+        </receiver>
 
         <meta-data
             android:name="preloaded_fonts"

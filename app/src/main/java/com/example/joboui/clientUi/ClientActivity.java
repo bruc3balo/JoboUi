@@ -4,13 +4,19 @@ import static com.example.joboui.SplashScreen.addListener;
 import static com.example.joboui.SplashScreen.addLogoutListener;
 import static com.example.joboui.SplashScreen.directToLogin;
 import static com.example.joboui.SplashScreen.removeListener;
+import static com.example.joboui.adapters.ServicesPageGrid.allServiceList;
+import static com.example.joboui.adapters.ServicesPageGrid.serviceList;
 import static com.example.joboui.globals.GlobalDb.serviceRepository;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.LOGGED_IN;
 import static com.example.joboui.globals.GlobalVariables.SERVICE_DB;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.SignInActivity.clearSp;
+import static com.example.joboui.login.SignInActivity.getObjectMapper;
 import static com.example.joboui.login.SignInActivity.getSp;
+import static com.example.joboui.utils.SimilarityClass.alike;
+import static com.example.joboui.utils.SimilarityClass.printSimilarity;
+import static com.example.joboui.utils.SimilarityClass.similarity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -43,12 +49,14 @@ import com.example.joboui.adapters.ServicesPageGrid;
 import com.example.joboui.databinding.ActivityClientBinding;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.login.ServiceProviderAdditionalActivity;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.material.navigation.NavigationView;
 
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 public class ClientActivity extends AppCompatActivity {
     private ActivityClientBinding clientBinding;
@@ -76,7 +84,7 @@ public class ClientActivity extends AppCompatActivity {
             Bundle bundle = new Bundle();
             Optional<Domain.Services> service = servicesPageGridAdapter.getItem(position);
             bundle.putSerializable(SERVICE_DB, service.orElse(null));
-            startActivity(new Intent(ClientActivity.this,ServiceRequestActivity.class).putExtras(bundle));
+            startActivity(new Intent(ClientActivity.this, ServiceRequestActivity.class).putExtras(bundle));
         });
 
         SearchView clientSearch = clientBinding.clientSearch;
@@ -85,6 +93,22 @@ public class ClientActivity extends AppCompatActivity {
                 showSearch(clientBinding.introText, clientSearch);
             } else {
                 hideSearch(clientBinding.introText, clientSearch);
+                serviceList.clear();
+                serviceList.putAll(allServiceList);
+                servicesPageGridAdapter.notifyDataSetChanged();
+            }
+        });
+
+        clientSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchServices(newText);
+                return false;
             }
         });
 
@@ -146,8 +170,25 @@ public class ClientActivity extends AppCompatActivity {
 
     }
 
-    private void goToMyJobs () {
-        startActivity(new Intent(ClientActivity.this,MyJobs.class));
+    private void searchServices(String query) {
+        if (query.isEmpty()) {
+            serviceList.clear();
+            serviceList.putAll(allServiceList);
+            servicesPageGridAdapter.notifyDataSetChanged();
+        } else {
+            serviceList.clear();
+            servicesPageGridAdapter.notifyDataSetChanged();
+            allServiceList.forEach((position, services) -> {
+                if (alike(query,services.getName())) {
+                    serviceList.put(position, services);
+                    servicesPageGridAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+    }
+
+    private void goToMyJobs() {
+        startActivity(new Intent(ClientActivity.this, MyJobs.class));
     }
 
     private SpannableStringBuilder getWelcomeGreeting(String username) {
@@ -185,7 +226,6 @@ public class ClientActivity extends AppCompatActivity {
 
         return welcomeText;
     }
-
 
 
     @Override

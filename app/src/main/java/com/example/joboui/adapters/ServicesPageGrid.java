@@ -2,9 +2,9 @@ package com.example.joboui.adapters;
 
 import static com.example.joboui.globals.GlobalDb.serviceRepository;
 import static com.example.joboui.globals.GlobalVariables.*;
+import static com.example.joboui.login.SignInActivity.getObjectMapper;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,26 +13,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 
 import com.bumptech.glide.Glide;
 import com.example.joboui.R;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.utils.MyLinkedMap;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 public class ServicesPageGrid extends BaseAdapter {
 
-    private final MyLinkedMap<Integer, Domain.Services> serviceList = new MyLinkedMap<>();
+    public final static MyLinkedMap<Integer, Domain.Services> allServiceList = new MyLinkedMap<>();
+    public final static MyLinkedMap<Integer, Domain.Services> serviceList = new MyLinkedMap<>();
+
 
     //todo solve bug
     //todo send request
@@ -45,11 +39,14 @@ public class ServicesPageGrid extends BaseAdapter {
             serviceRepository.getServiceLive().observe(lifecycleOwner, services -> {
                 if (services.isPresent()) {
                     if (!services.get().isEmpty()) {
-                        serviceList.clear();
-                        notifyDataSetChanged();
-                        services.get().forEach(s -> {
-                            serviceList.put(services.get().indexOf(s), s);
-                        });
+                        allServiceList.clear();
+                        services.get().forEach(s -> allServiceList.put(services.get().indexOf(s), s));
+                        serviceList.putAll(allServiceList);
+                        try {
+                            System.out.println(getObjectMapper().writeValueAsString(serviceList) + " all");
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
                         System.out.println("THE SIZE IS " + services.get().size());
                         notifyDataSetChanged();
                     }

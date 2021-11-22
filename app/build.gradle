@@ -47,6 +47,12 @@ android {
 
 dependencies {
 
+    //phone
+    implementation 'com.google.android.gms:play-services-auth:19.2.0'
+
+    implementation 'com.google.android.gms:play-services-auth-api-phone:17.5.1'
+
+
     //safety net
 
     implementation 'com.google.android.gms:play-services-safetynet:17.0.1'
@@ -84,6 +90,8 @@ dependencies {
 
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.navigation:navigation-fragment:2.3.5'
+    implementation 'androidx.navigation:navigation-ui:2.3.5'
 
     //Room
     dependencies {

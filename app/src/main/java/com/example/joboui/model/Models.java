@@ -918,6 +918,14 @@ public class Models {
 
         private Integer job_status;
 
+        public JobUpdateForm(Integer job_status) {
+            this.job_status = job_status;
+        }
+
+        public JobUpdateForm(String job_price) {
+            this.job_price = job_price;
+        }
+
         public JobUpdateForm() {
         }
 

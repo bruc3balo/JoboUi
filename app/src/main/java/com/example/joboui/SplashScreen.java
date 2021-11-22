@@ -281,16 +281,18 @@ public class SplashScreen extends AppCompatActivity {
     }
 
     public static void addLogoutListener(Activity activity) {
-        userRepository.getUserLive().observe((LifecycleOwner) activity, user -> {
-            if (user.isPresent()) {
-                System.out.println(user.get().getUsername() + " logged in");
-            } else {
-                if (isResumed) {
-                    directToLogin(activity);
-                    System.out.println("User has been logged out");
+        if (userRepository != null) {
+            userRepository.getUserLive().observe((LifecycleOwner) activity, user -> {
+                if (user.isPresent()) {
+                    System.out.println(user.get().getUsername() + " logged in");
+                } else {
+                    if (isResumed) {
+                        directToLogin(activity);
+                        System.out.println("User has been logged out");
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public static void addListener() {

@@ -11,10 +11,21 @@ import static com.example.joboui.login.SignInActivity.getObjectMapper;
 import static com.example.joboui.utils.DataOps.getAuthorization;
 import static com.example.joboui.utils.DataOps.getDomainUserFromModelUser;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.IntentSender;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.telephony.SmsManager;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,8 +34,11 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.joboui.R;
@@ -35,20 +49,27 @@ import com.example.joboui.model.Models;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.credentials.Credential;
+import com.google.android.gms.auth.api.credentials.HintRequest;
+import com.google.android.gms.auth.api.phone.SmsRetriever;
+import com.google.android.gms.auth.api.phone.SmsRetrieverClient;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApi;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.safetynet.SafetyNet;
 import com.google.android.gms.safetynet.SafetyNetApi;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -56,13 +77,20 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class VerificationActivity extends AppCompatActivity {
+public class VerificationActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks {
 
+    private static final int PERMISSION_REQUEST_SEND_SMS = 5;
     private ActivityTutorialBinding tutorialBinding;
     private Domain.User user;
     private boolean requestSent = false;
+    private boolean verificationSent = false;
     private UserViewModel userViewModel;
     private final ArrayList<String> phoneNumberList = new ArrayList<>();
+    private boolean isLoading = false;
+
+    private int RESOLVE_HINT = 13;
+
+    //TODO SEND verification on phone and notify
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,23 +98,19 @@ public class VerificationActivity extends AppCompatActivity {
         tutorialBinding = ActivityTutorialBinding.inflate(getLayoutInflater());
         setContentView(tutorialBinding.getRoot());
 
+        setWindowColors();
+
+        Toolbar toolbar = tutorialBinding.toolbar;
+        setSupportActionBar(toolbar);
+
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         LinearLayout otpLayout = tutorialBinding.optLayout;
         otpLayout.setVisibility(View.GONE);
 
-        Button sendOPT = tutorialBinding.sendOPT;
-        sendOPT.setOnClickListener(v -> isSafetyNetEnabled());
 
-
-        Button changeNumber = tutorialBinding.changeNumber;
-        changeNumber.setOnClickListener(v -> showDialogNumber());
-
-        Button checkStatusB = tutorialBinding.checkStatusB;
-        checkStatusB.setOnClickListener(v -> checkStatus());
-
-        Button logoutB = tutorialBinding.logoutB;
-        logoutB.setOnClickListener(v -> logout(getApplication()));
+        hidePb();
+        populatePhoneNumberList();
 
         userRepository.getUserLive().observe(this, user -> {
             if (!user.isPresent()) {
@@ -96,6 +120,10 @@ public class VerificationActivity extends AppCompatActivity {
             }
 
             this.user = user.get();
+            if (!verificationSent) {
+                verificationSent = true;
+                isSafetyNetEnabled();
+            }
 
             if (!requestSent) {
                 checkStatus();
@@ -103,11 +131,23 @@ public class VerificationActivity extends AppCompatActivity {
 
         });
 
-        hidePb();
-        setWindowColors();
-        populatePhoneNumberList();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (!isLoading) {
+            menu.add("Change number").setTitle("Change number").setOnMenuItemClickListener(item -> {
+                showDialogNumber();
+                return false;
+            }).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+
+            menu.add("Logout").setTitle("Logout").setOnMenuItemClickListener(item -> {
+                logout(getApplication());
+                return false;
+            }).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
 
     private void populatePhoneNumberList() {
         userViewModel.getAllPhoneNumbers().observe(this, numbers -> {
@@ -137,8 +177,10 @@ public class VerificationActivity extends AppCompatActivity {
     }
 
     private void sendOTP() {
+        tutorialBinding.sendOPT.setOnClickListener(null);
+
         showPb();
-        long TIME_OUT = 60L * 1000;
+        long TIME_OUT = 120L * 1000;
 
 
         CountDownTimer timer = new CountDownTimer(TIME_OUT, 1000) {
@@ -147,8 +189,13 @@ public class VerificationActivity extends AppCompatActivity {
                 tutorialBinding.timeOut.setIndeterminate(false);
                 tutorialBinding.timeOut.setProgress(getReverseProgress(millisUntilFinished, TIME_OUT));
                 tutorialBinding.confirmOTP.setRotation(getRotation(millisUntilFinished, TIME_OUT));
+                tutorialBinding.sendOPT.setText("Code has been send to " + user.getPhone_number() + "\n Timeout in " + calculateTime(millisUntilFinished));
+                tutorialBinding.sendOPT.setTextColor(Color.BLACK);
+
                 if (millisUntilFinished == 0) {
                     timeOut(true);
+                    tutorialBinding.sendOPT.setText("Timeout , click to resend code");
+                    tutorialBinding.sendOPT.setOnClickListener(v -> isSafetyNetEnabled());
                 }
             }
 
@@ -176,6 +223,10 @@ public class VerificationActivity extends AppCompatActivity {
                         tutorialBinding.optLayout.setVisibility(View.GONE);
                         hidePb();
                         Toast.makeText(VerificationActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        tutorialBinding.sendOPT.setText("Failed , click to resend code");
+                        tutorialBinding.sendOPT.setTextColor(Color.RED);
+                        tutorialBinding.sendOPT.setOnClickListener(v -> isSafetyNetEnabled());
+                        e.printStackTrace();
                     }
 
                     @Override
@@ -185,17 +236,117 @@ public class VerificationActivity extends AppCompatActivity {
                         enterPin(verificationId, timer);
                         hidePb();
                         Toast.makeText(VerificationActivity.this, "Code send to " + user.getPhone_number(), Toast.LENGTH_SHORT).show();
+                        tutorialBinding.sendOPT.setText("Code has been send to " + user.getPhone_number() + "\n Timeout in " + calculateTime(TIME_OUT));
+                        tutorialBinding.sendOPT.setTextColor(Color.BLACK);
+
+                        smsPermissions();
                     }
 
                     @Override
                     public void onCodeAutoRetrievalTimeOut(@NonNull String s) {
                         super.onCodeAutoRetrievalTimeOut(s);
+                        timeOut(true);
+                        tutorialBinding.status.setVisibility(View.GONE);
+
                     }
                 })          // OnVerificationStateChangedCallbacks
                 .build();
 
         PhoneAuthProvider.verifyPhoneNumber(options);
     }
+
+    private void smsPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {
+                Toast.makeText(VerificationActivity.this, "Show rationale", Toast.LENGTH_SHORT).show();
+                System.out.println("RATIONALLE");
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS, Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS}, PERMISSION_REQUEST_SEND_SMS);
+            }
+        } else {
+            autoFill();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_SEND_SMS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getApplicationContext(), "SMS permission granted .", Toast.LENGTH_LONG).show();
+                autoFill();
+            } else {
+                Toast.makeText(getApplicationContext(), "SMS permission denied", Toast.LENGTH_LONG).show();
+            }
+        }
+
+    }
+
+    private GoogleApiClient getGoogleApiClient() {
+        return new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .enableAutoManage(this, connectionResult -> {
+
+                })
+                .addApi(Auth.CREDENTIALS_API)
+                .build();
+    }
+
+    private void requestHint(GoogleApiClient apiClient) throws IntentSender.SendIntentException {
+        HintRequest hintRequest = new HintRequest.Builder()
+                .setPhoneNumberIdentifierSupported(true)
+                .build();
+
+        PendingIntent intent = Auth.CredentialsApi.getHintPickerIntent(
+                apiClient, hintRequest);
+        startIntentSenderForResult(intent.getIntentSender(),
+                RESOLVE_HINT, null, 0, 0, 0);
+    }
+
+    // Obtain the phone number from the result
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESOLVE_HINT) {
+            if (resultCode == RESULT_OK) {
+                Credential credential = data.getParcelableExtra(Credential.EXTRA_KEY);
+                // credential.getId();  <-- will need to process phone number string
+            }
+        }
+    }
+
+
+    private void autoFill() {
+        SmsRetrieverClient smsRetrieverClient = SmsRetriever.getClient(this);
+        smsRetrieverClient.startSmsRetriever().addOnSuccessListener(unused -> {
+            tutorialBinding.status.setVisibility(View.VISIBLE);
+            tutorialBinding.status.setText("Waiting for sms ... ");
+            Toast.makeText(VerificationActivity.this, "Waiting for sms", Toast.LENGTH_LONG).show();
+        }).addOnFailureListener(e -> {
+            tutorialBinding.status.setVisibility(View.GONE);
+            Toast.makeText(VerificationActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+        });
+    }
+
+
+    public static String calculateTime(long milliseconds) {
+
+        int day = (int) TimeUnit.MILLISECONDS.toDays(milliseconds);
+        long hours = TimeUnit.MILLISECONDS.toHours(milliseconds) - (day * 24L);
+        long minute = TimeUnit.MILLISECONDS.toMinutes(milliseconds) - (TimeUnit.MILLISECONDS.toHours(milliseconds) * 60);
+        long second = TimeUnit.MILLISECONDS.toSeconds(milliseconds) - (TimeUnit.MILLISECONDS.toMinutes(milliseconds) * 60);
+
+        String time = hours + "hr : " + minute + " : min" + second + " sec";
+
+        if (hours == 0 && minute != 0) {
+            return minute + " min " + second + " sec";
+        } else if (minute == 0 && hours == 0 && second != 0) {
+            return second + " sec";
+        } else {
+            return time;
+        }
+    }
+
 
     private void verifyUser() {
         showPb();
@@ -257,7 +408,7 @@ public class VerificationActivity extends AppCompatActivity {
     }
 
     private int getRotation(long millisUntilFinished, long totalTime) {
-        int rotation = (getReverseProgress(millisUntilFinished,totalTime) * 360) / 100;
+        int rotation = (getReverseProgress(millisUntilFinished, totalTime) * 360) / 100;
         System.out.println("ROTATION " + rotation + "%");
         return rotation;
     }
@@ -282,6 +433,12 @@ public class VerificationActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(VerificationActivity.this, "Failed to verify", Toast.LENGTH_SHORT).show();
                         timeOut(false);
+                        tutorialBinding.status.setVisibility(View.VISIBLE);
+                        tutorialBinding.status.setText("Wrong code");
+                        tutorialBinding.sendOPT.setVisibility(View.VISIBLE);
+                        tutorialBinding.sendOPT.setText("Click to resend");
+                        tutorialBinding.sendOPT.setTextColor(Color.RED);
+                        tutorialBinding.sendOPT.setOnClickListener(v2 -> isSafetyNetEnabled());
                     }
                 });
             }
@@ -294,6 +451,7 @@ public class VerificationActivity extends AppCompatActivity {
         tutorialBinding.timeOut.setSecondaryProgress(0);
         if (timedOut) {
             tutorialBinding.sendOPT.setText("Your OTP has expired \n Click to get a new one");
+            tutorialBinding.status.setVisibility(View.GONE);
         }
         hidePb();
     }
@@ -366,6 +524,27 @@ public class VerificationActivity extends AppCompatActivity {
         }
     }
 
+
+    public static void editSingleValue(int inputType, String hint,Activity activity, Function<String, Void> function) {
+        Dialog d = new Dialog(activity);
+        d.setContentView(R.layout.number_dialog);
+        d.show();
+
+        EditText field = d.findViewById(R.id.phoneNumberField);
+        field.setInputType(inputType);
+        field.setHint(hint);
+
+        Button confirm_button = d.findViewById(R.id.confirm_button);
+        confirm_button.setOnClickListener(v -> {
+            d.dismiss();
+            function.apply(field.getText().toString());
+        });
+
+        ImageButton cancel = d.findViewById(R.id.cancel);
+        cancel.setOnClickListener(v -> d.dismiss());
+
+    }
+
     private void showDialogNumber() {
         Dialog d = new Dialog(VerificationActivity.this);
         d.setContentView(R.layout.number_dialog);
@@ -397,6 +576,9 @@ public class VerificationActivity extends AppCompatActivity {
             }
         });
 
+        ImageButton cancel = d.findViewById(R.id.cancel);
+        cancel.setOnClickListener(v -> d.dismiss());
+
     }
 
     private void changePhoneNumber(String phoneNumber) {
@@ -405,11 +587,14 @@ public class VerificationActivity extends AppCompatActivity {
             hidePb();
             if (!user.isPresent()) {
                 Toast.makeText(VerificationActivity.this, "Failed to change phone number", Toast.LENGTH_SHORT).show();
+                tutorialBinding.sendOPT.setText("Failed to change phone number");
+
                 return;
             }
 
 
-            tutorialBinding.changeNumber.setText("Number changed to " + user.get().getPhone_number() + " \n click to change again");
+            tutorialBinding.sendOPT.setText("Number changed to " + user.get().getPhone_number());
+            sendOTP();
         });
     }
 
@@ -417,9 +602,9 @@ public class VerificationActivity extends AppCompatActivity {
         tutorialBinding.sendOPT.setEnabled(false);
         tutorialBinding.timeOut.setEnabled(false);
         tutorialBinding.confirmOTP.setEnabled(false);
-        tutorialBinding.changeNumber.setEnabled(false);
-        tutorialBinding.checkStatusB.setEnabled(false);
         tutorialBinding.tutorialPb.setVisibility(View.VISIBLE);
+        isLoading = true;
+        invalidateOptionsMenu();
     }
 
     private void hidePb() {
@@ -427,8 +612,8 @@ public class VerificationActivity extends AppCompatActivity {
         tutorialBinding.sendOPT.setEnabled(true);
         tutorialBinding.timeOut.setEnabled(true);
         tutorialBinding.confirmOTP.setEnabled(true);
-        tutorialBinding.changeNumber.setEnabled(true);
-        tutorialBinding.checkStatusB.setEnabled(true);
+        isLoading = false;
+        invalidateOptionsMenu();
     }
 
     private void setWindowColors() {
@@ -436,4 +621,13 @@ public class VerificationActivity extends AppCompatActivity {
         getWindow().setNavigationBarColor(getColor(R.color.white));
     }
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
 }
