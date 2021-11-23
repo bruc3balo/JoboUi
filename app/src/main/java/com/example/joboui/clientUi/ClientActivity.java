@@ -157,7 +157,8 @@ public class ClientActivity extends AppCompatActivity {
 
         setWindowColors();
 
-        userRepository.getUserLive().observe(this, user -> {
+        if (userRepository != null) {
+            userRepository.getUserLive().observe(this, user -> {
             if (user.isPresent()) {
                 me = user.get();
                 clientBinding.welcomeText.setText(getWelcomeGreeting(me.getUsername()));
@@ -167,6 +168,7 @@ public class ClientActivity extends AppCompatActivity {
                 email.setText(me.getEmail_address());
             }
         });
+        }
 
     }
 

@@ -36,22 +36,24 @@ public class ServicesPageGrid extends BaseAdapter {
             serviceRepository.updateServices();
         } catch (Exception ignored) {
         } finally {
-            serviceRepository.getServiceLive().observe(lifecycleOwner, services -> {
-                if (services.isPresent()) {
-                    if (!services.get().isEmpty()) {
-                        allServiceList.clear();
-                        services.get().forEach(s -> allServiceList.put(services.get().indexOf(s), s));
-                        serviceList.putAll(allServiceList);
-                        try {
-                            System.out.println(getObjectMapper().writeValueAsString(serviceList) + " all");
-                        } catch (JsonProcessingException e) {
-                            e.printStackTrace();
+            if (serviceRepository != null) {
+                serviceRepository.getServiceLive().observe(lifecycleOwner, services -> {
+                    if (services.isPresent()) {
+                        if (!services.get().isEmpty()) {
+                            allServiceList.clear();
+                            services.get().forEach(s -> allServiceList.put(services.get().indexOf(s), s));
+                            serviceList.putAll(allServiceList);
+                            try {
+                                System.out.println(getObjectMapper().writeValueAsString(serviceList) + " all");
+                            } catch (JsonProcessingException e) {
+                                e.printStackTrace();
+                            }
+                            System.out.println("THE SIZE IS " + services.get().size());
+                            notifyDataSetChanged();
                         }
-                        System.out.println("THE SIZE IS " + services.get().size());
-                        notifyDataSetChanged();
                     }
-                }
-            });
+                });
+            }
         }
     }
 

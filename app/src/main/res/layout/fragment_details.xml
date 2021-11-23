@@ -5,91 +5,194 @@
     android:layout_height="match_parent"
     tools:context=".clientUi.request.DetailsFragment">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <TextView
+        android:layout_height="wrap_content">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_vertical"
-            android:textColor="@color/purple"
-            android:text="@string/description"
-            android:textStyle="bold"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="20dp"/>
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/descriptionField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="20dp"
-            android:background="@drawable/edit_text_field_white_thin"
-            android:gravity="center"
-            android:hint="@string/provide_a_description_of_your_job"
-            android:minWidth="48dp"
-            android:padding="30dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_vertical"
-            android:textColor="@color/purple"
-            android:text="@string/time"
-            android:textStyle="bold"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="20dp"/>
-
-        <RadioGroup
-            android:id="@+id/timeGroup"
-            android:layout_margin="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-            <RadioButton
-                android:id="@+id/asap"
-                android:layout_width="0dp"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_gravity="center"
                 android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:checked="true"
-                android:buttonTint="@color/deep_purple"
-                android:text="@string/as_soon_as_possible"/>
+                android:textColor="@color/purple"
+                android:text="@string/job_description_label"
+                android:textStyle="bold"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="20dp"/>
 
-            <RadioButton
-                android:id="@+id/schedules"
-                android:layout_width="0dp"
+            <EditText
+                android:id="@+id/descriptionField"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:buttonTint="@color/deep_purple"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                android:background="@drawable/edit_text_field_white_thin"
+                android:gravity="center"
+                android:hint="@string/provide_a_description_of_your_job"
+                android:minWidth="48dp"
+                android:padding="30dp" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/scheduled"/>
+                android:textColor="@color/purple"
+                android:text="@string/price_range_label"
+                android:textStyle="bold"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="20dp"/>
 
-        </RadioGroup>
 
-        <TextView
-            android:id="@+id/scheduledTimeTv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:textSize="30sp"
-            android:textColor="@color/deep_purple"/>
+            <LinearLayout
 
-    </LinearLayout>
+                android:layout_margin="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical"
+                        android:layout_margin="5dp"
+                        android:textColor="@color/purple"
+                        android:text="@string/minksh"
+                        android:textStyle="bold"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginTop="20dp"/>
+
+                    <EditText
+                        android:id="@+id/minRange"
+                        android:minWidth="100dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:layout_margin="5dp"
+                        android:textColor="@color/black"
+                        android:hint="0"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="50dp"
+                    android:layout_height="5dp"
+                    android:layout_gravity="center"
+                    android:background="@color/grey"/>
+
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/purple"
+                        android:text="@string/maKsh"
+                        android:textStyle="bold"
+                        android:layout_margin="5dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginTop="20dp"/>
+
+                    <EditText
+                        android:id="@+id/maxRange"
+                        android:layout_width="wrap_content"
+                        android:minWidth="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:layout_margin="5dp"
+                        android:textColor="@color/black"
+                        android:hint="0"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:textColor="@color/purple"
+                android:text="@string/timeLabel"
+                android:textStyle="bold"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="20dp"/>
+
+            <RadioGroup
+                android:id="@+id/timeGroup"
+                android:layout_margin="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <RadioButton
+                    android:id="@+id/asap"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/black"
+                    android:checked="true"
+                    android:buttonTint="@color/deep_purple"
+                    android:text="@string/as_soon_as_possible"/>
+
+                <RadioButton
+                    android:id="@+id/schedules"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:buttonTint="@color/deep_purple"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/black"
+                    android:text="@string/scheduled"/>
+
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/scheduledTimeTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="30sp"
+                android:textColor="@color/deep_purple"/>
+
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

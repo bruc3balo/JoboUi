@@ -239,12 +239,14 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
         if (job.getJob_status() == JobStatus.NEGOTIATING.code || job.getJob_status() == JobStatus.REQUESTED.code) {
             holder.edit.setVisibility(View.VISIBLE);
+            holder.chat.setVisibility(View.VISIBLE);
             holder.edit.setOnClickListener(v -> editSingleValue(InputType.TYPE_CLASS_NUMBER, "Enter new price",activity, price -> {
                 updatePrice(job.getId(),price);
                 return null;
             }));
         } else {
             holder.edit.setVisibility(View.GONE);
+            holder.chat.setVisibility(View.GONE);
         }
 
     }

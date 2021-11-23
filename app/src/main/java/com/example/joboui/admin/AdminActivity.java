@@ -8,14 +8,18 @@ import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.SignInActivity.clearSp;
 
 import android.app.Application;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.GridView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.joboui.R;
+import com.example.joboui.adapters.AdminPageGrid;
+import com.example.joboui.adapters.ServiceProviderPageGrid;
 import com.example.joboui.databinding.ActivityAdminBinding;
 
 
@@ -30,6 +34,7 @@ import com.example.joboui.databinding.ActivityAdminBinding;
 public class AdminActivity extends AppCompatActivity {
 
     ActivityAdminBinding adminBinding;
+    private AdminPageGrid adminPageGrid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,15 +45,34 @@ public class AdminActivity extends AppCompatActivity {
         Toolbar adminToolbar = adminBinding.adminToolbar;
         setSupportActionBar(adminToolbar);
 
-        userRepository.getUserLive().observe(this, user -> {
+        GridView serviceProviderGrid = adminBinding.adminGrid;
+        adminPageGrid = new AdminPageGrid();
+        serviceProviderGrid.setAdapter(adminPageGrid);
+        serviceProviderGrid.setOnItemClickListener((parent, view, position, id) -> {
+            switch (position) {
+                default:break;
+
+                case 1:
+                  goToUsers();
+                    break;
+            }
+        });
+
+        if (userRepository != null) {
+            userRepository.getUserLive().observe(this, user -> {
             if (user.isPresent()) {
                 adminToolbar.setTitle(user.get().getRole());
                 adminToolbar.setSubtitle(user.get().getUsername());
             }
         });
+        }
 
 
         setWindowColors();
+    }
+
+    private void goToUsers() {
+        startActivity(new Intent(AdminActivity.this,UserActivity.class));
     }
 
     @Override

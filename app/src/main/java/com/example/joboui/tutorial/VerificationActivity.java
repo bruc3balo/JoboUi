@@ -350,7 +350,7 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
 
     private void verifyUser() {
         showPb();
-        userViewModel.updateExistingUser(new Models.UserUpdateForm(null, true)).observe(VerificationActivity.this, user -> {
+        userViewModel.updateExistingUser(new Models.UserUpdateForm(null, null,true)).observe(VerificationActivity.this, user -> {
             hidePb();
             if (!user.isPresent()) {
                 Toast.makeText(VerificationActivity.this, "Failed to update verification of number", Toast.LENGTH_SHORT).show();
@@ -583,7 +583,7 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
 
     private void changePhoneNumber(String phoneNumber) {
         showPb();
-        userViewModel.updateExistingUser(new Models.UserUpdateForm(phoneNumber, null)).observe(this, user -> {
+        userViewModel.updateExistingUser(new Models.UserUpdateForm(phoneNumber)).observe(this, user -> {
             hidePb();
             if (!user.isPresent()) {
                 Toast.makeText(VerificationActivity.this, "Failed to change phone number", Toast.LENGTH_SHORT).show();

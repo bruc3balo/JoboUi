@@ -36,6 +36,9 @@ public interface UserApi {
     @GET(base + "/all")
     Call<JsonResponse> getUsers(@Query(USERNAME) String username, @Header(AUTHORIZATION) String token);
 
+    @GET(base + "/all")
+    Call<JsonResponse> getAllUsers(@Header(AUTHORIZATION) String token);
+
     @GET(base + "/numbers")
     Call<JsonResponse> getNumbers();
 

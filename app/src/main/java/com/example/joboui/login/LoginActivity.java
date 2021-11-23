@@ -14,6 +14,7 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.example.joboui.Disabled;
 import com.example.joboui.R;
 import com.example.joboui.admin.AdminActivity;
 import com.example.joboui.clientUi.ClientActivity;
@@ -75,33 +76,42 @@ public class LoginActivity extends AppCompatActivity {
             }
 
 
-            switch (appUser.get().getRole()) {
-                case "ROLE_CLIENT":
-                    if (appUser.get().isVerified()) {
-                        goToClientPage(activity);
-                    } else {
-                        goToVerificationPage(activity);
-                    }
-                    break;
-                case "ROLE_SERVICE_PROVIDER":
-
-                    if (appUser.get().isVerified()) {
-                        goToServiceProviderPage(activity);
-                    } else {
-                        if (appUser.get().getPreferred_working_hours().equals(HY) || appUser.get().getSpecialities().equals(HY)) {
-                            goToAdditionalInfoActivity(activity);
+            if (appUser.get().isIs_deleted() || appUser.get().isIs_disabled()) {
+                goToDisabledPage(activity);
+            } else {
+                switch (appUser.get().getRole()) {
+                    case "ROLE_CLIENT":
+                        if (appUser.get().isVerified()) {
+                            goToClientPage(activity);
                         } else {
                             goToVerificationPage(activity);
                         }
-                    }
-                    break;
+                        break;
+                    case "ROLE_SERVICE_PROVIDER":
 
-                case "ROLE_ADMIN":
-                case "ROLE_ADMIN_TRAINEE":
-                    goToAdminPage(activity);
-                    break;
+                        if (appUser.get().isVerified()) {
+                            goToServiceProviderPage(activity);
+                        } else {
+                            if (appUser.get().getPreferred_working_hours().equals(HY) || appUser.get().getSpecialities().equals(HY)) {
+                                goToAdditionalInfoActivity(activity);
+                            } else {
+                                goToVerificationPage(activity);
+                            }
+                        }
+                        break;
+
+                    case "ROLE_ADMIN":
+                    case "ROLE_ADMIN_TRAINEE":
+                        goToAdminPage(activity);
+                        break;
+                }
             }
         });
+    }
+
+    public static void goToDisabledPage(Activity activity) {
+        activity.startActivity(new Intent(activity, Disabled.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+        activity.finish();
     }
 
     public static void goToServiceProviderPage(Activity activity) {

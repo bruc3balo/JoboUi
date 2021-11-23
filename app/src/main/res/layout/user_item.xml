@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="15dp"
+    app:cardElevation="12dp"
+    android:layout_gravity="center"
+    android:layout_margin="15dp"
+    app:cardBackgroundColor="@color/black"
+    android:layout_height="wrap_content">
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/white"
+        android:layout_margin="2dp"
+        android:layout_gravity="center"
+        app:cardCornerRadius="15dp">
+
+        <LinearLayout
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:layout_width="150dp"
+                    android:maxHeight="150dp"
+                    android:minHeight="150dp"
+                    android:maxWidth="150dp"
+                    android:minWidth="150dp"
+                    android:layout_margin="5dp"
+                    android:layout_height="150dp"
+                    app:riv_corner_radius="30dp"
+                    app:riv_mutate_background="true"
+                    app:riv_border_width="2dp"
+                    app:riv_border_color="@color/grey"
+                    android:scaleType="centerCrop"
+                    android:id="@+id/profilePicItem"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_person_circle"/>
+
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:minHeight="150dp"
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+                    <TextView
+                        android:padding="10dp"
+                        android:id="@+id/usernameItem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:layout_gravity="center"
+                        android:text="@string/to_be_filled"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:fontFamily="sans-serif"/>
+
+                    <TextView
+                        android:padding="10dp"
+                        android:id="@+id/emailItem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:layout_gravity="center"
+                        android:text="@string/to_be_filled"
+                        android:textStyle="normal"
+                        android:gravity="center"
+                        android:fontFamily="sans-serif"/>
+
+                    <TextView
+                        android:padding="10dp"
+                        android:id="@+id/roleItem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:layout_gravity="center"
+                        android:text="@string/to_be_filled"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:fontFamily="sans-serif"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:background="@android:color/transparent"
+                            android:id="@+id/deleted"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_delete"
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"/>
+
+                        <ImageButton
+                            android:background="@android:color/transparent"
+                            android:id="@+id/disabled"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_circle"
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"/>
+
+                        <ImageButton
+                            android:background="@android:color/transparent"
+                            android:id="@+id/verify"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_cancel"
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.cardview.widget.CardView>

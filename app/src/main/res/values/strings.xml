@@ -87,6 +87,7 @@
     <string name="provide_a_description_of_your_job">Provide a description of your job. The service provider will do only what is required of him / her</string>
     <string name="description">Description</string>
     <string name="time">Time</string>
+    <string name="timeLabel">Time : </string>
     <string name="as_soon_as_possible">As soon as possible</string>
     <string name="scheduled">Scheduled</string>
     <string name="yes">Yes</string>
@@ -124,4 +125,8 @@
     <string name="decline">Decline</string>
     <string name="negotiate">Negotiate</string>
     <string name="urgency">Urgency :</string>
+    <string name="min">Min</string>
+    <string name="minksh">Min (KSH)</string>
+    <string name="maKsh">Max (KSH)</string>
+    <string name="users">Users</string>
 </resources>

@@ -305,7 +305,7 @@ public class UserViewModel extends AndroidViewModel {
         }
 
         ObjectMapper mapper = getObjectMapper();
-        String token = "Bearer " + getSp(USER_DB, getApplication()).get(ACCESS_TOKEN); //todo refresh
+        String token = "Bearer " + getSp(USER_DB, getApplication()).get(REFRESH_TOKEN); //todo refresh
 
         userApi.updateUser(repositoryUser.get().getUsername(), token, form).enqueue(new Callback<JsonResponse>() {
             @Override
@@ -349,6 +349,85 @@ public class UserViewModel extends AndroidViewModel {
             }
         });
         return mutableLiveData;
+    }
+
+    private MutableLiveData<Optional<Models.AppUser>> updateAUser(String username,UserUpdateForm form) {
+        MutableLiveData<Optional<Models.AppUser>> mutableLiveData = new MutableLiveData<>();
+
+        Toast.makeText(application, "Updating request", Toast.LENGTH_SHORT).show();
+
+
+        ObjectMapper mapper = getObjectMapper();
+        String token = "Bearer " + getSp(USER_DB, getApplication()).get(REFRESH_TOKEN);
+
+        userApi.updateUser(username, token, form).enqueue(new Callback<JsonResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
+
+                try {
+
+                    if (response.body() == null) {
+                        Toast.makeText(application, "Failed to get response", Toast.LENGTH_SHORT).show();
+                        mutableLiveData.setValue(Optional.empty());
+                        return;
+                    }
+
+                    if (response.body().getData() == null) {
+                        Toast.makeText(application, "Failed to get data", Toast.LENGTH_SHORT).show();
+                        mutableLiveData.setValue(Optional.empty());
+                        return;
+                    }
+
+                    JsonResponse jsonResponse = response.body();
+                    Models.AppUser updatedUser = mapper.readValue(new JsonObject(mapper.writeValueAsString(jsonResponse.getData())).toString(), Models.AppUser.class);
+
+
+                    Thread.sleep(2000);
+
+                    mutableLiveData.setValue(Optional.of(updatedUser));
+                } catch (JsonProcessingException | InterruptedException e) {
+                    e.printStackTrace();
+                    Toast.makeText(application, "Error updating account", Toast.LENGTH_SHORT).show();
+                    System.out.println("====================== Error updating account =======================");
+                    mutableLiveData.setValue(Optional.empty());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
+                System.out.println("============================ ERROR SENDING UPDATE REQUEST " + t.getMessage() + "==============================");
+            }
+        });
+        return mutableLiveData;
+    }
+
+    private MutableLiveData<Optional<JsonResponse>> getAllUserData() {
+        MutableLiveData<Optional<JsonResponse>> userMutableLiveData = new MutableLiveData<>();
+        ObjectMapper mapper = getObjectMapper();
+        String token = "Bearer " + getSp(USER_DB, getApplication()).get(REFRESH_TOKEN);
+
+
+        userApi.getAllUsers(token).enqueue(new Callback<JsonResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
+
+                JsonResponse jsonResponse = response.body();
+
+                if (jsonResponse == null || jsonResponse.getData() == null || jsonResponse.isHas_error() || !jsonResponse.isSuccess()) {
+                    userMutableLiveData.setValue(Optional.empty());
+                    return;
+                }
+
+                userMutableLiveData.setValue(Optional.of(jsonResponse));
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
+                userMutableLiveData.setValue(Optional.empty());
+            }
+        });
+
+        return userMutableLiveData;
     }
 
     private MutableLiveData<List<String>> getUsernames() {
@@ -458,6 +537,8 @@ public class UserViewModel extends AndroidViewModel {
         return mutableLiveData;
     }
 
+
+
     public void refreshToken() {
         Map<String, ?> map = getSp(USER_DB, application);
         String username = Objects.requireNonNull(map.get(USERNAME)).toString();
@@ -490,9 +571,16 @@ public class UserViewModel extends AndroidViewModel {
         return updateUser(form);
     }
 
+    public LiveData<Optional<Models.AppUser>> updateAnExistingUser(String username,UserUpdateForm form) {
+        return updateAUser(username,form);
+    }
+
     public LiveData<Optional<List<Models.AppUser>>> getProviders(String speciality, Integer page, Integer pageSize) throws JSONException, JsonProcessingException {
         return getServiceProviders(speciality, page, pageSize);
     }
 
+    public LiveData<Optional<JsonResponse>> getLiveAllUsers() {
+        return getAllUserData();
+    }
 
 }

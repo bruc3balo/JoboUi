@@ -26,6 +26,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JoboUi">
         <activity
+            android:name=".Disabled"
+            android:exported="true" />
+        <activity
+            android:name=".admin.UserActivity"
+            android:exported="true" />
+        <activity
             android:name=".serviceProviderUi.pages.ChatActivity"
             android:exported="true" />
         <activity

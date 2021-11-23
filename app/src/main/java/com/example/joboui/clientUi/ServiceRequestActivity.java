@@ -76,9 +76,10 @@ public class ServiceRequestActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 currentPosition = position;
                 if (position == mainTitles.length - 1) {
-                    nextButton.setText("Finish");
+                    nextButton.setVisibility(View.GONE);
                 } else {
                     nextButton.setText("Next");
+                    nextButton.setVisibility(View.VISIBLE);
                 }
                 invalidateOptionsMenu();
                 super.onPageSelected(position);

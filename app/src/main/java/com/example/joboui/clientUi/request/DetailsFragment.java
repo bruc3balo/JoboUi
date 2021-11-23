@@ -2,6 +2,7 @@ package com.example.joboui.clientUi.request;
 
 import static com.example.joboui.clientUi.ServiceRequestActivity.jobRequestForm;
 import static com.example.joboui.globals.GlobalVariables.ASAP;
+import static com.example.joboui.globals.GlobalVariables.HY;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -51,6 +52,8 @@ public class DetailsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentDetailsBinding.inflate(inflater);
 
+        jobRequestForm.setScheduled_at(ASAP);
+
         EditText descriptionField = binding.descriptionField;
         descriptionField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -72,6 +75,12 @@ public class DetailsFragment extends Fragment {
 
             }
         });
+
+        EditText minPrice = binding.minRange;
+        EditText maxPrice = binding.maxRange;
+
+        minPrice.addTextChangedListener(priceRangeWatcher(minPrice, maxPrice));
+        maxPrice.addTextChangedListener(priceRangeWatcher(minPrice, maxPrice));
 
         RadioGroup timeGroup = binding.timeGroup;
         timeGroup.setOnCheckedChangeListener((group, checkedId) -> {
@@ -96,10 +105,10 @@ public class DetailsFragment extends Fragment {
                 TimePickerDialog timePickerDialog = new TimePickerDialog(requireContext(), (view, hourOfDay, minute) -> {
                     hourS[0] = hourOfDay;
                     minS[0] = minute;
-                    scheduledDate.set(yearS[0],monthS[0],dayS[0], hourS[0], minS[0]);
+                    scheduledDate.set(yearS[0], monthS[0], dayS[0], hourS[0], minS[0]);
                     binding.scheduledTimeTv.setText(scheduledDate.getTime().toString());
                     jobRequestForm.setScheduled_at(scheduledDate.getTime().toString());
-                },hr,min,true);
+                }, hr, min, true);
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
                     yearS[0] = year;
@@ -123,5 +132,59 @@ public class DetailsFragment extends Fragment {
         binding.asap.setChecked(true);
 
         return binding.getRoot();
+    }
+
+    TextWatcher priceRangeWatcher(EditText minPrice, EditText maxPrice) {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if (minPrice.getText().toString().isEmpty() ) {
+                    return;
+                }
+
+                try {
+                    Double.parseDouble(minPrice.getText().toString());
+                } catch (Exception e) {
+                    if (e instanceof NumberFormatException) {
+                        minPrice.setError("Value to be a number");
+                        minPrice.requestFocus();
+                        return;
+                    }
+                    e.printStackTrace();
+                }
+
+
+                if (maxPrice.getText().toString().isEmpty()) {
+                    return;
+                }
+
+                try {
+                    Double.parseDouble(maxPrice.getText().toString());
+                } catch (Exception e) {
+                    if (e instanceof NumberFormatException) {
+                        maxPrice.setError("Value to be a number");
+                        maxPrice.requestFocus();
+                        return;
+                    }
+                    e.printStackTrace();
+                }
+
+
+
+
+                jobRequestForm.setJob_price_range(minPrice.getText().toString().concat(HY).concat(maxPrice.getText().toString()));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
     }
 }

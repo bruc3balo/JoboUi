@@ -246,13 +246,22 @@ public class Models {
 
         private LinkedList<String> specialities;
 
+        private Boolean disabled;
+
+        private Boolean deleted;
+
         public UserUpdateForm() {
 
         }
 
-        public UserUpdateForm(String phone_number, Boolean verified) {
-            this.phone_number = phone_number;
+        public UserUpdateForm(Boolean disabled, Boolean deleted, Boolean verified) {
+            this.disabled = disabled;
+            this.deleted = deleted;
             this.verified = verified;
+        }
+
+        public UserUpdateForm(String phone_number) {
+            this.phone_number = phone_number;
         }
 
         public UserUpdateForm(String id_number, String bio, LinkedHashMap<String, String> preferred_working_hours, LinkedList<String> specialities, Boolean verified) {
@@ -365,6 +374,24 @@ public class Models {
 
         public void setSpecialities(LinkedList<String> specialities) {
             this.specialities = specialities;
+        }
+
+
+
+        public Boolean getDisabled() {
+            return disabled;
+        }
+
+        public void setDisabled(Boolean disabled) {
+            this.disabled = disabled;
+        }
+
+        public Boolean getDeleted() {
+            return deleted;
+        }
+
+        public void setDeleted(Boolean deleted) {
+            this.deleted = deleted;
         }
     }
 
