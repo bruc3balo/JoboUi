@@ -82,8 +82,11 @@ public class UserViewModel extends AndroidViewModel {
 
 
                     if (jsonResponse == null) {
+                        System.out.println("NO USER DATA "+response.code());
                         userMutableLiveData.setValue(Optional.empty());
                         return;
+                    }  else {
+                        System.out.println("USER  DAA");
                     }
 
                     System.out.println("=============== SUCCESS GETTING USER " + getObjectMapper().writeValueAsString(jsonResponse.getData()) + "===================");

@@ -7,6 +7,7 @@ import static com.example.joboui.serviceProviderUi.pages.JobRequests.populateMyJ
 import static com.example.joboui.tutorial.VerificationActivity.editSingleValue;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.location.Address;
@@ -176,9 +177,15 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
             holder.providerLayout.setVisibility(View.VISIBLE);
 
-            holder.decline.setOnClickListener(v -> declineJob(job.getId()));
+            holder.decline.setOnClickListener(v -> confirmDialog("", job, job1 -> {
+                declineJob(job1);
+                return null;
+            }));
 
-            holder.accept.setOnClickListener(v -> acceptJob(job.getId()));
+            holder.accept.setOnClickListener(v -> confirmDialog("", job, job12 -> {
+                acceptJob(job12);
+                return null;
+            }));
 
             holder.negotiation.setOnClickListener(v -> {
                 //todo dialog
@@ -193,8 +200,21 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
     }
 
-    private void acceptJob(Long jobId) {
-        jobViewModel.updateJob(jobId, new Models.JobUpdateForm(JobStatus.ACCEPTED.code)).observe((LifecycleOwner) activity, new Observer<Optional<JsonResponse>>() {
+
+    private void confirmDialog(String info,Models.Job job ,Function<Models.Job,Void> function) {
+        Dialog d = new Dialog(activity);
+        d.setContentView(R.layout.yes_no_info_layout);
+        TextView infov = d.findViewById(R.id.newInfoTv);
+        infov.setText(info);
+        Button no = d.findViewById(R.id.noButton);
+        no.setOnClickListener(v->d.dismiss());
+
+        Button yes = d.findViewById(R.id.yesButton);
+        yes.setOnClickListener(v -> function.apply(job));
+    }
+
+    private void acceptJob(Models.Job job) {
+        jobViewModel.updateJob(job.getId(), new Models.JobUpdateForm(JobStatus.ACCEPTED.code)).observe((LifecycleOwner) activity, new Observer<Optional<JsonResponse>>() {
             @Override
             public void onChanged(Optional<JsonResponse> jsonResponse) {
                 if (!jsonResponse.isPresent() || jsonResponse.get().getData() == null || !jsonResponse.get().isSuccess() || jsonResponse.get().isHas_error()) {
@@ -208,8 +228,8 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
         });
     }
 
-    private void declineJob(Long jobId) {
-        jobViewModel.updateJob(jobId, new Models.JobUpdateForm(JobStatus.DECLINED.code)).observe((LifecycleOwner) activity, jsonResponse -> {
+    private void declineJob(Models.Job jobId) {
+        jobViewModel.updateJob(jobId.getId(), new Models.JobUpdateForm(JobStatus.DECLINED.code)).observe((LifecycleOwner) activity, jsonResponse -> {
             if (!jsonResponse.isPresent() || jsonResponse.get().getData() == null || !jsonResponse.get().isSuccess() || jsonResponse.get().isHas_error()) {
                 Toast.makeText(activity, "Failed to get response", Toast.LENGTH_SHORT).show();
                 return;
@@ -219,8 +239,8 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
         });
     }
 
-    private void updatePrice(Long jobId,String price) {
-        jobViewModel.updateJob(jobId, new Models.JobUpdateForm(price)).observe((LifecycleOwner) activity, jsonResponse -> {
+    private void updatePrice(Models.Job job,String price) {
+        jobViewModel.updateJob(job.getId(), new Models.JobUpdateForm(price)).observe((LifecycleOwner) activity, jsonResponse -> {
             if (!jsonResponse.isPresent() || jsonResponse.get().getData() == null || !jsonResponse.get().isSuccess() || jsonResponse.get().isHas_error()) {
                 Toast.makeText(activity, "Failed to get response", Toast.LENGTH_SHORT).show();
                 return;
@@ -241,7 +261,7 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
             holder.edit.setVisibility(View.VISIBLE);
             holder.chat.setVisibility(View.VISIBLE);
             holder.edit.setOnClickListener(v -> editSingleValue(InputType.TYPE_CLASS_NUMBER, "Enter new price",activity, price -> {
-                updatePrice(job.getId(),price);
+                updatePrice(job,price);
                 return null;
             }));
         } else {

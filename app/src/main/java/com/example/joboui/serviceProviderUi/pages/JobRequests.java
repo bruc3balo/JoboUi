@@ -34,6 +34,8 @@ public class JobRequests extends AppCompatActivity {
     private JobsRvAdapter jobsRvAdapter;
 
 
+    //todo confirmation prompt
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
