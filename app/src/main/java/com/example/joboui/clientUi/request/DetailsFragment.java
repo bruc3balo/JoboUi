@@ -45,7 +45,6 @@ public class DetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -76,11 +75,8 @@ public class DetailsFragment extends Fragment {
             }
         });
 
-        EditText minPrice = binding.minRange;
-        EditText maxPrice = binding.maxRange;
-
-        minPrice.addTextChangedListener(priceRangeWatcher(minPrice, maxPrice));
-        maxPrice.addTextChangedListener(priceRangeWatcher(minPrice, maxPrice));
+        EditText estimate = binding.estimate;
+        estimate.addTextChangedListener(priceRangeWatcher());
 
         RadioGroup timeGroup = binding.timeGroup;
         timeGroup.setOnCheckedChangeListener((group, checkedId) -> {
@@ -134,7 +130,7 @@ public class DetailsFragment extends Fragment {
         return binding.getRoot();
     }
 
-    TextWatcher priceRangeWatcher(EditText minPrice, EditText maxPrice) {
+     private TextWatcher priceRangeWatcher() {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -144,41 +140,23 @@ public class DetailsFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if (minPrice.getText().toString().isEmpty() ) {
+                if (binding.estimate.getText().toString().isEmpty() ) {
                     return;
                 }
 
                 try {
-                    Double.parseDouble(minPrice.getText().toString());
+                    Double.parseDouble(binding.estimate.getText().toString());
+                    jobRequestForm.setJob_price_range(binding.estimate.getText().toString());
                 } catch (Exception e) {
                     if (e instanceof NumberFormatException) {
-                        minPrice.setError("Value to be a number");
-                        minPrice.requestFocus();
+                        binding.estimate.setError("Value to be a number");
+                        binding.estimate.requestFocus();
                         return;
                     }
                     e.printStackTrace();
                 }
 
 
-                if (maxPrice.getText().toString().isEmpty()) {
-                    return;
-                }
-
-                try {
-                    Double.parseDouble(maxPrice.getText().toString());
-                } catch (Exception e) {
-                    if (e instanceof NumberFormatException) {
-                        maxPrice.setError("Value to be a number");
-                        maxPrice.requestFocus();
-                        return;
-                    }
-                    e.printStackTrace();
-                }
-
-
-
-
-                jobRequestForm.setJob_price_range(minPrice.getText().toString().concat(HY).concat(maxPrice.getText().toString()));
             }
 
             @Override

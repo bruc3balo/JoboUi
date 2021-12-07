@@ -2,13 +2,19 @@ package com.example.joboui.adapters;
 
 import static com.example.joboui.clientUi.MyJobs.populateClientJobs;
 import static com.example.joboui.clientUi.request.LocationRequest.getAddressFromLocation;
-import static com.example.joboui.login.SignInActivity.getObjectMapper;
+import static com.example.joboui.globals.GlobalDb.db;
+import static com.example.joboui.globals.GlobalVariables.JOB;
+import static com.example.joboui.globals.GlobalVariables.ROLE;
+import static com.example.joboui.model.Models.Messages.MESSAGES;
 import static com.example.joboui.serviceProviderUi.pages.JobRequests.populateMyJobs;
 import static com.example.joboui.tutorial.VerificationActivity.editSingleValue;
+import static com.example.joboui.utils.DataOps.getThreadId;
+import static com.example.joboui.utils.JobStatus.SERVICE_COMPLETE;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Address;
 import android.text.InputType;
@@ -26,21 +32,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.joboui.R;
+import com.example.joboui.ReviewActivity;
 import com.example.joboui.db.job.JobViewModel;
 import com.example.joboui.model.Models;
 import com.example.joboui.serviceProviderUi.pages.ChatActivity;
-import com.example.joboui.serviceProviderUi.pages.JobRequests;
-import com.example.joboui.serviceProviderUi.pages.NegotiationActivity;
 import com.example.joboui.utils.JobStatus;
-import com.example.joboui.utils.JsonResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +53,6 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.Function;
 
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder> {
@@ -104,24 +106,6 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
             holder.jdContent.setText(job.getJob_description());
         }
 
-        if (job.getClient_username() != null) {
-            String clientLabel = activity.getString(R.string.client_label);
-            holder.clientPartyContent.setText(getBoldSpannable(clientLabel,job.getClient_username()));
-
-            if (job.getClient_username().equals(getUsername())) {
-                setClient(holder,job);
-            }
-        }
-
-        if (job.getLocal_service_provider_username() != null) {
-            String providerLabel = activity.getString(R.string.service_provider_label);
-            holder.providerPartyContent.setText(getBoldSpannable(providerLabel,job.getLocal_service_provider_username()));
-
-
-            if (job.getLocal_service_provider_username().equals(getUsername())) {
-                setServiceProvider(holder, job);
-            }
-        }
 
         if (job.getJob_location() != null) {
             String locationLabel = activity.getString(R.string.location_label);
@@ -145,10 +129,6 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
             holder.priceContent.setText(getBoldSpannable(priceLabel, String.valueOf(job.getJob_price())));
         }
 
-        if (job.getJob_price_range() != null) {
-            String priceRangeLabel = activity.getString(R.string.price_range_label);
-            holder.priceRangeContent.setText(getBoldSpannable(priceRangeLabel, job.getJob_price_range()));
-        }
 
         if (job.getCreated_at() != null) {
             String createdAtLabel = activity.getString(R.string.createdat_label);
@@ -162,111 +142,664 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
         if (job.getScheduled_at() != null) {
             String urgencyLabel = activity.getString(R.string.urgency);
-            holder.urgency.setText(getBoldSpannable(urgencyLabel,job.getScheduled_at()));
+            holder.urgency.setText(getBoldSpannable(urgencyLabel, job.getScheduled_at()));
         }
 
-        holder.chat.setOnClickListener(v -> activity.startActivity(new Intent(activity, ChatActivity.class)));
+        if (job.getClient_username() != null) {
+            String clientLabel = activity.getString(R.string.client_label);
+            holder.clientPartyContent.setText(getBoldSpannable(clientLabel, job.getClient_username()));
 
+            if (job.getClient_username().equals(getUsername())) {
+                setClient(holder, job);
+            }
+        }
+
+        if (job.getLocal_service_provider_username() != null) {
+            String providerLabel = activity.getString(R.string.service_provider_label);
+            holder.providerPartyContent.setText(getBoldSpannable(providerLabel, job.getLocal_service_provider_username()));
+
+
+            if (job.getLocal_service_provider_username().equals(getUsername())) {
+                setServiceProvider(holder, job);
+            }
+        }
+
+    }
+
+    private void deleteChatThread(Models.Job job) {
+        db.getReference().child(MESSAGES).child(getThreadId(job.getClient_username(), job.getLocal_service_provider_username())).removeValue().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                System.out.println("Chat 1 cleared");
+            } else {
+                System.out.println("Chat 1 not cleared");
+
+                db.getReference().child(MESSAGES).child(getThreadId(job.getLocal_service_provider_username(), job.getClient_username())).removeValue().addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        System.out.println("Chat 2 cleared");
+                    } else {
+                        System.out.println("Chat 2 not cleared");
+                    }
+                });
+
+            }
+        });
     }
 
     public void setServiceProvider(ViewHolder holder, Models.Job job) {
 
+        holder.negotiation.setVisibility(View.GONE);
+        holder.chat.setVisibility(View.GONE);
+        holder.accept.setVisibility(View.GONE);
+        holder.decline.setVisibility(View.GONE);
         holder.edit.setVisibility(View.GONE);
+        holder.providerLayout.setVisibility(View.VISIBLE);
 
-        if (job.getJob_status() == JobStatus.REQUESTED.code) {
-
-            holder.providerLayout.setVisibility(View.VISIBLE);
-
-            holder.decline.setOnClickListener(v -> confirmDialog("", job, job1 -> {
-                declineJob(job1);
+        holder.negotiation.setOnClickListener(v -> {
+            Toast.makeText(activity, "Negotiation", Toast.LENGTH_SHORT).show();
+            confirmDialog("Do you want to negotiate for price ?", job, job12 -> {
+                changeJobStatus(job12, JobStatus.NEGOTIATING, false);
                 return null;
-            }));
-
-            holder.accept.setOnClickListener(v -> confirmDialog("", job, job12 -> {
-                acceptJob(job12);
-                return null;
-            }));
-
-            holder.negotiation.setOnClickListener(v -> {
-                //todo dialog
-                Toast.makeText(activity, "Negotiation", Toast.LENGTH_SHORT).show();
             });
-        } else if (job.getJob_status() == JobStatus.ACCEPTED.code) {
-            holder.providerLayout.setVisibility(View.GONE);
-            holder.decline.setOnClickListener(null);
-            holder.accept.setOnClickListener(null);
-            holder.negotiation.setOnClickListener(null);
+        });
+
+        switch (job.getJob_status()) {
+            //Requested
+            default:
+            case 0:
+                //todo set price user
+
+                //can chat
+                //can negotiate
+                //can accept / decline
+                holder.negotiation.setVisibility(View.VISIBLE);
+                holder.negotiation.setOnClickListener(v -> confirmDialog("Do you want to suggest your price ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.NEGOTIATING, false);
+                    return null;
+                }));
+
+                holder.accept.setVisibility(View.VISIBLE);
+                holder.accept.setOnClickListener(v -> confirmDialog("Do you want to accept this job for " + job.getJob_price_range() + " KSH ?", job, job12 -> {
+                    updatePrice(job12, job12.getJob_price_range(), null, JobStatus.ACCEPTED.code, false);
+                    return null;
+                }));
+
+                holder.decline.setVisibility(View.VISIBLE);
+                holder.decline.setOnClickListener(v -> confirmDialog("Do you want to decline this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.DECLINED, false);
+                    return null;
+                }));
+
+                holder.chat.setVisibility(View.VISIBLE);
+                if (job.getJob_price_range() != null) {
+                    holder.priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range())));
+                }
+
+
+                break;
+
+            //Accepted
+            case 1:
+                //cannot decline / accept
+                //can chat
+                //cannot negotiate
+
+                holder.negotiation.setVisibility(View.GONE);
+
+                holder.accept.setVisibility(View.GONE);
+                holder.decline.setVisibility(View.VISIBLE);
+                holder.decline.setText("Abort");
+                holder.decline.setOnClickListener(v -> confirmDialog("Do you want to abort this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CANCELLED, false);
+                    return null;
+                }));
+
+                holder.chat.setVisibility(View.VISIBLE);
+
+
+                break;
+
+
+            //Declined //CANCELLED //SERVICE_CANCELLED_IN_PROGRESS //CLIENT_CANCELLED_IN_PROGRESS
+            case 2:
+            case 7:
+                break;
+
+                //service i cancelled
+            case 12:
+
+                break;
+            case 13:
+
+                //cannot decline / accept
+                //cannot chat
+                //cannot negotiate
+
+                holder.statusContent.setTextColor(Color.RED);
+                holder.statusContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+
+
+                holder.chat.setImageResource(R.drawable.ic_customer_complaint);
+                holder.chat.setVisibility(View.VISIBLE);
+
+                holder.chat.setOnClickListener(v -> confirmDialog("Do you want to report " + job.getClient_username() + " ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CLIENT_REPORTED, true);
+                    return null;
+                }));
+
+                holder.negotiation.setVisibility(View.VISIBLE);
+                holder.negotiation.setText("Review");
+                holder.negotiation.setOnClickListener(v -> goToReview(false, job));
+
+
+                break;
+
+            //negotiating
+            case 3:
+                //can chat
+                //can accept / decline
+                // cannot negotiate button
+
+                holder.negotiation.setVisibility(View.GONE);
+                holder.chat.setVisibility(View.VISIBLE);
+
+                holder.accept.setVisibility(View.VISIBLE);
+                holder.accept.setOnClickListener(v -> confirmDialog("Do you want to accept this job for " + job.getJob_price_range() + " KSH ?", job, job12 -> {
+                    updatePrice(job12, job12.getJob_price_range(), null, JobStatus.ACCEPTED.code, false);
+                    return null;
+                }));
+
+                holder.decline.setVisibility(View.VISIBLE);
+                holder.decline.setOnClickListener(v -> confirmDialog("Do you want to decline this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.DECLINED, false);
+                    return null;
+                }));
+
+                if (job.getJob_price_range() != null) {
+                    holder.priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range())));
+                }
+
+
+                break;
+
+            //Ready
+            case 4:
+
+                //cannot accept / decline
+                //can cancel
+                //can chat
+                //cannot negotiate / button
+
+                holder.negotiation.setVisibility(View.GONE);
+                holder.chat.setVisibility(View.VISIBLE);
+
+                holder.accept.setVisibility(View.VISIBLE);
+                holder.accept.setText("Start Job");
+                holder.accept.setOnClickListener(v -> confirmDialog("Do you want to start this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.PROGRESS, false);
+                    return null;
+                }));
+
+                //cancel
+                holder.decline.setVisibility(View.VISIBLE);
+                holder.decline.setText("Cancel");
+                holder.decline.setOnClickListener(v3 -> holder.decline.setOnClickListener(v4 -> confirmDialog("Do you want to cancel this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CANCELLED, false);
+                    return null;
+                })));
+
+                break;
+
+            //Progress
+            case 5:
+
+                //can cancel // complete
+                //cannot accept / decline
+                //can chat
+                // cannot negotiate / button
+
+                holder.negotiation.setVisibility(View.GONE);
+                holder.chat.setVisibility(View.VISIBLE);
+                holder.edit.setVisibility(View.GONE);
+
+                holder.accept.setVisibility(View.VISIBLE);
+                holder.accept.setText("Complete");
+                holder.accept.setOnClickListener(v3 -> confirmDialog("Do you want to complete this job ?", job, job12 -> {
+                    changeJobStatus(job12, SERVICE_COMPLETE, false);
+                    return null;
+                }));
+
+
+                //cancel
+                holder.decline.setVisibility(View.VISIBLE);
+                holder.decline.setText("Abort");
+                holder.decline.setOnClickListener(v5 -> confirmDialog("Do you want to abort this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.SERVICE_CANCELLED_IN_PROGRESS, false);
+                    return null;
+                }));
+
+                break;
+
+            //Completed
+            case 6:
+
+                break;
+
+            //SERVICE_COMPLETE
+            case 8:
+            case 16:
+
+                holder.statusContent.setTextColor(Color.GREEN);
+                holder.statusContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+
+                //report
+                holder.chat.setImageResource(R.drawable.ic_customer_complaint);
+                holder.chat.setVisibility(View.VISIBLE);
+                holder.chat.setOnClickListener(v -> confirmDialog("Do you want to report " + job.getClient_username() + " ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CLIENT_REPORTED, true);
+                    return null;
+                }));
+
+                //review
+                holder.negotiation.setVisibility(View.VISIBLE);
+                holder.negotiation.setText("Review");
+                holder.negotiation.setOnClickListener(v -> goToReview(false, job));
+
+                break;
+
+            //CLIENT_COMPLETE // i want to complete or complain
+            case 9:
+
+                holder.statusContent.setTextColor(Color.GREEN);
+                holder.statusContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+
+
+                holder.chat.setImageResource(R.drawable.ic_customer_complaint);
+                holder.chat.setVisibility(View.VISIBLE);
+                holder.chat.setOnClickListener(v -> confirmDialog("Do you want to report " + job.getClient_username() + " ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CLIENT_REPORTED, true);
+                    return null;
+                }));
+
+                holder.accept.setText("Confirm Completion");
+                holder.accept.setVisibility(View.VISIBLE);
+                holder.accept.setOnClickListener(v5 -> confirmDialog("Do you want to complete this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.RATING, false);
+                    return null;
+                }));
+
+                break;
+
+            //CLIENT_RATING
+            case 10:
+
+                //todo i service need to rate
+                break;
+
+            //SERVICE_RATING
+            case 11:
+                //todo i service have rated
+
+                break;
+
+            //SERVICE_REPORTED
+            case 14:
+                //todo i service have reported
+
+                break;
+
+            //CLIENT_REPORTED
+            case 15:
+                //todo i service have been reported
+
+                break;
+
         }
 
     }
 
+    private void goToReview(boolean isClient, Models.Job job) {
+        activity.startActivity(new Intent(activity, ReviewActivity.class).putExtra(ROLE, isClient).putExtra(JOB, job));
+    }
 
-    private void confirmDialog(String info,Models.Job job ,Function<Models.Job,Void> function) {
+    private void confirmDialog(String info, Models.Job job, Function<Models.Job, Void> function) {
         Dialog d = new Dialog(activity);
         d.setContentView(R.layout.yes_no_info_layout);
         TextView infov = d.findViewById(R.id.newInfoTv);
         infov.setText(info);
         Button no = d.findViewById(R.id.noButton);
-        no.setOnClickListener(v->d.dismiss());
+        no.setOnClickListener(v -> d.dismiss());
 
         Button yes = d.findViewById(R.id.yesButton);
-        yes.setOnClickListener(v -> function.apply(job));
-    }
-
-    private void acceptJob(Models.Job job) {
-        jobViewModel.updateJob(job.getId(), new Models.JobUpdateForm(JobStatus.ACCEPTED.code)).observe((LifecycleOwner) activity, new Observer<Optional<JsonResponse>>() {
-            @Override
-            public void onChanged(Optional<JsonResponse> jsonResponse) {
-                if (!jsonResponse.isPresent() || jsonResponse.get().getData() == null || !jsonResponse.get().isSuccess() || jsonResponse.get().isHas_error()) {
-                    Toast.makeText(activity, "Failed to get response", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                populateMyJobs(activity,getUsername(),JobsRvAdapter.this);
-
-            }
+        yes.setOnClickListener(v -> {
+            function.apply(job);
+            d.dismiss();
         });
+
+        d.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        d.show();
     }
 
-    private void declineJob(Models.Job jobId) {
-        jobViewModel.updateJob(jobId.getId(), new Models.JobUpdateForm(JobStatus.DECLINED.code)).observe((LifecycleOwner) activity, jsonResponse -> {
+    private void changeJobStatus(Models.Job job, JobStatus status, boolean isClient) {
+        Models.JobUpdateForm form = new Models.JobUpdateForm(status.getCode());
+        form.setCompleted_at(status == JobStatus.COMPLETED || status == JobStatus.DECLINED || status == JobStatus.CANCELLED);
+
+        try {
+            if (form.getCompleted_at() != null) {
+                deleteChatThread(job);
+            }
+        } catch (Exception ignored) {
+        }
+
+        jobViewModel.updateJob(job.getId(), form).observe((LifecycleOwner) activity, jsonResponse -> {
             if (!jsonResponse.isPresent() || jsonResponse.get().getData() == null || !jsonResponse.get().isSuccess() || jsonResponse.get().isHas_error()) {
                 Toast.makeText(activity, "Failed to get response", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            populateMyJobs(activity,getUsername(),JobsRvAdapter.this);
+
+            if (isClient) {
+                populateClientJobs(activity, getUsername(), JobsRvAdapter.this);
+            } else {
+                populateMyJobs(activity, getUsername(), JobsRvAdapter.this);
+
+            }
+
         });
     }
 
-    private void updatePrice(Models.Job job,String price) {
-        jobViewModel.updateJob(job.getId(), new Models.JobUpdateForm(price)).observe((LifecycleOwner) activity, jsonResponse -> {
+    private void updatePrice(Models.Job job, String price, String priceRange, Integer status, boolean isClient) {
+        jobViewModel.updateJob(job.getId(), new Models.JobUpdateForm(price, priceRange, status)).observe((LifecycleOwner) activity, jsonResponse -> {
             if (!jsonResponse.isPresent() || jsonResponse.get().getData() == null || !jsonResponse.get().isSuccess() || jsonResponse.get().isHas_error()) {
                 Toast.makeText(activity, "Failed to get response", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            populateClientJobs(activity,getUsername(),JobsRvAdapter.this);
+
+            if (isClient) {
+                populateClientJobs(activity, getUsername(), JobsRvAdapter.this);
+
+            } else {
+                populateMyJobs(activity, getUsername(), JobsRvAdapter.this);
+
+            }
         });
     }
 
-    private void negotiation() {
-        activity.startActivity(new Intent(activity, NegotiationActivity.class));
-    }
 
     private void setClient(ViewHolder holder, Models.Job job) {
-        holder.providerLayout.setVisibility(View.GONE);
 
-        if (job.getJob_status() == JobStatus.NEGOTIATING.code || job.getJob_status() == JobStatus.REQUESTED.code) {
-            holder.edit.setVisibility(View.VISIBLE);
-            holder.chat.setVisibility(View.VISIBLE);
-            holder.edit.setOnClickListener(v -> editSingleValue(InputType.TYPE_CLASS_NUMBER, "Enter new price",activity, price -> {
-                updatePrice(job,price);
-                return null;
-            }));
-        } else {
-            holder.edit.setVisibility(View.GONE);
-            holder.chat.setVisibility(View.GONE);
+        holder.negotiation.setVisibility(View.GONE);
+        holder.chat.setVisibility(View.GONE);
+        holder.edit.setVisibility(View.GONE);
+        holder.accept.setVisibility(View.GONE);
+        holder.decline.setVisibility(View.GONE);
+        holder.providerLayout.setVisibility(View.VISIBLE);
+
+
+        holder.edit.setOnClickListener(v -> editSingleValue(InputType.TYPE_CLASS_NUMBER, "Enter new price", activity, price -> {
+            updatePrice(job, null, price, null, true);
+            return null;
+        }));
+
+        switch (job.getJob_status()) {
+            //REQUESTED
+            default:
+            case 0:
+                //can chat
+                //can cancel
+                //can change price
+                //cannot decline / accept
+                //cannot negotiate
+
+                holder.decline.setVisibility(View.VISIBLE);
+                holder.decline.setText("Cancel");
+                holder.decline.setOnClickListener(v -> confirmDialog("Do you want to cancel this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CANCELLED, true);
+                    return null;
+                }));
+
+                holder.accept.setVisibility(View.GONE);
+                holder.edit.setVisibility(View.VISIBLE);
+
+                holder.negotiation.setVisibility(View.GONE);
+                holder.chat.setVisibility(View.VISIBLE);
+
+                if (job.getJob_price_range() != null) {
+                    holder.priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range())));
+                }
+
+
+                break;
+
+            //ACCEPTED
+            case 1:
+                //cannot change price
+                //cannot negotiate
+                //cannot negotiate button
+                //can cancel
+                //cannot accept / decline
+                //can chat
+                //cannot edit price button
+
+                holder.edit.setVisibility(View.GONE);
+                holder.negotiation.setVisibility(View.GONE);
+
+                holder.decline.setVisibility(View.VISIBLE);
+                holder.decline.setText("Cancel");
+                holder.decline.setOnClickListener(v -> confirmDialog("Do you want to cancel this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.SERVICE_CANCELLED_IN_PROGRESS, true);
+                    return null;
+                }));
+
+                holder.accept.setVisibility(View.VISIBLE);
+                holder.accept.setText("READY TO START");
+                holder.accept.setOnClickListener(v -> confirmDialog("Do you want to start this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.READY, true);
+                    return null;
+                }));
+
+                holder.chat.setVisibility(View.VISIBLE);
+
+
+                break;
+
+            //DECLINED // CANCELLED //
+            case 2:
+            case 7:
+                break;
+
+           //SERVICE_CANCELLED_IN_PROGRESS //CLIENT_CANCELLED_IN_PROGRESS
+            case 12:
+
+                holder.statusContent.setTextColor(Color.RED);
+                holder.statusContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+
+                //just a red bg
+                holder.statusBg.setCardBackgroundColor(Color.RED);
+
+                holder.completedAtContent.setVisibility(View.VISIBLE);
+                holder.chat.setImageResource(R.drawable.ic_customer_complaint);
+                holder.chat.setVisibility(View.VISIBLE);
+
+                holder.chat.setOnClickListener(v -> confirmDialog("Do you want to report " + job.getLocal_service_provider_username() + " ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CLIENT_REPORTED, true);
+                    return null;
+                }));
+
+                holder.negotiation.setVisibility(View.VISIBLE);
+                holder.negotiation.setText("Review");
+                holder.negotiation.setOnClickListener(v -> goToReview(true, job));
+
+
+                if (job.getJob_price_range() != null) {
+                    holder.priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range())));
+                }
+
+                break;
+
+                //I cancelled - ... client
+            case 13:
+
+
+
+
+            //NEGOTIATING
+            case 3:
+                //can cancel
+                //can chat
+                //cannot negotiate button
+                //cannot accept / decline
+                //can edit price
+
+                holder.decline.setVisibility(View.VISIBLE);
+                holder.decline.setText("Cancel");
+                holder.decline.setOnClickListener(v -> confirmDialog("Do you want to cancel this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CANCELLED, true);
+                    return null;
+                }));
+                holder.chat.setVisibility(View.VISIBLE);
+                holder.providerLayout.setVisibility(View.VISIBLE);
+                holder.negotiation.setVisibility(View.GONE);
+                holder.accept.setVisibility(View.GONE);
+
+                holder.edit.setVisibility(View.VISIBLE);
+
+                if (job.getJob_price_range() != null) {
+                    holder.priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range())));
+                }
+
+
+                break;
+
+            //READY
+            case 4:
+
+                //can chat
+                //can cancel
+                //cannot negotiate
+                //cannot edit price
+                //cannot accept / decline
+
+                holder.chat.setVisibility(View.VISIBLE);
+
+                holder.decline.setVisibility(View.VISIBLE);
+                holder.decline.setText("Cancel");
+                holder.decline.setOnClickListener(v -> confirmDialog("Do you want to cancel this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CANCELLED, true);
+                    return null;
+                }));
+
+                holder.negotiation.setVisibility(View.GONE);
+                holder.edit.setVisibility(View.GONE);
+
+                holder.accept.setVisibility(View.GONE);
+
+                break;
+
+            //PROGRESS
+            case 5:
+                //can cancel
+                //can complete
+                //cannot negotiate
+                //cannot edit
+
+                holder.negotiation.setVisibility(View.GONE);
+                holder.chat.setVisibility(View.VISIBLE);
+                holder.edit.setVisibility(View.GONE);
+
+
+                holder.accept.setVisibility(View.VISIBLE);
+                holder.accept.setText("Complete");
+                holder.accept.setOnClickListener(v3 -> confirmDialog("Do you want to complete this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CLIENT_COMPLETE, true);
+                    return null;
+                }));
+
+
+                //cancel
+                holder.decline.setVisibility(View.VISIBLE);
+                holder.decline.setText("Abort");
+                holder.decline.setOnClickListener(v5 -> confirmDialog("Do you want to abort this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CLIENT_CANCELLED_IN_PROGRESS, true);
+                    return null;
+                }));
+
+                break;
+
+            //COMPLETED
+            case 6:
+
+                break;
+
+            //SERVICE_COMPLETE
+            case 8:
+
+                holder.negotiation.setVisibility(View.GONE);
+                holder.chat.setVisibility(View.VISIBLE);
+                holder.edit.setVisibility(View.GONE);
+
+                holder.decline.setText("REPORT");
+                holder.decline.setVisibility(View.VISIBLE);
+                holder.decline.setOnClickListener(v5 -> confirmDialog("Do you want to report " + job.getLocal_service_provider_username(), job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CLIENT_REPORTED, true);
+                    return null;
+                }));
+
+                holder.accept.setText("COMPLETE");
+                holder.decline.setVisibility(View.VISIBLE);
+                holder.decline.setOnClickListener(v5 -> confirmDialog("Do you want to complete this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.SERVICE_REPORTED, true);
+                    return null;
+                }));
+
+
+                break;
+            //CLIENT_COMPLETE //i have completed
+            case 9:
+            case 16:
+
+                //review
+                //complain
+
+                holder.statusContent.setTextColor(Color.GREEN);
+                holder.statusContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+
+                holder.chat.setImageResource(R.drawable.ic_customer_complaint);
+                holder.chat.setVisibility(View.VISIBLE);
+                holder.chat.setOnClickListener(v -> confirmDialog("Do you want to report " + job.getLocal_service_provider_username() + " ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CLIENT_REPORTED, true);
+                    return null;
+                }));
+
+                holder.negotiation.setVisibility(View.VISIBLE);
+                holder.negotiation.setText("Review");
+                holder.negotiation.setOnClickListener(v -> goToReview(true, job));
+
+                break;
+
+            //CLIENT_RATING
+            case 10:
+                //todo i have rated
+
+                break;
+
+            //SERVICE_RATING
+            case 11:
+                //todo o client have not rated
+
+                break;
+
+            //SERVICE_REPORTED
+            case 14:
+                //todo I client have been reported
+
+                break;
+
+            //CLIENT_REPORTED
+            case 15:
+                //todo I client have reported
+
+                break;
         }
 
     }
@@ -295,10 +828,11 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView statusTitle, statusContent, jdTitle, jdContent, partyTitle, clientPartyContent, providerPartyContent, locationTitle, locationContent;
-        TextView specialityTitle, specialityContent, priceTv, priceContent, priceRangeContent, timeTv, createdAtContent, completedAtContent,urgency;
+        TextView specialityTitle, specialityContent, priceTv, priceContent, timeTv, createdAtContent, completedAtContent, urgency;
         ImageButton edit, chat;
         LinearLayout providerLayout;
         Button decline, accept, negotiation;
+        CardView statusBg;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -315,17 +849,17 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
             specialityContent = itemView.findViewById(R.id.specialityContent);
             priceTv = itemView.findViewById(R.id.priceTv);
             priceContent = itemView.findViewById(R.id.priceContent);
-            priceRangeContent = itemView.findViewById(R.id.priceRangeContent);
             timeTv = itemView.findViewById(R.id.timeTv);
             createdAtContent = itemView.findViewById(R.id.createdAtContent);
             completedAtContent = itemView.findViewById(R.id.completedAtContent);
-            edit = itemView.findViewById(R.id.editPrice);
             chat = itemView.findViewById(R.id.chat);
+            edit = itemView.findViewById(R.id.edit);
             providerLayout = itemView.findViewById(R.id.serviceProviderControls);
             decline = itemView.findViewById(R.id.decline);
             accept = itemView.findViewById(R.id.accept);
             negotiation = itemView.findViewById(R.id.negotiate);
             urgency = itemView.findViewById(R.id.urgency);
+            statusBg = itemView.findViewById(R.id.statusBg);
             itemView.setOnClickListener(this);
         }
 

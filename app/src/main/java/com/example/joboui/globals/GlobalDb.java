@@ -11,6 +11,7 @@ import com.example.joboui.db.service.ServiceApi;
 import com.example.joboui.db.service.ServiceRepository;
 import com.example.joboui.db.userDb.UserApi;
 import com.example.joboui.db.userDb.UserRepository;
+import com.google.firebase.database.FirebaseDatabase;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -28,6 +29,7 @@ public class GlobalDb extends Application {
     public static JobApi jobApi;
     public static ServiceApi serviceApi;
     public static Application application;
+    public static FirebaseDatabase db;
     public GlobalDb() {
 
     }
@@ -43,6 +45,8 @@ public class GlobalDb extends Application {
             jobApi = retrofit.create(JobApi.class);
             userRepository = new UserRepository(application);
             serviceRepository = new ServiceRepository(application);
+            db = FirebaseDatabase.getInstance();
+            db.setPersistenceEnabled(true);
             initialized = true;
 
             System.out.println("======================== INITIALIZED ========================");

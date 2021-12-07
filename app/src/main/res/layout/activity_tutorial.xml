@@ -18,6 +18,7 @@
             android:layout_gravity="top"
             app:title="Verify you phone number"
             app:titleTextColor="@color/white"
+            app:subtitleTextColor="@color/grey"
             android:background="@color/purple"/>
 
 
@@ -30,102 +31,154 @@
 
 
 
-        <TextView
-            android:id="@+id/sendOPT"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="35dp"
-            android:gravity="center"
-            android:text="@string/to_be_filled"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            android:textStyle="bold" />
 
-
-
-        <TextView
-            android:id="@+id/status"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="35dp"
-            android:gravity="center"
-            android:text=""
-            android:textColor="@color/grey"
-            android:textSize="15sp"
-            android:textStyle="normal" />
 
 
 
         <LinearLayout
             android:id="@+id/optLayout"
-            android:padding="10dp"
-            android:layout_margin="15dp"
+            android:padding="5dp"
+            android:layout_margin="10dp"
             android:gravity="center"
             android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <EditText
-                android:inputType="number"
-                android:padding="15dp"
+
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:background="@color/black"
+                android:layout_margin="30dp"/>
+
+            <TextView
+                android:id="@+id/infoOpt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_margin="25dp"
                 android:gravity="center"
+                android:text="@string/to_be_filled"
                 android:textColor="@color/black"
-                android:id="@+id/otp"
-                android:hint="@string/enter_password_received_from_sms"
-                android:background="@drawable/edit_text_field_white_thin"/>
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
-            <RelativeLayout
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_margin="15dp"
+            <LinearLayout
                 android:gravity="center"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <ProgressBar
-                    android:id="@+id/timeOut"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:elevation="12dp"
-                    style="@style/CircularDeterminateProgressBar"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:indeterminateOnly="false"/>
-
-                <ImageButton
-                    android:id="@+id/confirmOTP"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
+                <com.example.joboui.utils.CutCopyPasteEditText
+                    android:id="@+id/code1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="10dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/circle_day_bg_selected"
-                    android:backgroundTint="@color/white"
-                    android:rotation="0"
-                    android:src="@android:drawable/ic_menu_send"
-                    android:text="@string/check_otp"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:visibility="visible"
-                    tools:ignore="SpeakableTextPresentCheck" />
+                    android:layout_weight="1"
+                    android:background="@drawable/edit_text_field_white_thin"
+                    android:gravity="center"
+                    android:hint="@string/star"
+                    android:inputType="number"
+                    android:padding="15dp"
+                    android:textColor="@color/black" />
 
-            </RelativeLayout>
+                <com.example.joboui.utils.CutCopyPasteEditText
+                    android:inputType="number"
+                    android:padding="15dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:id="@+id/code2"
+                    android:layout_margin="10dp"
+                    android:hint="@string/star"
+                    android:background="@drawable/edit_text_field_white_thin"/>
+
+
+
+                <com.example.joboui.utils.CutCopyPasteEditText
+                    android:inputType="number"
+                    android:padding="15dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:id="@+id/code3"
+                    android:layout_margin="10dp"
+                    android:hint="@string/star"
+                    android:background="@drawable/edit_text_field_white_thin"/>
+
+
+
+                <com.example.joboui.utils.CutCopyPasteEditText
+                    android:inputType="number"
+                    android:padding="15dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:id="@+id/code4"
+                    android:layout_margin="10dp"
+                    android:hint="@string/star"
+                    android:background="@drawable/edit_text_field_white_thin"/>
+
+
+
+                <com.example.joboui.utils.CutCopyPasteEditText
+                    android:inputType="number"
+                    android:padding="15dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:id="@+id/code5"
+                    android:layout_margin="10dp"
+                    android:hint="@string/star"
+                    android:background="@drawable/edit_text_field_white_thin"/>
+
+
+
+                <com.example.joboui.utils.CutCopyPasteEditText
+                    android:inputType="number"
+                    android:padding="15dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:id="@+id/code6"
+                    android:layout_margin="10dp"
+                    android:hint="@string/star"
+                    android:background="@drawable/edit_text_field_white_thin"/>
+
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/countdownTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="25dp"
+                android:gravity="center"
+                android:text="@string/to_be_filled"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -141,6 +194,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:indeterminateTint="@color/deep_purple"/>
+        android:indeterminateTint="@color/grey"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -129,4 +129,7 @@
     <string name="minksh">Min (KSH)</string>
     <string name="maKsh">Max (KSH)</string>
     <string name="users">Users</string>
+    <string name="star">*</string>
+    <string name="suggest_price">Suggest Your price</string>
+    <string name="_0">0</string>
 </resources>

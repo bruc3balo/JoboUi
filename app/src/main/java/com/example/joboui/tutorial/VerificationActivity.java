@@ -21,8 +21,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.telephony.SmsManager;
-import android.text.InputType;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +46,7 @@ import com.example.joboui.databinding.ActivityTutorialBinding;
 import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
+import com.example.joboui.utils.CutCopyPasteEditText;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,13 +55,9 @@ import com.google.android.gms.auth.api.credentials.Credential;
 import com.google.android.gms.auth.api.credentials.HintRequest;
 import com.google.android.gms.auth.api.phone.SmsRetriever;
 import com.google.android.gms.auth.api.phone.SmsRetrieverClient;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.safetynet.SafetyNet;
 import com.google.android.gms.safetynet.SafetyNetApi;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -68,6 +65,8 @@ import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -87,9 +86,9 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
     private UserViewModel userViewModel;
     private final ArrayList<String> phoneNumberList = new ArrayList<>();
     private boolean isLoading = false;
-
+    private String verificationIdS;
     private int RESOLVE_HINT = 13;
-
+    private CountDownTimer timer;
     //TODO SEND verification on phone and notify
 
     @Override
@@ -102,11 +101,11 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
 
         Toolbar toolbar = tutorialBinding.toolbar;
         setSupportActionBar(toolbar);
+        toolbar.setOverflowIcon(getDrawable(R.drawable.more));
 
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         LinearLayout otpLayout = tutorialBinding.optLayout;
-        otpLayout.setVisibility(View.GONE);
 
 
         hidePb();
@@ -120,14 +119,16 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
             }
 
             this.user = user.get();
-            if (!verificationSent) {
-                verificationSent = true;
-                isSafetyNetEnabled();
-            }
+
 
             if (!requestSent) {
                 checkStatus();
             }
+
+            toolbar.setSubtitle(user.get().getPhone_number());
+            toolbar.setTitle("Verify your phone number " + user.get().getUsername());
+
+            enterPin();
 
         });
 
@@ -177,25 +178,26 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
     }
 
     private void sendOTP() {
-        tutorialBinding.sendOPT.setOnClickListener(null);
+
+        tutorialBinding.countdownTv.setText("We will use your browser to confirm that you are not a robot");
 
         showPb();
         long TIME_OUT = 120L * 1000;
 
 
-        CountDownTimer timer = new CountDownTimer(TIME_OUT, 1000) {
+        timer = new CountDownTimer(TIME_OUT, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                tutorialBinding.timeOut.setIndeterminate(false);
-                tutorialBinding.timeOut.setProgress(getReverseProgress(millisUntilFinished, TIME_OUT));
-                tutorialBinding.confirmOTP.setRotation(getRotation(millisUntilFinished, TIME_OUT));
-                tutorialBinding.sendOPT.setText("Code has been send to " + user.getPhone_number() + "\n Timeout in " + calculateTime(millisUntilFinished));
-                tutorialBinding.sendOPT.setTextColor(Color.BLACK);
+
+                tutorialBinding.infoOpt.setText("Code has been sent");
+                tutorialBinding.countdownTv.setText("Didn't receive the code ? Resend in " + calculateTime(millisUntilFinished));
+                tutorialBinding.countdownTv.setTextColor(Color.BLACK);
 
                 if (millisUntilFinished == 0) {
                     timeOut(true);
-                    tutorialBinding.sendOPT.setText("Timeout , click to resend code");
-                    tutorialBinding.sendOPT.setOnClickListener(v -> isSafetyNetEnabled());
+                    tutorialBinding.infoOpt.setText("Timeout");
+                    tutorialBinding.countdownTv.setText("Timeout , click to resend code");
+                    tutorialBinding.countdownTv.setOnClickListener(v -> isSafetyNetEnabled());
                 }
             }
 
@@ -211,7 +213,8 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
         PhoneAuthOptions options = PhoneAuthOptions.newBuilder(FirebaseAuth.getInstance())
                 .setPhoneNumber(user.getPhone_number())       // Phone number to verify
                 .setTimeout(TIME_OUT, TimeUnit.MILLISECONDS) // Timeout and unit
-                .setActivity(this)                 // Activity (for callback binding)
+                .setActivity(this)
+                // Activity (for callback binding)
                 .setCallbacks(new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                     @Override
                     public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
@@ -220,12 +223,12 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
 
                     @Override
                     public void onVerificationFailed(@NonNull FirebaseException e) {
-                        tutorialBinding.optLayout.setVisibility(View.GONE);
                         hidePb();
                         Toast.makeText(VerificationActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        tutorialBinding.sendOPT.setText("Failed , click to resend code");
-                        tutorialBinding.sendOPT.setTextColor(Color.RED);
-                        tutorialBinding.sendOPT.setOnClickListener(v -> isSafetyNetEnabled());
+                        tutorialBinding.infoOpt.setText(e.getLocalizedMessage());
+                        tutorialBinding.countdownTv.setText("Failed , click to resend code");
+                        tutorialBinding.countdownTv.setTextColor(Color.RED);
+                        tutorialBinding.countdownTv.setOnClickListener(v -> isSafetyNetEnabled());
                         e.printStackTrace();
                     }
 
@@ -233,11 +236,14 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
                     public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken token) {
                         super.onCodeSent(verificationId, token);
                         timer.start();
-                        enterPin(verificationId, timer);
+                        verificationIdS = verificationId;
+                        enterPin();
                         hidePb();
                         Toast.makeText(VerificationActivity.this, "Code send to " + user.getPhone_number(), Toast.LENGTH_SHORT).show();
-                        tutorialBinding.sendOPT.setText("Code has been send to " + user.getPhone_number() + "\n Timeout in " + calculateTime(TIME_OUT));
-                        tutorialBinding.sendOPT.setTextColor(Color.BLACK);
+                        tutorialBinding.infoOpt.setText("Code has been sent");
+                        tutorialBinding.infoOpt.setTextColor(Color.BLACK);
+                        tutorialBinding.countdownTv.setOnClickListener(null);
+                        tutorialBinding.countdownTv.setText("Your code has been sent");
 
                         smsPermissions();
                     }
@@ -246,8 +252,10 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
                     public void onCodeAutoRetrievalTimeOut(@NonNull String s) {
                         super.onCodeAutoRetrievalTimeOut(s);
                         timeOut(true);
-                        tutorialBinding.status.setVisibility(View.GONE);
-
+                        tutorialBinding.infoOpt.setTextColor(Color.BLACK);
+                        tutorialBinding.infoOpt.setText("Timeout");
+                        tutorialBinding.countdownTv.setText("Your code has timed out ... click to resend");
+                        tutorialBinding.countdownTv.setOnClickListener(v -> isSafetyNetEnabled());
                     }
                 })          // OnVerificationStateChangedCallbacks
                 .build();
@@ -319,12 +327,12 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
     private void autoFill() {
         SmsRetrieverClient smsRetrieverClient = SmsRetriever.getClient(this);
         smsRetrieverClient.startSmsRetriever().addOnSuccessListener(unused -> {
-            tutorialBinding.status.setVisibility(View.VISIBLE);
-            tutorialBinding.status.setText("Waiting for sms ... ");
+            tutorialBinding.infoOpt.setVisibility(View.VISIBLE);
+            tutorialBinding.infoOpt.setText("Waiting for sms ... ");
             Toast.makeText(VerificationActivity.this, "Waiting for sms", Toast.LENGTH_LONG).show();
         }).addOnFailureListener(e -> {
-            tutorialBinding.status.setVisibility(View.GONE);
-            Toast.makeText(VerificationActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+            tutorialBinding.infoOpt.setText(e.getLocalizedMessage());
+            Toast.makeText(VerificationActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         });
     }
 
@@ -349,13 +357,20 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
 
 
     private void verifyUser() {
+        tutorialBinding.infoOpt.setText("Verifying");
+
         showPb();
-        userViewModel.updateExistingUser(new Models.UserUpdateForm(null, null,true)).observe(VerificationActivity.this, user -> {
+        userViewModel.updateExistingUser(new Models.UserUpdateForm(null, null, true)).observe(VerificationActivity.this, user -> {
+
             hidePb();
+
             if (!user.isPresent()) {
+                tutorialBinding.infoOpt.setText("Failed to update verification of number");
                 Toast.makeText(VerificationActivity.this, "Failed to update verification of number", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            tutorialBinding.infoOpt.setText("Verified Successfully");
 
             Toast.makeText(VerificationActivity.this, "Verified", Toast.LENGTH_SHORT).show();
             checkStatus();
@@ -363,6 +378,7 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
     }
 
     private void isSafetyNetEnabled() {
+        tutorialBinding.countdownTv.setText("Sending OTP, Hang on");
 
         SafetyNet.getClient(this)
                 .isVerifyAppsEnabled()
@@ -371,13 +387,16 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
                         SafetyNetApi.VerifyAppsUserResponse result = task.getResult();
                         if (result.isVerifyAppsEnabled()) {
                             Log.d("MY_APP_TAG", "The Verify Apps feature is enabled.");
+
                             sendOTP();
                         } else {
                             Log.d("MY_APP_TAG", "The Verify Apps feature is disabled.");
+                            tutorialBinding.infoOpt.setText("Safety net isn't enabled");
                             enableSafetyNet();
                         }
                     } else {
                         Log.e("MY_APP_TAG", "A general error occurred.");
+                        tutorialBinding.infoOpt.setText("Safety error");
                     }
                 });
 
@@ -390,13 +409,17 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
                     if (task.isSuccessful()) {
                         SafetyNetApi.VerifyAppsUserResponse result = task.getResult();
                         if (result.isVerifyAppsEnabled()) {
-                            Log.d("MY_APP_TAG", "The user gave consent " + "to enable the Verify Apps feature.");
+                            Log.d("MY_APP_TAG", "You gave consent to enable the Verify Apps feature.");
+                            tutorialBinding.infoOpt.setText("You gave consent to enable the Verify Apps feature.");
                             sendOTP();
                         } else {
-                            Log.d("MY_APP_TAG", "The user didn't give consent " + "to enable the Verify Apps feature.");
+                            Log.d("MY_APP_TAG", "You didn't give consent " + "to enable the Verify Apps feature.");
+                            tutorialBinding.infoOpt.setText("You didn't give consent to enable the Verify Apps feature.");
+
                         }
                     } else {
                         Log.e("MY_APP_TAG", "A general error occurred.");
+                        tutorialBinding.infoOpt.setText("Safety error");
                     }
                 });
     }
@@ -413,50 +436,302 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
         return rotation;
     }
 
-    private void enterPin(String verificationId, CountDownTimer timer) {
-        tutorialBinding.optLayout.setVisibility(View.VISIBLE);
-        tutorialBinding.timeOut.setIndeterminate(false);
-        EditText otp = tutorialBinding.otp;
-        tutorialBinding.confirmOTP.setOnClickListener(v -> {
-            if (otp.getText().toString().isEmpty()) {
-                otp.setError("code required. check sms");
-                otp.requestFocus();
-            } else {
-                showPb();
-                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, otp.getText().toString());
-                FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(task -> {
-                    hidePb();
-                    timer.cancel();
-                    if (task.isSuccessful()) {
-                        Toast.makeText(VerificationActivity.this, "Successfully verified", Toast.LENGTH_SHORT).show();
-                        verifyUser();
-                    } else {
-                        Toast.makeText(VerificationActivity.this, "Failed to verify", Toast.LENGTH_SHORT).show();
-                        timeOut(false);
-                        tutorialBinding.status.setVisibility(View.VISIBLE);
-                        tutorialBinding.status.setText("Wrong code");
-                        tutorialBinding.sendOPT.setVisibility(View.VISIBLE);
-                        tutorialBinding.sendOPT.setText("Click to resend");
-                        tutorialBinding.sendOPT.setTextColor(Color.RED);
-                        tutorialBinding.sendOPT.setOnClickListener(v2 -> isSafetyNetEnabled());
+    private void enterPin() {
+
+        boolean pasted1 = false;
+
+        CutCopyPasteEditText otp1 = tutorialBinding.code1;
+        CutCopyPasteEditText otp2 = tutorialBinding.code2;
+        CutCopyPasteEditText otp3 = tutorialBinding.code3;
+        CutCopyPasteEditText otp4 = tutorialBinding.code4;
+        CutCopyPasteEditText otp5 = tutorialBinding.code5;
+        CutCopyPasteEditText otp6 = tutorialBinding.code6;
+
+        CutCopyPasteEditText[] list = new CutCopyPasteEditText[]{
+                otp1,
+                otp2,
+                otp3,
+                otp4,
+                otp5,
+                otp6
+        };
+
+
+        TextWatcher codeWatcher1 = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String code1 = Objects.requireNonNull(otp1.getText()).toString();
+                int length = code1.length();
+
+                System.out.println("CODE 1 " + code1);
+
+                if (length > 0) {
+                    String current = String.valueOf(code1.charAt(0));
+
+                    System.out.println("CODE 1 CURRENT " + current);
+
+
+                    if (length > 1) {
+
+                        System.out.println("CODE REST " + code1);
+
+                        for (int i = 0; i < code1.length(); i++) {
+                            System.out.println("CODE DIST " + i +" " + code1.charAt(i));
+                            list[i].setText(String.valueOf(code1.charAt(i)));
+                        }
+
+                        otp1.setError("only 1 digit required");
                     }
-                });
+                }
+
+                if (otp1.getText().toString().length() != 0) {
+                    otp2.requestFocus();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
+
+        TextWatcher codeWatcher2 = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String code1 = Objects.requireNonNull(otp2.getText()).toString();
+                int length = code1.length();
+
+                if (length > 0) {
+                    String current = String.valueOf(code1.charAt(0));
+                    if (length > 1) {
+                        String toSend = code1.substring(1);
+                        otp2.setError("only 1 digit required");
+                        //otp3.setText(toSend);
+                    }
+                }
+
+                if (otp2.getText().toString().length() != 0) {
+                    otp3.requestFocus();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
+
+        TextWatcher codeWatcher3 = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String code1 = Objects.requireNonNull(otp3.getText()).toString();
+                int length = code1.length();
+
+                if (length > 0) {
+                    String current = String.valueOf(code1.charAt(0));
+                    if (length > 1) {
+                        String toSend = code1.substring(1);
+                        otp3.setError("only 1 digit required");
+                        //otp4.setText(toSend);
+                    }
+                }
+
+                if (otp3.getText().toString().length() != 0) {
+                    otp4.requestFocus();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
+
+        TextWatcher codeWatcher4 = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String code1 = Objects.requireNonNull(otp4.getText()).toString();
+                int length = code1.length();
+
+                if (length > 0) {
+                    String current = String.valueOf(code1.charAt(0));
+                    if (length > 1) {
+                        String toSend = code1.substring(1);
+                        otp4.setError("only 1 digit required");
+                        //otp5.setText(toSend);
+                    }
+                }
+
+                if (otp4.getText().toString().length() != 0) {
+                    otp5.requestFocus();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
+
+        TextWatcher codeWatcher5 = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String code1 = Objects.requireNonNull(otp5.getText()).toString();
+                int length = code1.length();
+
+                if (length > 0) {
+                    String current = String.valueOf(code1.charAt(0));
+                    if (length > 1) {
+                        String toSend = code1.substring(1);
+                        otp5.setError("only 1 digit required");
+                        //otp6.setText(toSend);
+                    }
+                }
+
+                if (otp5.getText().toString().length() != 0) {
+                    otp6.requestFocus();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
+
+        TextWatcher codeWatcher6 = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String code = Objects.requireNonNull(otp1.getText()).toString().concat(Objects.requireNonNull(otp2.getText()).toString()).concat(Objects.requireNonNull(otp3.getText()).toString()).concat(Objects.requireNonNull(otp4.getText()).toString()).concat(Objects.requireNonNull(otp5.getText()).toString()).concat(Objects.requireNonNull(otp6.getText()).toString());
+                int length = code.length();
+
+
+                if (otp6.getText().toString().length() > 0) {
+                    if (otp6.getText().toString().length() > 1) {
+                        otp6.setError("only 1 digit required");
+                        return;
+                    }
+
+                    if (length == 6) {
+                        try {
+                            confirmCode(code);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Toast.makeText(VerificationActivity.this, "Code is " + code, Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
+
+        CutCopyPasteEditText.OnCutCopyPasteListener pasteEar = new CutCopyPasteEditText.OnCutCopyPasteListener() {
+            @Override
+            public void onCut() {
+
+            }
+
+            @Override
+            public void onCopy() {
+
+            }
+
+            @Override
+            public void onPaste() {
+                int length = Objects.requireNonNull(otp1.getText()).toString().length();
+                String pastedCode = Objects.requireNonNull(otp1.getText()).toString();
+
+                System.out.println(pastedCode + " pasted code");
+                List<String> pastedCodeList = new ArrayList<>();
+                for (int i = 0; i < pastedCode.length(); i++) {
+                    final String code = String.valueOf(pastedCode.charAt(i)).trim();
+                    pastedCodeList.add(code);
+                    list[i].setText(code);
+                    list[i].setError(null);
+                }
+
+                System.out.println("pasted code list is " + pastedCodeList);
+            }
+        };
+
+        // otp1.setOnCutCopyPasteListener(pasteEar);
+        otp1.addTextChangedListener(codeWatcher1);
+        otp2.addTextChangedListener(codeWatcher2);
+        otp3.addTextChangedListener(codeWatcher3);
+        otp4.addTextChangedListener(codeWatcher4);
+        otp5.addTextChangedListener(codeWatcher5);
+        otp6.addTextChangedListener(codeWatcher6);
+    }
+
+    private void confirmCode(String code) {
+        showPb();
+        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationIdS, code);
+        FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(task -> {
+            hidePb();
+            timer.cancel();
+            if (task.isSuccessful()) {
+                Toast.makeText(VerificationActivity.this, "Successfully verified", Toast.LENGTH_SHORT).show();
+                verifyUser();
+            } else {
+                //Toast.makeText(VerificationActivity.this, "Failed to verify", Toast.LENGTH_SHORT).show();
+                timeOut(false);
+                tutorialBinding.infoOpt.setVisibility(View.VISIBLE);
+                tutorialBinding.infoOpt.setText("Wrong code");
+                tutorialBinding.countdownTv.setVisibility(View.VISIBLE);
+                tutorialBinding.countdownTv.setText("Click to resend");
+                tutorialBinding.countdownTv.setTextColor(Color.RED);
+                tutorialBinding.countdownTv.setOnClickListener(v2 -> isSafetyNetEnabled());
             }
         });
     }
 
     private void timeOut(boolean timedOut) {
         tutorialBinding.optLayout.setVisibility(View.GONE);
-        tutorialBinding.timeOut.setProgress(0);
-        tutorialBinding.timeOut.setSecondaryProgress(0);
+
         if (timedOut) {
-            tutorialBinding.sendOPT.setText("Your OTP has expired \n Click to get a new one");
-            tutorialBinding.status.setVisibility(View.GONE);
+            tutorialBinding.infoOpt.setText("Your OTP has expired \n Click to get a new one");
         }
         hidePb();
     }
 
     private void checkStatus() {
+        tutorialBinding.infoOpt.setText("Checking verification");
         if (user != null) {
 
             requestSent = true;
@@ -472,16 +747,20 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
 
                     if (jsonResponse == null) {
                         Toast.makeText(VerificationActivity.this, "Failed to get response", Toast.LENGTH_SHORT).show();
+                        tutorialBinding.infoOpt.setText("Failed to get response");
                         return;
                     }
 
                     if (jsonResponse.isHas_error() && !jsonResponse.isSuccess()) {
                         Toast.makeText(VerificationActivity.this, "Error getting verification status", Toast.LENGTH_SHORT).show();
+                        tutorialBinding.infoOpt.setText("Error getting verification status");
+
                         return;
                     }
 
                     if (jsonResponse.getData() == null) {
                         Toast.makeText(VerificationActivity.this, "User info not found", Toast.LENGTH_SHORT).show();
+
                         logout(getApplication());
                         return;
                     }
@@ -504,6 +783,12 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
                             proceed(VerificationActivity.this);
                         } else {
                             Toast.makeText(VerificationActivity.this, "You have not verified your phone number", Toast.LENGTH_SHORT).show();
+                            tutorialBinding.infoOpt.setText("You have not verified your phone number");
+
+                            if (!verificationSent) {
+                                verificationSent = true;
+                                 isSafetyNetEnabled();
+                            }
                         }
                     } catch (JsonProcessingException | InterruptedException e) {
 
@@ -519,13 +804,14 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
                 public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
                     Toast.makeText(VerificationActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                     hidePb();
+                    tutorialBinding.infoOpt.setText(t.getLocalizedMessage());
                 }
             });
         }
     }
 
 
-    public static void editSingleValue(int inputType, String hint,Activity activity, Function<String, Void> function) {
+    public static void editSingleValue(int inputType, String hint, Activity activity, Function<String, Void> function) {
         Dialog d = new Dialog(activity);
         d.setContentView(R.layout.number_dialog);
         d.show();
@@ -587,21 +873,18 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
             hidePb();
             if (!user.isPresent()) {
                 Toast.makeText(VerificationActivity.this, "Failed to change phone number", Toast.LENGTH_SHORT).show();
-                tutorialBinding.sendOPT.setText("Failed to change phone number");
+                tutorialBinding.infoOpt.setText("Failed to change phone number");
 
                 return;
             }
 
 
-            tutorialBinding.sendOPT.setText("Number changed to " + user.get().getPhone_number());
-            sendOTP();
+            tutorialBinding.infoOpt.setText("Number changed to " + user.get().getPhone_number());
+            isSafetyNetEnabled();
         });
     }
 
     private void showPb() {
-        tutorialBinding.sendOPT.setEnabled(false);
-        tutorialBinding.timeOut.setEnabled(false);
-        tutorialBinding.confirmOTP.setEnabled(false);
         tutorialBinding.tutorialPb.setVisibility(View.VISIBLE);
         isLoading = true;
         invalidateOptionsMenu();
@@ -609,16 +892,13 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
 
     private void hidePb() {
         tutorialBinding.tutorialPb.setVisibility(View.GONE);
-        tutorialBinding.sendOPT.setEnabled(true);
-        tutorialBinding.timeOut.setEnabled(true);
-        tutorialBinding.confirmOTP.setEnabled(true);
         isLoading = false;
         invalidateOptionsMenu();
     }
 
     private void setWindowColors() {
-        getWindow().setStatusBarColor(getColor(R.color.white));
-        getWindow().setNavigationBarColor(getColor(R.color.white));
+        getWindow().setStatusBarColor(getColor(R.color.deep_purple));
+        getWindow().setNavigationBarColor(getColor(R.color.deep_purple));
     }
 
     @Override

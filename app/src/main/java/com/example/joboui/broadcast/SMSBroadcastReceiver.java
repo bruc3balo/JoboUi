@@ -22,7 +22,7 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 
 
             try {
-                System.out.println(getObjectMapper().writeValueAsString(extras.get(SmsRetriever.EXTRA_STATUS)) + " ::: STATUS");
+                System.out.println(getObjectMapper().writeValueAsString(extras.get(SmsRetriever.EXTRA_STATUS)) + " CODE ::: STATUS");
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }

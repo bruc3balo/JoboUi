@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
+    android:id="@+id/statusBg"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -176,16 +177,7 @@
 
 
 
-            <TextView
-                android:id="@+id/priceTv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:textStyle="bold"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/price"/>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -194,8 +186,30 @@
                 android:layout_gravity="center"
                 android:gravity="center_vertical">
 
+                <TextView
+                    android:id="@+id/priceTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    android:textStyle="bold"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/black"
+                    android:text="@string/price"/>
+
+                <TextView
+                    android:id="@+id/priceContent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    android:textStyle="bold"
+                    android:gravity="center_vertical"
+                    android:textColor="@android:color/holo_green_dark"
+                    android:text="@string/price_label"/>
+
                 <ImageButton
-                    android:id="@+id/editPrice"
+                    android:id="@+id/edit"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_gravity="center"
@@ -204,31 +218,10 @@
                     android:src="@drawable/ic_edit"
                     tools:ignore="SpeakableTextPresentCheck" />
 
-                <TextView
-                    android:layout_weight="1"
-                    android:id="@+id/priceContent"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:padding="10dp"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/black"
-                    android:text="@string/price_label"/>
-
-
-                <ImageButton
-                    android:id="@+id/chat"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:layout_margin="5dp"
-                    android:backgroundTint="@android:color/transparent"
-                    android:src="@drawable/ic_chat"
-                    tools:ignore="SpeakableTextPresentCheck" />
 
             </LinearLayout>
 
-            <TextView
+           <!-- <TextView
                 android:id="@+id/priceRangeContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -236,7 +229,7 @@
                 android:padding="10dp"
                 android:gravity="center_vertical"
                 android:textColor="@color/black"
-                android:text="@string/price_range_label"/>
+                android:text="@string/price_range_label"/>-->
 
             <TextView
                 android:id="@+id/timeTv"
@@ -267,14 +260,15 @@
 
                 <TextView
                     android:id="@+id/completedAtContent"
-                    android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:padding="10dp"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:text="@string/completedat_label"
                     android:textColor="@color/black"
-                    android:text="@string/completedat_label"/>
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -289,6 +283,9 @@
                 android:text="@string/urgency"/>
 
             <LinearLayout
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:layout_gravity="center"
                 android:id="@+id/serviceProviderControls"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -298,38 +295,66 @@
                     android:layout_margin="10dp"
                     android:id="@+id/decline"
                     android:layout_weight="1"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:padding="10dp"
                     android:gravity="center"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif-condensed-medium"
                     android:background="@drawable/login_bg_button_white"
                     android:backgroundTint="@color/red"
                     android:textColor="@color/white"
                     android:text="@string/decline"/>
 
-                <Button
-                    android:id="@+id/negotiate"
-                    android:layout_weight="1"
-                    android:background="@drawable/login_bg_button_white"
-                    android:backgroundTint="@android:color/holo_blue_dark"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                <LinearLayout
                     android:layout_gravity="center"
-                    android:padding="10dp"
-                    android:layout_margin="10dp"
+                    android:layout_width="0dp"
                     android:gravity="center"
-                    android:textColor="@color/white"
-                    android:text="@string/negotiate"/>
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageButton
+                        android:id="@+id/chat"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="5dp"
+                        android:backgroundTint="@android:color/transparent"
+                        android:src="@drawable/ic_chat"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                    <Button
+                        android:id="@+id/negotiate"
+                        android:layout_width="match_parent"
+                        android:fontFamily="sans-serif-condensed-medium"
+                        android:layout_height="0dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp"
+                        android:textSize="12sp"
+                        android:layout_weight="1"
+                        android:background="@drawable/login_bg_button_white"
+                        android:backgroundTint="@android:color/holo_blue_dark"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="@string/negotiate"
+                        android:textColor="@color/white"
+                        android:visibility="visible"
+                        tools:ignore="NestedWeights" />
+
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/accept"
                     android:layout_weight="1"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:padding="10dp"
+                    android:textSize="12sp"
                     android:layout_margin="10dp"
+                    android:fontFamily="sans-serif-condensed-medium"
                     android:background="@drawable/login_bg_button_white"
                     android:backgroundTint="@color/quantum_lightgreen"
                     android:gravity="center"

@@ -89,7 +89,7 @@ public class ProviderChoosing extends Fragment {
             } else if (jobRequestForm.getJob_description() == null || jobRequestForm.getJob_description().isEmpty()) {
                 Toast.makeText(requireContext(), "You need to give a description of the job", Toast.LENGTH_SHORT).show();
             } else if (jobRequestForm.getJob_price_range() == null) {
-                Toast.makeText(requireContext(), "You need to give a price range for the job", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "You need to suggest a price for the job", Toast.LENGTH_SHORT).show();
             } else {
                 confirmationDialog(providerList.get(position).getNames() + " is going to be requested with for service " + service.getName() + " scheduled for " + jobRequestForm.getScheduled_at() + " with description " + jobRequestForm.getJob_description());
             }
@@ -117,8 +117,6 @@ public class ProviderChoosing extends Fragment {
 
 
         no.setOnClickListener(v -> d.dismiss());
-
-
     }
 
 

@@ -2,6 +2,7 @@ package com.example.joboui.clientUi;
 
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
+import static com.example.joboui.utils.JobStatus.CLIENT_CANCELLED_IN_PROGRESS;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -53,17 +54,19 @@ public class MyJobs extends AppCompatActivity {
         jobsRvAdapter = new JobsRvAdapter(MyJobs.this, myJobsList);
         jobsRv.setAdapter(jobsRvAdapter);
 
-        userRepository.getUserLive().observe(this, user -> {
-            if (!user.isPresent()) {
-                Toast.makeText(MyJobs.this, "Failed to get user data", Toast.LENGTH_SHORT).show();
-                finish();
-                return;
-            }
+        if (userRepository != null) {
+            userRepository.getUserLive().observe(this, user -> {
+                if (!user.isPresent()) {
+                    Toast.makeText(MyJobs.this, "Failed to get user data", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
 
-            jobsRvAdapter.setUsername(user.get().getUsername());
-            populateClientJobs(MyJobs.this,user.get().getUsername(),jobsRvAdapter);
+                jobsRvAdapter.setUsername(user.get().getUsername());
+                populateClientJobs(MyJobs.this,user.get().getUsername(),jobsRvAdapter);
 
-        });
+            });
+        }
     }
 
     public static void populateClientJobs(Activity activity, String username, JobsRvAdapter adapter) {
@@ -88,7 +91,10 @@ public class MyJobs extends AppCompatActivity {
                 jobs.forEach(u -> {
                     try {
                         Models.Job job = getObjectMapper().readValue(u.toString(), Models.Job.class);
-                        myJobsList.add(job);
+                        if (!(CLIENT_CANCELLED_IN_PROGRESS.getCode() == job.getJob_status())) {
+                            myJobsList.add(job);
+                        }
+
                         adapter.notifyDataSetChanged();
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();

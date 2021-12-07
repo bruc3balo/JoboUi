@@ -26,6 +26,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JoboUi">
         <activity
+            android:name=".ReviewActivity"
+            android:exported="false" />
+        <activity
             android:name=".Disabled"
             android:exported="true" />
         <activity
@@ -33,9 +36,6 @@
             android:exported="true" />
         <activity
             android:name=".serviceProviderUi.pages.ChatActivity"
-            android:exported="true" />
-        <activity
-            android:name=".serviceProviderUi.pages.NegotiationActivity"
             android:exported="true" />
         <activity
             android:name=".serviceProviderUi.pages.JobRequests"

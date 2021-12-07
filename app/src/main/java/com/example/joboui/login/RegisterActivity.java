@@ -136,6 +136,9 @@ public class RegisterActivity extends AppCompatActivity {
         } else if (usernameList.contains(usernameField.getText().toString())) {
             usernameField.setError("username is taken");
             usernameField.requestFocus();
+        } else if (usernameField.getText().toString().contains("-")) {
+            usernameField.setError("- not permitted");
+            usernameField.requestFocus();
         } else if (emailAddressField.getText().toString().isEmpty()) {
             emailAddressField.setError("required");
             emailAddressField.requestFocus();
@@ -159,7 +162,7 @@ public class RegisterActivity extends AppCompatActivity {
         } else if (phoneNumberField.getText().toString().length() < 12) {
             phoneNumberField.setError("Invalid phone number");
             phoneNumberField.requestFocus();
-        } else if (phoneNumberList.contains(phoneNumberField.getText().toString())|| phoneNumberList.contains(phoneNumberField.getText().toString().replace("+",""))) {
+        } else if (phoneNumberList.contains(phoneNumberField.getText().toString()) || phoneNumberList.contains(phoneNumberField.getText().toString().replace("+", ""))) {
             phoneNumberField.setError("Phone number already added");
             phoneNumberField.requestFocus();
         } else {

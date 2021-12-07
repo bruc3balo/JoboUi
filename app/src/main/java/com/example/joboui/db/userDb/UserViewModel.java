@@ -540,8 +540,6 @@ public class UserViewModel extends AndroidViewModel {
         return mutableLiveData;
     }
 
-
-
     public void refreshToken() {
         Map<String, ?> map = getSp(USER_DB, application);
         String username = Objects.requireNonNull(map.get(USERNAME)).toString();

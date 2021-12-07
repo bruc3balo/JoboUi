@@ -5,6 +5,10 @@ import static com.example.joboui.globals.GlobalVariables.HY;
 
 import androidx.annotation.NonNull;
 
+import com.example.joboui.domain.Domain;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -949,12 +953,16 @@ public class Models {
             this.job_status = job_status;
         }
 
-        public JobUpdateForm(String job_price) {
+        public JobUpdateForm(String job_price,String job_price_range,Integer job_status) {
             this.job_price = job_price;
+            this.job_price_range = job_price_range;
+            this.job_status = job_status;
         }
 
         public JobUpdateForm() {
         }
+
+
 
         public JobUpdateForm(String job_location, String scheduled_at, Boolean completed_at, String job_price_range, String job_price, Integer job_status) {
             this.job_location = job_location;
@@ -1014,7 +1022,7 @@ public class Models {
         }
     }
 
-    public static class Job {
+    public static class Job implements Serializable{
 
         private Long id;
 
@@ -1168,5 +1176,173 @@ public class Models {
         }
     }
 
+
+
+    public static class Messages implements Serializable {
+
+        public static final String MESSAGES = "Messages";
+
+        private String threadId;
+        public static final String THREAD_ID = "threadId";
+
+        private String messageId;
+        public static final String MESSAGE_ID = "messageId";
+        private String senderUsername;
+        public static final String SENDER_UID = "senderUsername";
+        private String receiverUsername;
+        public static final String RECEIVER_UID = "receiverUsername";
+        private String messageContent;
+        public static final String MESSAGE_CONTENT = "messageContent";
+        private String createdAt;
+        private int status;
+        public static final String STATUS = "status";
+        private String lastModified;
+        public static final String LAST_MODIFIED = "lastModified";
+        private String openedAt;
+
+        public static final String MESSAGE_SUR = "MSG";
+
+
+        public static final int DRAFT = 0;
+        public static final int QUEUED = 1;
+        public static final int SENT = 2;
+        public static final int RECEIVED = 3;
+        public static final int OPENED = 4;
+
+
+        public Messages() {
+        }
+
+
+        public Messages(String threadId, String messageId, String senderUsername, String receiverUsername, String messageContent, String createdAt, int status, String lastModified, String openedAt) {
+            this.threadId = threadId;
+            this.messageId = messageId;
+            this.senderUsername = senderUsername;
+            this.receiverUsername = receiverUsername;
+            this.messageContent = messageContent;
+            this.createdAt = createdAt;
+            this.status = status;
+            this.lastModified = lastModified;
+            this.openedAt = openedAt;
+        }
+
+        public Messages(@NotNull String messageId, String senderUsername, String receiverUsername, String messageContent, String createdAt) {
+            this.messageId = messageId;
+            this.senderUsername = senderUsername;
+            this.receiverUsername = receiverUsername;
+            this.messageContent = messageContent;
+            this.createdAt = createdAt;
+        }
+
+        public @NotNull String getMessageId() {
+            return messageId;
+        }
+
+        public void setMessageId(@NotNull String messageId) {
+            this.messageId = messageId;
+        }
+
+        public String getOpenedAt() {
+            return openedAt;
+        }
+
+        public void setOpenedAt(String openedAt) {
+            this.openedAt = openedAt;
+        }
+
+        public String getThreadId() {
+            return threadId;
+        }
+
+        public void setThreadId(String threadId) {
+            this.threadId = threadId;
+        }
+
+        public String getSenderUsername() {
+            return senderUsername;
+        }
+
+        public void setSenderUsername(String senderUsername) {
+            this.senderUsername = senderUsername;
+        }
+
+        public String getReceiverUsername() {
+            return receiverUsername;
+        }
+
+        public void setReceiverUsername(String receiverUsername) {
+            this.receiverUsername = receiverUsername;
+        }
+
+        public String getMessageContent() {
+            return messageContent;
+        }
+
+        public void setMessageContent(String messageContent) {
+            this.messageContent = messageContent;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public int getStatus() {
+            return status;
+        }
+
+        public void setStatus(int status) {
+            this.status = status;
+        }
+
+        public String getLastModified() {
+            return lastModified;
+        }
+
+        public void setLastModified(String lastModified) {
+            this.lastModified = lastModified;
+        }
+    }
+
+    public static class MessageBundle {
+        private final LinkedList<Models.Messages> messagesList = new LinkedList<>();
+        private Domain.User me;
+        private AppUser you;
+
+        public MessageBundle() {
+        }
+
+        public MessageBundle(Domain.User me) {
+            this.me = me;
+        }
+
+        public MessageBundle(Domain.User me, AppUser you) {
+            this.me = me;
+            this.you = you;
+        }
+
+        public LinkedList<Messages> getMessagesList() {
+            return messagesList;
+        }
+
+        public Domain.User getMe() {
+            return me;
+        }
+
+        public void setMe(Domain.User me) {
+            this.me = me;
+        }
+
+        public AppUser getYou() {
+            return you;
+        }
+
+        public void setYou(AppUser you) {
+            this.you = you;
+        }
+    }
 
 }
