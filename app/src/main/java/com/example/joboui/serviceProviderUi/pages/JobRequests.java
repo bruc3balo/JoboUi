@@ -90,7 +90,7 @@ public class JobRequests extends AppCompatActivity {
                         Models.Job job = getObjectMapper().readValue(u.toString(), Models.Job.class);
 
 
-                        if (!(job.getJob_status().equals(JobStatus.DECLINED.code)) && !(job.getJob_status().equals(JobStatus.CANCELLED.code)) && !(job.getJob_status().equals(JobStatus.SERVICE_CANCELLED_IN_PROGRESS.code))) {
+                        if (!(job.getJob_status().equals(JobStatus.DECLINED.code)) && !(job.getJob_status().equals(JobStatus.CANCELLED.code)) && !(job.getJob_status().equals(JobStatus.SERVICE_REPORTED.code)) || !(job.getJob_status() == JobStatus.SERVICE_REPORTED.getCode() || !(job.getJob_status() == JobStatus.CLIENT_REPORTED.getCode()))) {
                             myJobsList.add(job);
                             adapter.notifyDataSetChanged();
 
@@ -106,7 +106,6 @@ public class JobRequests extends AppCompatActivity {
             }
 
         });
-
 
     }
 

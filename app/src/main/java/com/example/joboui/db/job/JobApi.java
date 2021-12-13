@@ -47,5 +47,16 @@ public interface JobApi {
     @PUT(base + "/delete")
     Call<JsonResponse> deleteAJob(@Query(ID) Long jobId, @Header(AUTHORIZATION) String token);
 
+    @GET(base + "/review/all")
+    Call<JsonResponse> getAllReviews(@QueryMap HashMap<String, String> params, @Header(AUTHORIZATION) String token);
+
+    @POST(base + "/review/new")
+    Call<JsonResponse> postAReview(@Body Models.Review review, @Header(AUTHORIZATION) String token);
+
+    @PUT(base + "/review/update")
+    Call<JsonResponse> updateAReview(@Body Models.Review review, @Header(AUTHORIZATION) String token);
+
+    @POST("pay")
+    Call<JsonResponse> postPayment(@Body Models.MakeStkRequest request, @Header(AUTHORIZATION) String token);
 
 }

@@ -208,12 +208,12 @@ public class ClientActivity extends AppCompatActivity {
 
         if (hour < 12) {
             welcome = "Good Morning ";
-        } else if (hour > 12 && hour < 16) {
+        } else if (hour <= 16) {
             welcome = "Good Afternoon ";
-        } else if (hour > 16 && hour < 24) {
+        } else if (hour < 24) {
             welcome = "Good Evening ";
         } else {
-            welcome = "Hello ";
+            welcome = "Hello";
         }
 
         ForegroundColorSpan foregroundColorSpanRed = new ForegroundColorSpan(getColor(R.color.bright_purple));

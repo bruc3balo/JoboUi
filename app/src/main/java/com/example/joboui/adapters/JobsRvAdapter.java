@@ -3,14 +3,20 @@ package com.example.joboui.adapters;
 import static com.example.joboui.clientUi.MyJobs.populateClientJobs;
 import static com.example.joboui.clientUi.request.LocationRequest.getAddressFromLocation;
 import static com.example.joboui.globals.GlobalDb.db;
+import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.JOB;
+import static com.example.joboui.globals.GlobalVariables.REPORTED;
 import static com.example.joboui.globals.GlobalVariables.ROLE;
+import static com.example.joboui.login.SignInActivity.getObjectMapper;
 import static com.example.joboui.model.Models.Messages.MESSAGES;
 import static com.example.joboui.serviceProviderUi.pages.JobRequests.populateMyJobs;
 import static com.example.joboui.tutorial.VerificationActivity.editSingleValue;
 import static com.example.joboui.utils.DataOps.getThreadId;
+import static com.example.joboui.utils.JobStatus.CLIENT_REPORTED;
 import static com.example.joboui.utils.JobStatus.SERVICE_COMPLETE;
+import static com.example.joboui.utils.JobStatus.SERVICE_REPORTED;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -34,6 +40,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,9 +48,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.joboui.R;
 import com.example.joboui.ReviewActivity;
 import com.example.joboui.db.job.JobViewModel;
+import com.example.joboui.domain.Domain;
+import com.example.joboui.globals.GlobalVariables;
 import com.example.joboui.model.Models;
 import com.example.joboui.serviceProviderUi.pages.ChatActivity;
 import com.example.joboui.utils.JobStatus;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.jetbrains.annotations.NotNull;
@@ -57,16 +67,18 @@ import io.vertx.core.json.JsonObject;
 
 public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder> {
 
-    private LinkedList<Models.Job> list;
+    private final LinkedList<Models.Job> list;
     private ItemClickListener mClickListener;
-    private Activity activity;
+    private final Activity activity;
     private String username;
     private final JobViewModel jobViewModel;
+    private Domain.User user;
 
     public JobsRvAdapter(Activity activity, LinkedList<Models.Job> list) {
         this.list = list;
         this.activity = activity;
         jobViewModel = new ViewModelProvider((ViewModelStoreOwner) activity).get(JobViewModel.class);
+        userRepository.getUser().ifPresent(u -> this.user = u);
     }
 
     @NotNull
@@ -164,22 +176,112 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
             }
         }
 
+        if (!job.getPayments().isEmpty()) {
+            holder.pricePaidContent.setVisibility(View.VISIBLE);
+            final double[] price = {0.0};
+            job.getPayments().forEach(p -> {
+                if (p.getAmount() != null) {
+                    double amount = Double.parseDouble(p.getAmount());
+                    price[0] = price[0] + amount;
+                }
+
+            });
+            holder.pricePaidContent.setText(getBoldSpannable("Amount paid : ", price[0] + " Ksh"));
+
+        }
+
     }
 
-    private void deleteChatThread(Models.Job job) {
-        db.getReference().child(MESSAGES).child(getThreadId(job.getClient_username(), job.getLocal_service_provider_username())).removeValue().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                System.out.println("Chat 1 cleared");
-            } else {
-                System.out.println("Chat 1 not cleared");
+    private void goToChat(Models.Job job) {
+        activity.startActivity(new Intent(activity, ChatActivity.class).putExtra(JOB, job));
+    }
 
-                db.getReference().child(MESSAGES).child(getThreadId(job.getLocal_service_provider_username(), job.getClient_username())).removeValue().addOnCompleteListener(task1 -> {
-                    if (task1.isSuccessful()) {
-                        System.out.println("Chat 2 cleared");
-                    } else {
-                        System.out.println("Chat 2 not cleared");
-                    }
-                });
+    private void goToReview(Models.Job job) {
+        activity.startActivity(new Intent(activity, ReviewActivity.class).putExtra(JOB, job));
+    }
+
+    private void goToReport(Models.Job job) {
+        activity.startActivity(new Intent(activity, ReviewActivity.class).putExtra(JOB, job).putExtra(REPORTED, true));
+    }
+
+    private void confirmDialog(String info, Models.Job job, Function<Models.Job, Void> function) {
+        Dialog d = new Dialog(activity);
+        d.setContentView(R.layout.yes_no_info_layout);
+        TextView infov = d.findViewById(R.id.newInfoTv);
+        infov.setText(info);
+        Button no = d.findViewById(R.id.noButton);
+        no.setOnClickListener(v -> d.dismiss());
+
+        Button yes = d.findViewById(R.id.yesButton);
+        yes.setOnClickListener(v -> {
+            function.apply(job);
+            d.dismiss();
+        });
+
+        d.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        d.show();
+    }
+
+    private void changeJobStatus(Models.Job job, JobStatus status, boolean isClient) {
+        Models.JobUpdateForm form = new Models.JobUpdateForm(status.getCode());
+        form.setCompleted_at(status == JobStatus.COMPLETED || status == JobStatus.DECLINED || status == JobStatus.CANCELLED);
+
+        if (status == SERVICE_REPORTED || status == CLIENT_REPORTED) {
+            form.setReported(true);
+        }
+
+        jobViewModel.updateJob(job.getId(), form).observe((LifecycleOwner) activity, jsonResponse -> {
+            if (!jsonResponse.isPresent() || jsonResponse.get().getData() == null || !jsonResponse.get().isSuccess() || jsonResponse.get().isHas_error()) {
+                Toast.makeText(activity, "Failed to get response", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
+            if (isClient) {
+                populateClientJobs(activity, getUsername(), JobsRvAdapter.this);
+            } else {
+                populateMyJobs(activity, getUsername(), JobsRvAdapter.this);
+            }
+
+            if (status == SERVICE_REPORTED || status == CLIENT_REPORTED) {
+                goToReport(job);
+            }
+
+        });
+    }
+
+    private void sendPaymentRequest(Models.Job job) {
+
+        Models.MakeStkRequest request = new Models.MakeStkRequest(GlobalVariables.transactionType, String.valueOf(Math.round(job.getJob_price().doubleValue())).split("\\.")[0], user.getPhone_number().replace("+", ""), user.getPhone_number().replace("+", ""), job.getId(), "Payment of " + job.getJob_price() + " for job " + job.getId());
+
+        jobViewModel.makePayment(request).observe((LifecycleOwner) activity, success -> {
+            if (!success.isPresent()) {
+                Toast.makeText(activity, "Failed to send prompt", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (success.get()) {
+                Toast.makeText(activity, "Successfully initiated payment", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(activity, "Failed to send prompt", Toast.LENGTH_SHORT).show();
+            }
+
+        });
+    }
+
+    private void updatePrice(Models.Job job, String price, String priceRange, Integer status, boolean isClient) {
+        jobViewModel.updateJob(job.getId(), new Models.JobUpdateForm(price, priceRange, status)).observe((LifecycleOwner) activity, jsonResponse -> {
+            if (!jsonResponse.isPresent() || jsonResponse.get().getData() == null || !jsonResponse.get().isSuccess() || jsonResponse.get().isHas_error()) {
+                Toast.makeText(activity, "Failed to get response", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
+            if (isClient) {
+                populateClientJobs(activity, getUsername(), JobsRvAdapter.this);
+
+            } else {
+                populateMyJobs(activity, getUsername(), JobsRvAdapter.this);
 
             }
         });
@@ -201,6 +303,7 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
                 return null;
             });
         });
+        holder.chat.setOnClickListener(v -> goToChat(job));
 
         switch (job.getJob_status()) {
             //Requested
@@ -230,6 +333,8 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
                 }));
 
                 holder.chat.setVisibility(View.VISIBLE);
+
+
                 if (job.getJob_price_range() != null) {
                     holder.priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range())));
                 }
@@ -264,7 +369,7 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
             case 7:
                 break;
 
-                //service i cancelled
+            //service i cancelled
             case 12:
 
                 break;
@@ -288,7 +393,7 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
                 holder.negotiation.setVisibility(View.VISIBLE);
                 holder.negotiation.setText("Review");
-                holder.negotiation.setOnClickListener(v -> goToReview(false, job));
+                holder.negotiation.setOnClickListener(v -> goToReview(job));
 
 
                 break;
@@ -386,7 +491,19 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
             //SERVICE_COMPLETE
             case 8:
+                holder.statusContent.setTextColor(Color.GREEN);
+                holder.statusContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+
+                //report
+                holder.chat.setImageResource(R.drawable.ic_customer_complaint);
+                holder.chat.setVisibility(View.VISIBLE);
+                holder.chat.setOnClickListener(v -> confirmDialog("Do you want to report " + job.getClient_username() + " ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CLIENT_REPORTED, true);
+                    return null;
+                }));
+                break;
             case 16:
+            case 10:
 
                 holder.statusContent.setTextColor(Color.GREEN);
                 holder.statusContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
@@ -402,12 +519,13 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
                 //review
                 holder.negotiation.setVisibility(View.VISIBLE);
                 holder.negotiation.setText("Review");
-                holder.negotiation.setOnClickListener(v -> goToReview(false, job));
+                holder.negotiation.setOnClickListener(v -> goToReview(job));
 
                 break;
 
             //CLIENT_COMPLETE // i want to complete or complain
             case 9:
+
 
                 holder.statusContent.setTextColor(Color.GREEN);
                 holder.statusContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
@@ -416,23 +534,30 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
                 holder.chat.setImageResource(R.drawable.ic_customer_complaint);
                 holder.chat.setVisibility(View.VISIBLE);
                 holder.chat.setOnClickListener(v -> confirmDialog("Do you want to report " + job.getClient_username() + " ?", job, job12 -> {
-                    changeJobStatus(job12, JobStatus.CLIENT_REPORTED, true);
+                    changeJobStatus(job12, JobStatus.SERVICE_REPORTED, false);
                     return null;
                 }));
 
                 holder.accept.setText("Confirm Completion");
                 holder.accept.setVisibility(View.VISIBLE);
                 holder.accept.setOnClickListener(v5 -> confirmDialog("Do you want to complete this job ?", job, job12 -> {
-                    changeJobStatus(job12, JobStatus.RATING, false);
+                    changeJobStatus(job12, JobStatus.PAYING, false);
                     return null;
                 }));
 
                 break;
 
-            //CLIENT_RATING
-            case 10:
+            case 17:
 
-                //todo i service need to rate
+                holder.statusContent.setTextColor(Color.GREEN);
+                holder.statusContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+
+                holder.chat.setImageResource(R.drawable.ic_customer_complaint);
+                holder.chat.setVisibility(View.VISIBLE);
+                holder.chat.setOnClickListener(v -> confirmDialog("Do you want to report " + job.getClient_username() + " ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.SERVICE_REPORTED, false);
+                    return null;
+                }));
                 break;
 
             //SERVICE_RATING
@@ -444,12 +569,21 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
             //SERVICE_REPORTED
             case 14:
                 //todo i service have reported
+                //todo show complains
 
                 break;
 
             //CLIENT_REPORTED
             case 15:
                 //todo i service have been reported
+                //todo show complains
+
+                holder.statusContent.setTextColor(Color.RED);
+                holder.statusContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+
+                holder.negotiation.setText("Review");
+                holder.negotiation.setVisibility(View.VISIBLE);
+                holder.negotiation.setOnClickListener(v -> goToReview(job));
 
                 break;
 
@@ -457,75 +591,7 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
     }
 
-    private void goToReview(boolean isClient, Models.Job job) {
-        activity.startActivity(new Intent(activity, ReviewActivity.class).putExtra(ROLE, isClient).putExtra(JOB, job));
-    }
-
-    private void confirmDialog(String info, Models.Job job, Function<Models.Job, Void> function) {
-        Dialog d = new Dialog(activity);
-        d.setContentView(R.layout.yes_no_info_layout);
-        TextView infov = d.findViewById(R.id.newInfoTv);
-        infov.setText(info);
-        Button no = d.findViewById(R.id.noButton);
-        no.setOnClickListener(v -> d.dismiss());
-
-        Button yes = d.findViewById(R.id.yesButton);
-        yes.setOnClickListener(v -> {
-            function.apply(job);
-            d.dismiss();
-        });
-
-        d.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        d.show();
-    }
-
-    private void changeJobStatus(Models.Job job, JobStatus status, boolean isClient) {
-        Models.JobUpdateForm form = new Models.JobUpdateForm(status.getCode());
-        form.setCompleted_at(status == JobStatus.COMPLETED || status == JobStatus.DECLINED || status == JobStatus.CANCELLED);
-
-        try {
-            if (form.getCompleted_at() != null) {
-                deleteChatThread(job);
-            }
-        } catch (Exception ignored) {
-        }
-
-        jobViewModel.updateJob(job.getId(), form).observe((LifecycleOwner) activity, jsonResponse -> {
-            if (!jsonResponse.isPresent() || jsonResponse.get().getData() == null || !jsonResponse.get().isSuccess() || jsonResponse.get().isHas_error()) {
-                Toast.makeText(activity, "Failed to get response", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-
-            if (isClient) {
-                populateClientJobs(activity, getUsername(), JobsRvAdapter.this);
-            } else {
-                populateMyJobs(activity, getUsername(), JobsRvAdapter.this);
-
-            }
-
-        });
-    }
-
-    private void updatePrice(Models.Job job, String price, String priceRange, Integer status, boolean isClient) {
-        jobViewModel.updateJob(job.getId(), new Models.JobUpdateForm(price, priceRange, status)).observe((LifecycleOwner) activity, jsonResponse -> {
-            if (!jsonResponse.isPresent() || jsonResponse.get().getData() == null || !jsonResponse.get().isSuccess() || jsonResponse.get().isHas_error()) {
-                Toast.makeText(activity, "Failed to get response", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-
-            if (isClient) {
-                populateClientJobs(activity, getUsername(), JobsRvAdapter.this);
-
-            } else {
-                populateMyJobs(activity, getUsername(), JobsRvAdapter.this);
-
-            }
-        });
-    }
-
-
+    @SuppressLint("SetTextI18n")
     private void setClient(ViewHolder holder, Models.Job job) {
 
         holder.negotiation.setVisibility(View.GONE);
@@ -535,6 +601,7 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
         holder.decline.setVisibility(View.GONE);
         holder.providerLayout.setVisibility(View.VISIBLE);
 
+        holder.chat.setOnClickListener(v -> goToChat(job));
 
         holder.edit.setOnClickListener(v -> editSingleValue(InputType.TYPE_CLASS_NUMBER, "Enter new price", activity, price -> {
             updatePrice(job, null, price, null, true);
@@ -605,10 +672,14 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
             //DECLINED // CANCELLED //
             case 2:
+                holder.statusBg.setCardBackgroundColor(Color.RED);
+                //todo send to someone else
+                break;
             case 7:
+                holder.statusBg.setCardBackgroundColor(Color.RED);
                 break;
 
-           //SERVICE_CANCELLED_IN_PROGRESS //CLIENT_CANCELLED_IN_PROGRESS
+            //SERVICE_CANCELLED_IN_PROGRESS //CLIENT_CANCELLED_IN_PROGRESS
             case 12:
 
                 holder.statusContent.setTextColor(Color.RED);
@@ -628,7 +699,7 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
                 holder.negotiation.setVisibility(View.VISIBLE);
                 holder.negotiation.setText("Review");
-                holder.negotiation.setOnClickListener(v -> goToReview(true, job));
+                holder.negotiation.setOnClickListener(v -> goToReview(job));
 
 
                 if (job.getJob_price_range() != null) {
@@ -637,19 +708,19 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
                 break;
 
-                //I cancelled - ... client
+            //I cancelled - ... client
             case 13:
 
 
-
-
-            //NEGOTIATING
+                //NEGOTIATING
             case 3:
                 //can cancel
                 //can chat
                 //cannot negotiate button
                 //cannot accept / decline
                 //can edit price
+
+                //todo price change from chat
 
                 holder.decline.setVisibility(View.VISIBLE);
                 holder.decline.setText("Cancel");
@@ -733,22 +804,21 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
             //SERVICE_COMPLETE
             case 8:
+                holder.statusContent.setTextColor(Color.GREEN);
+                holder.statusContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
-                holder.negotiation.setVisibility(View.GONE);
+
+                holder.chat.setImageResource(R.drawable.ic_customer_complaint);
                 holder.chat.setVisibility(View.VISIBLE);
-                holder.edit.setVisibility(View.GONE);
-
-                holder.decline.setText("REPORT");
-                holder.decline.setVisibility(View.VISIBLE);
-                holder.decline.setOnClickListener(v5 -> confirmDialog("Do you want to report " + job.getLocal_service_provider_username(), job, job12 -> {
+                holder.chat.setOnClickListener(v -> confirmDialog("Do you want to report " + job.getLocal_service_provider_username() + " ?", job, job12 -> {
                     changeJobStatus(job12, JobStatus.CLIENT_REPORTED, true);
                     return null;
                 }));
 
-                holder.accept.setText("COMPLETE");
-                holder.decline.setVisibility(View.VISIBLE);
-                holder.decline.setOnClickListener(v5 -> confirmDialog("Do you want to complete this job ?", job, job12 -> {
-                    changeJobStatus(job12, JobStatus.SERVICE_REPORTED, true);
+                holder.accept.setText("Confirm Completion");
+                holder.accept.setVisibility(View.VISIBLE);
+                holder.accept.setOnClickListener(v5 -> confirmDialog("Do you want to complete this job ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.PAYING, true);
                     return null;
                 }));
 
@@ -756,7 +826,28 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
                 break;
             //CLIENT_COMPLETE //i have completed
             case 9:
+            case 17:
+                holder.statusContent.setTextColor(Color.GREEN);
+                holder.statusContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+
+                holder.chat.setImageResource(R.drawable.ic_customer_complaint);
+                holder.chat.setVisibility(View.VISIBLE);
+                holder.chat.setOnClickListener(v -> confirmDialog("Do you want to report " + job.getLocal_service_provider_username() + " ?", job, job12 -> {
+                    changeJobStatus(job12, JobStatus.CLIENT_REPORTED, true);
+                    return null;
+                }));
+
+                holder.negotiation.setVisibility(View.VISIBLE);
+                holder.negotiation.setText("Pay Now \n " + job.getJob_price() + " Ksh");
+                holder.negotiation.setOnClickListener(v -> confirmDialog("Do you want to pay " + job.getJob_price() + " ?", job, job12 -> {
+                    sendPaymentRequest(job12);
+                    return null;
+                }));
+                break;
+
             case 16:
+            case 11:
+                //SERVICE_RATING
 
                 //review
                 //complain
@@ -773,7 +864,7 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
                 holder.negotiation.setVisibility(View.VISIBLE);
                 holder.negotiation.setText("Review");
-                holder.negotiation.setOnClickListener(v -> goToReview(true, job));
+                holder.negotiation.setOnClickListener(v -> goToReview(job));
 
                 break;
 
@@ -783,22 +874,17 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
                 break;
 
-            //SERVICE_RATING
-            case 11:
-                //todo o client have not rated
-
-                break;
 
             //SERVICE_REPORTED
             case 14:
                 //todo I client have been reported
-
+                //todo show on problems
                 break;
 
             //CLIENT_REPORTED
             case 15:
                 //todo I client have reported
-
+                //todo show on problems
                 break;
         }
 
@@ -828,7 +914,7 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView statusTitle, statusContent, jdTitle, jdContent, partyTitle, clientPartyContent, providerPartyContent, locationTitle, locationContent;
-        TextView specialityTitle, specialityContent, priceTv, priceContent, timeTv, createdAtContent, completedAtContent, urgency;
+        TextView specialityTitle, specialityContent, priceTv, priceContent, timeTv, createdAtContent, completedAtContent, urgency, pricePaidContent;
         ImageButton edit, chat;
         LinearLayout providerLayout;
         Button decline, accept, negotiation;
@@ -860,6 +946,7 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
             negotiation = itemView.findViewById(R.id.negotiate);
             urgency = itemView.findViewById(R.id.urgency);
             statusBg = itemView.findViewById(R.id.statusBg);
+            pricePaidContent = itemView.findViewById(R.id.pricePaidContent);
             itemView.setOnClickListener(this);
         }
 

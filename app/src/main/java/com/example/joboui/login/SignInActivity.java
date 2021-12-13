@@ -23,10 +23,12 @@ import com.example.joboui.R;
 import com.example.joboui.databinding.ActivitySignInBinding;
 import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.model.Models;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 
 import org.json.JSONException;
 
@@ -130,6 +132,8 @@ public class SignInActivity extends AppCompatActivity {
         mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
         mapper = mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper = mapper.findAndRegisterModules();
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.setVisibility(VisibilityChecker.Std.defaultInstance().withFieldVisibility(JsonAutoDetect.Visibility.ANY));
         return mapper;
     }
 

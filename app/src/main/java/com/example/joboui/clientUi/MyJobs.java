@@ -24,6 +24,7 @@ import com.example.joboui.databinding.ActivityMyJobsBinding;
 import com.example.joboui.db.job.JobViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
+import com.example.joboui.utils.JobStatus;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -89,10 +90,13 @@ public class MyJobs extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 JsonArray jobs = new JsonArray(getObjectMapper().writeValueAsString(response.getData()));
                 jobs.forEach(u -> {
+                    System.out.println("JOBS ARE "+jobs.size());
+
                     try {
                         Models.Job job = getObjectMapper().readValue(u.toString(), Models.Job.class);
-                        if (!(CLIENT_CANCELLED_IN_PROGRESS.getCode() == job.getJob_status())) {
+                        if (!(CLIENT_CANCELLED_IN_PROGRESS.getCode() == job.getJob_status()) && !(job.getJob_status() == JobStatus.CLIENT_REPORTED.getCode()) && !(job.getJob_status() == JobStatus.SERVICE_REPORTED.getCode())) {
                             myJobsList.add(job);
+                            System.out.println("PAYMENT FOR JOB "+job.getId() +" is "+getObjectMapper().writeValueAsString(job.getPayments()));
                         }
 
                         adapter.notifyDataSetChanged();

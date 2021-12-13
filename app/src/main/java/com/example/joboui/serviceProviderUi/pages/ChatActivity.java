@@ -2,6 +2,7 @@ package com.example.joboui.serviceProviderUi.pages;
 
 import static com.example.joboui.globals.GlobalDb.application;
 import static com.example.joboui.globals.GlobalDb.db;
+import static com.example.joboui.globals.GlobalDb.jobApi;
 import static com.example.joboui.globals.GlobalDb.userApi;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.HY;
@@ -80,6 +81,7 @@ public class ChatActivity extends AppCompatActivity {
     private final LinkedList<Models.Messages> messagesList = new LinkedList<>();
 
     private ChildEventListener chatEventListener;
+    private Models.Job job;
 
 
     @Override
@@ -104,7 +106,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
         if (getIntent().getExtras() != null) {
-            Models.Job job = (Models.Job) getIntent().getExtras().get(JOB);
+            job = (Models.Job) getIntent().getExtras().get(JOB);
 
             userRepository.getUserLive().observe(this, user -> {
                 if (user.isPresent()) {
@@ -199,12 +201,14 @@ public class ChatActivity extends AppCompatActivity {
 
             if (!messageBundle.isPresent()) {
                 Toast.makeText(ChatActivity.this, "New chat", Toast.LENGTH_SHORT).show();
+                outProgress();
                 return;
             }
 
             chat = messageBundle.get();
 
             if (messageBundle.get().getMessagesList().isEmpty()) {
+                outProgress();
                 return;
             }
 
@@ -218,13 +222,7 @@ public class ChatActivity extends AppCompatActivity {
     private void sendNewMessage(Models.Messages messages, EditText editText) {
         try {
             inProgress();
-            String threadId;
-            if (!messagesList.isEmpty()) {
-                threadId = messagesList.stream().findFirst().get().getThreadId();
-            } else {
-                threadId = getThreadId(chat.getMe().getUsername(), chat.getYou().getUsername());
-            }
-            db.getReference().child(MESSAGES).child(threadId).child(messages.getMessageId()).setValue(messages).addOnCompleteListener(task -> {
+            db.getReference().child(MESSAGES).child(String.valueOf(job.getId())).child(messages.getMessageId()).setValue(messages).addOnCompleteListener(task -> {
                 outProgress();
                 if (task.isSuccessful()) {
                     messages.setStatus(SENT);
@@ -242,13 +240,8 @@ public class ChatActivity extends AppCompatActivity {
     @SuppressLint("NotifyDataSetChanged")
     private void updateList() {
         animate(binding.pb, binding.pb.getAlpha(), 0.0f, false);
-
 //        messagesList.stream().distinct().collect(Collectors.toCollection(() -> messagesList));
-
-
         chatRvAdapter.notifyDataSetChanged();
-
-
         messagesList.stream().findFirst().ifPresent(c -> {
             try {
                 System.out.println("SINGLE " + getObjectMapper().writeValueAsString(c));
@@ -294,7 +287,7 @@ public class ChatActivity extends AppCompatActivity {
             Models.Messages messages = new Models.Messages();
             messages.setSenderUsername(chat.getMe().getUsername());
             messages.setReceiverUsername(chat.getYou().getUsername());
-            messages.setThreadId(chat.getMessagesList().isEmpty() ? getThreadId(messages.getSenderUsername(), messages.getReceiverUsername()) : chat.getMessagesList().getFirst().getThreadId());
+            messages.setThreadId(String.valueOf(job.getId()));
 
             messages.setStatus(SENT);
             messages.setLastModified(Calendar.getInstance().getTime().toString());
@@ -306,6 +299,8 @@ public class ChatActivity extends AppCompatActivity {
             sendNewMessage(messages, messageField);
         }
     }
+
+    //live data
 
     private MutableLiveData<Optional<Models.AppUser>> getUserMutableByUsername(String username) {
         MutableLiveData<Optional<Models.AppUser>> userMutableLiveData = new MutableLiveData<>();
@@ -396,135 +391,6 @@ public class ChatActivity extends AppCompatActivity {
                 //get messages
                 DatabaseReference messageRef = db.getReference().child(MESSAGES);
                 messageRef.keepSynced(true);
-                /*messageRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot threadShots) {
-
-                        if (!threadShots.exists()) {
-                            outProgress();
-                            System.out.println("populating thread not exist " + youUsername);
-                            mutableLiveData.setValue(Optional.of(bundle));
-                            return;
-                        }
-
-
-                        System.out.println("populating thread exist " + youUsername);
-
-
-                        for (DataSnapshot threads : threadShots.getChildren()) { //get threads
-
-                            System.out.println("populating message exist " + youUsername);
-
-
-                            if (getMyIdFromThreadId(Objects.requireNonNull(threads.getKey()), bundle.getMe().getUsername()).equals(bundle.getMe().getUsername())) { //my threads
-
-                                System.out.println("populating message mine exist " + bundle.getMe().getUsername());
-
-
-                                for (DataSnapshot messagesItems : threads.getChildren()) { // get messages
-
-
-                                    Models.Messages message;
-                                    String senderUid = Objects.requireNonNull(messagesItems.child(SENDER_UID).getValue()).toString();
-                                    String receiverUid = Objects.requireNonNull(messagesItems.child(RECEIVER_UID).getValue()).toString();
-
-                                    System.out.println("populating sender uid " + senderUid + " receiver uid " + receiverUid);
-
-
-                                    if (senderUid.equals(bundle.getMe().getUsername()) || receiverUid.equals(bundle.getMe().getUsername())) { //i'm in the message
-                                        message = messagesItems.getValue(Models.Messages.class);
-                                        assert message != null;
-
-                                        System.out.println("message id is  " + message.getMessageId());
-
-                                        //bundle.getMessagesList().add(message);
-                                        if (!childListenerAdded[0]) {
-                                            childListenerAdded[0] = true;
-                                            bundle.getMessagesList().clear();
-                                            chatEventListener = new ChildEventListener() {
-                                                @Override
-                                                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                                                    Models.Messages messages = snapshot.getValue(Models.Messages.class);
-
-                                                    bundle.getMessagesList().add(messages);
-                                                    mutableLiveData.setValue(Optional.of(bundle));
-                                                    bundle.getMessagesList().forEach(i->{
-                                                        try {
-                                                            System.out.println(getObjectMapper().writeValueAsString(i) + " added");
-                                                        } catch (JsonProcessingException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    });
-                                                    updateList();
-                                                }
-
-                                                @Override
-                                                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                                                    System.out.println("ITEM CHANGED");
-
-                                                    Models.Messages newMessage = snapshot.getValue(Models.Messages.class);
-                                                    Optional<Models.Messages> oldMessage = bundle.getMessagesList().stream().filter(i -> {
-                                                        assert newMessage != null;
-                                                        return i.getMessageId().equals(newMessage.getMessageId());
-                                                    }).findFirst();
-
-                                                    if (oldMessage.isPresent()) {
-                                                        bundle.getMessagesList().set(bundle.getMessagesList().indexOf(oldMessage.get()), newMessage);
-                                                    } else {
-                                                        bundle.getMessagesList().add(newMessage);
-                                                    }
-
-                                                    mutableLiveData.setValue(Optional.of(bundle));
-                                                    updateList();
-                                                }
-
-                                                @Override
-                                                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                                                    System.out.println("ITEM REMOVED");
-                                                    System.out.println(bundle.getMessagesList().size() + " old message size");
-                                                    Models.Messages removedMessage = snapshot.getValue(Models.Messages.class);
-                                                    assert removedMessage != null;
-                                                    System.out.println("ITEM REMOVED " + removedMessage.getMessageId());
-                                                    bundle.getMessagesList().removeIf(i -> i.getMessageId().equals(Objects.requireNonNull(removedMessage).getMessageId()));
-                                                    mutableLiveData.setValue(Optional.of(bundle));
-                                                    System.out.println(bundle.getMessagesList().size() + " new cart size");
-                                                    updateList();
-                                                }
-
-                                                @Override
-                                                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                                                    try {
-                                                        System.out.println(" my message moved :: " + getObjectMapper().writeValueAsString(snapshot.getValue()));
-                                                    } catch (JsonProcessingException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
-                                                    System.out.println(" my message cancelled  :: " + error.getMessage());
-
-                                                }
-                                            };
-                                            messageRef.child(message.getThreadId()).addChildEventListener(chatEventListener);
-                                        }
-
-                                    }
-                                }
-                            }
-
-                        }
-                        bundle.getMessagesList().sort(Comparator.comparing(Models.Messages::getCreatedAt));
-                        mutableLiveData.setValue(Optional.of(bundle));
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(application, error.getMessage(), Toast.LENGTH_SHORT).show();
-                        mutableLiveData.setValue(Optional.empty());
-                        outProgress();
-                    }
-                });*/
                 chatEventListener = new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -591,32 +457,15 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 };
 
-                messageRef.child(getThreadId(bundle.getMe().getUsername(), bundle.getYou().getUsername())).addListenerForSingleValueEvent(new ValueEventListener() {
+                messageRef.child(String.valueOf(job.getId())).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot1) {
                         if (!snapshot1.exists()) {
-                            messageRef.child(getThreadId(bundle.getYou().getUsername(), bundle.getMe().getUsername())).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot2) {
-                                    if (!snapshot2.exists()) {
-                                        chat = bundle;
-                                        mutableLiveData.setValue(Optional.of(bundle));
-                                        return;
-                                    }
-
-                                    addMessageListener(getThreadId(bundle.getYou().getUsername(), bundle.getMe().getUsername()));
-                                    // messageRef.child().addChildEventListener(chatEventListener);
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-                                    Toast.makeText(ChatActivity.this, "2 " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                            Toast.makeText(ChatActivity.this, "new chat", Toast.LENGTH_SHORT).show();
+                            outProgress();
                             return;
                         }
-                        addMessageListener(getThreadId(bundle.getMe().getUsername(), bundle.getYou().getUsername()));
-                        //messageRef.child().addChildEventListener(chatEventListener);
+                        addMessageListener(String.valueOf(job.getId()));
                     }
 
                     @Override

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/ratingLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:minWidth="350dp"
+            android:minHeight="350dp"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/clientReview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/deep_purple"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:text="@string/client"
+                android:layout_marginBottom="50dp"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+            <RatingBar
+                android:id="@+id/clientRating"
+                android:indeterminateTint="@color/deep_purple"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/clientRatingContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:text="@string/not_rated_yet"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:gravity="center_vertical"
+                android:fontFamily="@font/roboto_medium"
+                android:id="@+id/clientPartyContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:text="@string/client_review_label"
+                android:textColor="@color/black" />
+
+
+            <TextView
+                android:id="@+id/providerReview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/deep_purple"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:layout_marginBottom="50dp"
+                android:layout_marginTop="50dp"
+                android:text="@string/service_provider"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+
+            <RatingBar
+                android:id="@+id/serviceRating"
+                android:indeterminateTint="@color/deep_purple"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="15dp"/>
+
+            <TextView
+                android:id="@+id/serviceRatingContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:textStyle="bold"
+                android:text="@string/not_rated_yet"
+                android:textColor="@color/black" />
+
+
+            <TextView
+                android:id="@+id/servicePartyContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:fontFamily="@font/roboto_medium"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/service_providers_review_label"
+                android:textColor="@color/black" />
+
+            <Button
+                android:layout_margin="10dp"
+                android:id="@+id/cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-condensed-medium"
+                android:background="@drawable/login_bg_button_white"
+                android:backgroundTint="@color/red"
+                android:textColor="@color/white"
+                android:text="@string/cancel"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/reviewPb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/grey"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

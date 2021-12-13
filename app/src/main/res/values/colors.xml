@@ -5,7 +5,9 @@
     <color name="bright_purple">#8548DC</color>
     <color name="transparent">#00000000</color>
     <color name="black">#FF000000</color>
+    <color name="semi_black">#57000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="semi_white">#70FFFFFF</color>
     <color name="grey">#877F7F</color>
     <color name="lgrey">#E4E1E1</color>
     <color name="brown_skin">#AC6F21</color>

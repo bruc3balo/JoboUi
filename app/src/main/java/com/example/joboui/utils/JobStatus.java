@@ -8,17 +8,18 @@ public enum JobStatus {
     NEGOTIATING(3,"Negotiating"),
     READY(4,"Ready"),
     PROGRESS(5,"Progress"),
-    COMPLETED(6,"Completed"),
-    CANCELLED(7,"Cancelled"),
+    COMPLETED(6,"Completed"), //completed not tested
+    CANCELLED(7,"Cancelled"), //cancelled not tested
     SERVICE_COMPLETE(8,"Service Complete"),
     CLIENT_COMPLETE(9,"Client Complete"),
-    CLIENT_RATING(10,"Client Rating"),
-    SERVICE_RATING(11,"Provider Rating"),
+    CLIENT_RATING(10,"Client Rating"), //client rating not tested
+    SERVICE_RATING(11,"Provider Rating"), //provider rating not tested
     SERVICE_CANCELLED_IN_PROGRESS(12,"Service provider cancelled in progress"),
     CLIENT_CANCELLED_IN_PROGRESS(13,"Client cancelled in progress"),
-    SERVICE_REPORTED(14,"Service reported"),
-    CLIENT_REPORTED(15,"Client reported"),
-    RATING(16,"Rating");
+    SERVICE_REPORTED(14,"Service reported"), // hidden
+    CLIENT_REPORTED(15,"Client reported"), //hidden
+    RATING(16,"Rating"),
+    PAYING(17,"Paying");
 
     public int code;
     public String description;

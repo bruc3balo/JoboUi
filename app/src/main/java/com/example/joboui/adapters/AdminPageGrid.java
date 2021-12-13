@@ -44,7 +44,6 @@ public class AdminPageGrid extends BaseAdapter {
         }
 
 
-
         String name = getServiceProviderDrawables().getKey(position);
 
         TextView title = convertView.findViewById(R.id.title_row);
@@ -62,10 +61,10 @@ public class AdminPageGrid extends BaseAdapter {
 
         map.put("Cash Flow", R.drawable.ic_cash_flow);
         map.put("Users", R.drawable.ic_person_circle);
-        map.put("Logs", R.drawable.log_history);
+        map.put("jobs", R.drawable.ic_file);
 
         map.put("Manage Services", R.drawable.ic_service);
-        map.put("Feedback", R.drawable.ic_ticket);
+        map.put("Reported", R.drawable.ic_customer_complaint);
         map.put("Chat", R.drawable.ic_chat);
 
         return map;

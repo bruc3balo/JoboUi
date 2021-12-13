@@ -89,14 +89,18 @@ public class LoginActivity extends AppCompatActivity {
                         break;
                     case "ROLE_SERVICE_PROVIDER":
 
+                        boolean hasNoData = appUser.get().getPreferred_working_hours().equals(HY) || appUser.get().getSpecialities().equals(HY) || appUser.get().getPreferred_working_hours().equals("") || appUser.get().getSpecialities().equals("");
+
+                        System.out.println(appUser.get().getPreferred_working_hours() + " :: "+appUser.get().getSpecialities());
+
                         if (appUser.get().isVerified()) {
-                            goToServiceProviderPage(activity);
-                        } else {
-                            if (appUser.get().getPreferred_working_hours().equals(HY) || appUser.get().getSpecialities().equals(HY)) {
+                            if (hasNoData) {
                                 goToAdditionalInfoActivity(activity);
                             } else {
-                                goToVerificationPage(activity);
+                                goToServiceProviderPage(activity);
                             }
+                        } else {
+                            goToVerificationPage(activity);
                         }
                         break;
 

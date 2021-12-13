@@ -6,6 +6,7 @@ import static com.example.joboui.globals.GlobalVariables.HY;
 import androidx.annotation.NonNull;
 
 import com.example.joboui.domain.Domain;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +23,7 @@ import java.util.Set;
 
 public class Models {
 
-    public static class NewUserForm {
+    public static class NewUserForm implements Serializable{
 
         private String names;
 
@@ -139,7 +140,7 @@ public class Models {
         }
     }
 
-    public static class RoleCreationForm {
+    public static class RoleCreationForm implements Serializable{
 
 
         private String name;
@@ -172,7 +173,7 @@ public class Models {
         }
     }
 
-    public static class RoleToUserForm {
+    public static class RoleToUserForm implements Serializable{
 
         private String username;
 
@@ -199,7 +200,7 @@ public class Models {
         }
     }
 
-    public static class UsernameAndPasswordAuthenticationRequest {
+    public static class UsernameAndPasswordAuthenticationRequest implements Serializable{
         private String username;
         private String password;
 
@@ -228,7 +229,7 @@ public class Models {
         }
     }
 
-    public static class UserUpdateForm {
+    public static class UserUpdateForm implements Serializable{
 
         private String names;
 
@@ -283,7 +284,7 @@ public class Models {
             this.specialities = specialities;
         }
 
-        public UserUpdateForm(String names, String email_address, String password, String role, String phone_number, String id_number, String bio, LinkedHashMap<String, String> preferred_working_hours, LinkedList<String> specialities,Boolean verified) {
+        public UserUpdateForm(String names, String email_address, String password, String role, String phone_number, String id_number, String bio, LinkedHashMap<String, String> preferred_working_hours, LinkedList<String> specialities, Boolean verified) {
             this.names = names;
             this.email_address = email_address;
             this.password = password;
@@ -381,7 +382,6 @@ public class Models {
         }
 
 
-
         public Boolean getDisabled() {
             return disabled;
         }
@@ -432,7 +432,7 @@ public class Models {
         }
     }
 
-    public static class AppUser implements Serializable{
+    public static class AppUser implements Serializable {
 
         private Long id;
 
@@ -629,7 +629,7 @@ public class Models {
         }
     }
 
-    public static class AppRole implements Serializable{
+    public static class AppRole implements Serializable {
 
         private Long id;
         private String name;
@@ -679,7 +679,7 @@ public class Models {
         }
     }
 
-    public static class Permissions implements Serializable{
+    public static class Permissions implements Serializable {
 
         private Long id;
         private String name;
@@ -713,7 +713,7 @@ public class Models {
         }
     }
 
-    public static class ServiceRequestForm {
+    public static class ServiceRequestForm implements Serializable{
 
         private String description;
 
@@ -745,7 +745,7 @@ public class Models {
         }
     }
 
-    public static class ServiceUpdateForm {
+    public static class ServiceUpdateForm implements Serializable{
 
         private String name;
 
@@ -787,7 +787,7 @@ public class Models {
         }
     }
 
-    public static class ServicesModel {
+    public static class ServicesModel implements Serializable{
 
         private Long id;
         private String name;
@@ -795,7 +795,6 @@ public class Models {
         private Boolean disabled;
         private Date created_at;
         private Date updated_at;
-
 
 
         public ServicesModel(String name) {
@@ -858,7 +857,7 @@ public class Models {
         }
     }
 
-    public static class JobRequestForm {
+    public static class JobRequestForm implements Serializable{
 
         private String local_service_provider_username;
 
@@ -935,7 +934,7 @@ public class Models {
         }
     }
 
-    public static class JobUpdateForm {
+    public static class JobUpdateForm implements Serializable{
 
         private String job_location;
 
@@ -949,11 +948,13 @@ public class Models {
 
         private Integer job_status;
 
+        private Boolean reported;
+
         public JobUpdateForm(Integer job_status) {
             this.job_status = job_status;
         }
 
-        public JobUpdateForm(String job_price,String job_price_range,Integer job_status) {
+        public JobUpdateForm(String job_price, String job_price_range, Integer job_status) {
             this.job_price = job_price;
             this.job_price_range = job_price_range;
             this.job_status = job_status;
@@ -963,7 +964,6 @@ public class Models {
         }
 
 
-
         public JobUpdateForm(String job_location, String scheduled_at, Boolean completed_at, String job_price_range, String job_price, Integer job_status) {
             this.job_location = job_location;
             this.scheduled_at = scheduled_at;
@@ -971,6 +971,18 @@ public class Models {
             this.job_price_range = job_price_range;
             this.job_price = job_price;
             this.job_status = job_status;
+        }
+
+        public JobUpdateForm(Boolean reported) {
+            this.reported = reported;
+        }
+
+        public Boolean getReported() {
+            return reported;
+        }
+
+        public void setReported(Boolean reported) {
+            this.reported = reported;
         }
 
         public String getJob_location() {
@@ -1022,7 +1034,7 @@ public class Models {
         }
     }
 
-    public static class Job implements Serializable{
+    public static class Job implements Serializable {
 
         private Long id;
 
@@ -1050,8 +1062,16 @@ public class Models {
 
         private Integer job_status;
 
+        private Boolean reported;
+
+        private Set<Payment> payments = new LinkedHashSet<>();
+
         public Job() {
 
+        }
+
+        public Job(Boolean reported) {
+            this.reported = reported;
         }
 
         public Job(Long id, String local_service_provider_username, String client_username, String job_location, String specialities, String created_at, String updated_at, String scheduled_at, String completed_at, String job_price_range, BigDecimal job_price, String job_description, Integer job_status) {
@@ -1070,6 +1090,22 @@ public class Models {
             this.job_status = job_status;
         }
 
+        public Boolean getReported() {
+            return reported;
+            //todo reported api
+        }
+
+        public Set<Payment> getPayments() {
+            return payments;
+        }
+
+        public void setPayments(Set<Payment> payments) {
+            this.payments = payments;
+        }
+
+        public void setReported(Boolean reported) {
+            this.reported = reported;
+        }
 
         public Long getId() {
             return id;
@@ -1079,7 +1115,7 @@ public class Models {
             this.id = id;
         }
 
-        public String    getLocal_service_provider_username() {
+        public String getLocal_service_provider_username() {
             return local_service_provider_username;
         }
 
@@ -1176,7 +1212,153 @@ public class Models {
         }
     }
 
+    public static class Payment implements Serializable{
 
+        private Long id;
+
+        private String CheckoutRequestID;
+
+        private String ResponseCode;
+
+        private boolean paid;
+
+        private String narration;
+
+        private String transaction_description;
+
+        private String PhoneNumber;
+
+        private Long job_id;
+
+        private Date confirmed_at;
+
+        private Date created_at;
+
+        private String access_token;
+
+        private Integer resultCode;
+
+        private String Amount;
+
+        private String MpesaReceiptNumber;
+
+
+        public Payment() {
+
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getCheckoutRequestID() {
+            return CheckoutRequestID;
+        }
+
+        public void setCheckoutRequestID(String checkoutRequestID) {
+            CheckoutRequestID = checkoutRequestID;
+        }
+
+        public String getResponseCode() {
+            return ResponseCode;
+        }
+
+        public void setResponseCode(String responseCode) {
+            ResponseCode = responseCode;
+        }
+
+        public boolean isPaid() {
+            return paid;
+        }
+
+        public void setPaid(boolean paid) {
+            this.paid = paid;
+        }
+
+        public String getNarration() {
+            return narration;
+        }
+
+        public void setNarration(String narration) {
+            this.narration = narration;
+        }
+
+        public String getTransaction_description() {
+            return transaction_description;
+        }
+
+        public void setTransaction_description(String transaction_description) {
+            this.transaction_description = transaction_description;
+        }
+
+        public String getPhoneNumber() {
+            return PhoneNumber;
+        }
+
+        public void setPhoneNumber(String phoneNumber) {
+            PhoneNumber = phoneNumber;
+        }
+
+        public Long getJob_id() {
+            return job_id;
+        }
+
+        public void setJob_id(Long job_id) {
+            this.job_id = job_id;
+        }
+
+        public Date getConfirmed_at() {
+            return confirmed_at;
+        }
+
+        public void setConfirmed_at(Date confirmed_at) {
+            this.confirmed_at = confirmed_at;
+        }
+
+        public Date getCreated_at() {
+            return created_at;
+        }
+
+        public void setCreated_at(Date created_at) {
+            this.created_at = created_at;
+        }
+
+        public String getAccess_token() {
+            return access_token;
+        }
+
+        public void setAccess_token(String access_token) {
+            this.access_token = access_token;
+        }
+
+        public Integer getResultCode() {
+            return resultCode;
+        }
+
+        public void setResultCode(Integer resultCode) {
+            this.resultCode = resultCode;
+        }
+
+        public String getAmount() {
+            return Amount;
+        }
+
+        public void setAmount(String amount) {
+            Amount = amount;
+        }
+
+        public String getMpesaReceiptNumber() {
+            return MpesaReceiptNumber;
+        }
+
+        public void setMpesaReceiptNumber(String mpesaReceiptNumber) {
+            MpesaReceiptNumber = mpesaReceiptNumber;
+        }
+    }
 
     public static class Messages implements Serializable {
 
@@ -1307,7 +1489,7 @@ public class Models {
         }
     }
 
-    public static class MessageBundle {
+    public static class MessageBundle implements Serializable{
         private final LinkedList<Models.Messages> messagesList = new LinkedList<>();
         private Domain.User me;
         private AppUser you;
@@ -1345,4 +1527,183 @@ public class Models {
         }
     }
 
+    public static class Review implements Serializable{
+        private Long id;
+        private String local_service_provider_username;
+        private String local_service_provider_review;
+        private String client_username;
+        private String client_review;
+        private Long job_id;
+        private String created_at;
+        private String updated_at;
+        private Boolean reported;
+
+
+        public Review() {
+
+        }
+
+        public Review(Long id, String local_service_provider_username, String local_service_provider_review, String client_username, String client_review, Long job_id, String created_at, String updated_at, Boolean reported) {
+            this.id = id;
+            this.local_service_provider_username = local_service_provider_username;
+            this.local_service_provider_review = local_service_provider_review;
+            this.client_username = client_username;
+            this.client_review = client_review;
+            this.job_id = job_id;
+            this.created_at = created_at;
+            this.updated_at = updated_at;
+            this.reported = reported;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getLocal_service_provider_username() {
+            return local_service_provider_username;
+        }
+
+        public void setLocal_service_provider_username(String local_service_provider_username) {
+            this.local_service_provider_username = local_service_provider_username;
+        }
+
+        public String getLocal_service_provider_review() {
+            return local_service_provider_review;
+        }
+
+        public void setLocal_service_provider_review(String local_service_provider_review) {
+            this.local_service_provider_review = local_service_provider_review;
+        }
+
+        public String getClient_username() {
+            return client_username;
+        }
+
+        public void setClient_username(String client_username) {
+            this.client_username = client_username;
+        }
+
+        public String getClient_review() {
+            return client_review;
+        }
+
+        public void setClient_review(String client_review) {
+            this.client_review = client_review;
+        }
+
+        public Long getJob_id() {
+            return job_id;
+        }
+
+        public void setJob_id(Long job_id) {
+            this.job_id = job_id;
+        }
+
+        public String getCreated_at() {
+            return created_at;
+        }
+
+        public void setCreated_at(String created_at) {
+            this.created_at = created_at;
+        }
+
+        public String getUpdated_at() {
+            return updated_at;
+        }
+
+        public void setUpdated_at(String updated_at) {
+            this.updated_at = updated_at;
+        }
+
+        public Boolean getReported() {
+            return reported;
+        }
+
+        public void setReported(Boolean reported) {
+            this.reported = reported;
+        }
+
+
+    }
+
+    public static class MakeStkRequest implements Serializable {
+
+        private String transaction_type;
+
+        private String amount;
+
+        private String phone_number;
+
+        private String party_a;
+
+        private Long job_id;
+
+        private String transaction_desc = "-";
+
+
+        public MakeStkRequest() {
+
+        }
+
+        public MakeStkRequest(String transaction_type, String amount, String phone_number, String party_a, Long job_id, String transaction_desc) {
+            this.transaction_type = transaction_type;
+            this.amount = amount;
+            this.phone_number = phone_number;
+            this.party_a = party_a;
+            this.job_id = job_id;
+            this.transaction_desc = transaction_desc;
+        }
+
+        public String getTransaction_type() {
+            return transaction_type;
+        }
+
+        public void setTransaction_type(String transaction_type) {
+            this.transaction_type = transaction_type;
+        }
+
+        public String getAmount() {
+            return amount;
+        }
+
+        public void setAmount(String amount) {
+            this.amount = amount;
+        }
+
+        public String getPhone_number() {
+            return phone_number;
+        }
+
+        public void setPhone_number(String phone_number) {
+            this.phone_number = phone_number;
+        }
+
+        public String getParty_a() {
+            return party_a;
+        }
+
+        public void setParty_a(String party_a) {
+            this.party_a = party_a;
+        }
+
+        public Long getJob_id() {
+            return job_id;
+        }
+
+        public void setJob_id(Long job_id) {
+            this.job_id = job_id;
+        }
+
+        public String getTransaction_desc() {
+            return transaction_desc;
+        }
+
+        public void setTransaction_desc(String transaction_desc) {
+            this.transaction_desc = transaction_desc;
+        }
+    }
 }

@@ -14,6 +14,7 @@ import static com.example.joboui.globals.GlobalVariables.WEDNESDAY;
 
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +39,7 @@ import com.example.joboui.databinding.WorkingHourPickerBinding;
 import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
+import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.time.LocalDateTime;
@@ -291,7 +293,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
     }
 
     private void goToTutorialPage() {
-        //todo  startActivity(new Intent(this, TutorialActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK).putExtra(ROLE, LOCAL_SERVICE_PROVIDER_ROLE));
+        startActivity(new Intent(this, ServiceProviderActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();
     }
 }

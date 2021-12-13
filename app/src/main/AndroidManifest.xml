@@ -26,6 +26,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JoboUi">
         <activity
+            android:name=".admin.AllJobsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ReviewActivity"
             android:exported="false" />
         <activity

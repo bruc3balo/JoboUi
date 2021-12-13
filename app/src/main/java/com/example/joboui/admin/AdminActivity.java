@@ -50,21 +50,26 @@ public class AdminActivity extends AppCompatActivity {
         serviceProviderGrid.setAdapter(adminPageGrid);
         serviceProviderGrid.setOnItemClickListener((parent, view, position, id) -> {
             switch (position) {
-                default:break;
+                default:
+                    break;
 
                 case 1:
-                  goToUsers();
+                    goToUsers();
+                    break;
+
+                case 2:
+                    goToJobs();
                     break;
             }
         });
 
         if (userRepository != null) {
             userRepository.getUserLive().observe(this, user -> {
-            if (user.isPresent()) {
-                adminToolbar.setTitle(user.get().getRole());
-                adminToolbar.setSubtitle(user.get().getUsername());
-            }
-        });
+                if (user.isPresent()) {
+                    adminToolbar.setTitle(user.get().getRole());
+                    adminToolbar.setSubtitle(user.get().getUsername());
+                }
+            });
         }
 
 
@@ -72,7 +77,11 @@ public class AdminActivity extends AppCompatActivity {
     }
 
     private void goToUsers() {
-        startActivity(new Intent(AdminActivity.this,UserActivity.class));
+        startActivity(new Intent(AdminActivity.this, UserActivity.class));
+    }
+
+    private void goToJobs() {
+        startActivity(new Intent(AdminActivity.this, AllJobsActivity.class));
     }
 
     @Override
