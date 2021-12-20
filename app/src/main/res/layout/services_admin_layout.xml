@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="5dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="20dp">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_gravity="top"
+            android:fitsSystemWindows="true"
+            android:gravity="center">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/toolbar_layout"
+                style="@style/Widget.MaterialComponents.Toolbar.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="top"
+                android:background="@color/white"
+                android:fitsSystemWindows="true"
+                app:contentScrim="@color/deep_purple"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:title="Login"
+                app:toolbarId="@+id/toolbar">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/serviceImage"
+                    android:layout_width="250dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_general_repair"
+                    android:tint="@color/white"
+                    app:riv_border_color="@color/grey"
+                    app:riv_border_width="1dp"
+                    app:riv_corner_radius="20sp" />
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/serviceInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="30dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <TextView
+                    android:textColor="@color/black"
+                    android:text="@string/service"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:padding="10dp" />
+
+                <TextView
+                    android:id="@+id/serviceName"
+                    android:text="@string/service"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:padding="10dp" />
+
+
+                <TextView
+                    android:text="@string/description"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:padding="10dp" />
+
+
+                <TextView
+                    android:id="@+id/serviceDescription"
+                    android:textColor="@color/black"
+                    android:text="Description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:padding="10dp" />
+
+                <TextView
+                    android:id="@+id/statusTv"
+                    android:text="@string/status"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:padding="10dp" />
+
+                <Button
+                    android:id="@+id/serviceStatusButton"
+                    android:background="@drawable/login_bg_button_white"
+                    android:drawableStart="@drawable/ic_circle"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@android:color/holo_green_light"
+                    android:text="Disable"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:padding="10dp" />
+
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</androidx.cardview.widget.CardView>
+

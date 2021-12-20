@@ -59,4 +59,7 @@ public interface JobApi {
     @POST("pay")
     Call<JsonResponse> postPayment(@Body Models.MakeStkRequest request, @Header(AUTHORIZATION) String token);
 
+    @GET("pay/cashflow")
+    Call<JsonResponse> getPaymentFlows(@Header(AUTHORIZATION) String token);
+
 }

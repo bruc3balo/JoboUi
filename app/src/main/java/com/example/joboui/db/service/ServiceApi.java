@@ -31,7 +31,7 @@ public interface ServiceApi {
     Call<JsonResponse> saveService(@Body Models.ServiceRequestForm serviceRequestForm, @Header(AUTHORIZATION) String token);
 
     @PUT(base + "/update")
-    Call<JsonResponse> updateAService(@Query(NAME) String name, @Body Models.ServiceUpdateForm serviceUpdateForm, @Header(AUTHORIZATION) String token);
+    Call<JsonResponse> updateAService(@Query("name") String name, @Body Models.ServiceUpdateForm serviceUpdateForm, @Header(AUTHORIZATION) String token);
 
 
 }

@@ -44,6 +44,10 @@ public class JobViewModel extends AndroidViewModel {
     }
 
 
+
+
+
+
     private MutableLiveData<Optional<Boolean>> requestPayment(Models.MakeStkRequest request) {
         MutableLiveData<Optional<Boolean>> mutableLiveData = new MutableLiveData<>();
 

@@ -53,12 +53,20 @@ public class AdminActivity extends AppCompatActivity {
                 default:
                     break;
 
+                case 0:
+                    goToCashFlow();
+                    break;
+
                 case 1:
                     goToUsers();
                     break;
 
                 case 2:
                     goToJobs();
+                    break;
+
+                case 3:
+                    goToServices();
                     break;
             }
         });
@@ -82,6 +90,14 @@ public class AdminActivity extends AppCompatActivity {
 
     private void goToJobs() {
         startActivity(new Intent(AdminActivity.this, AllJobsActivity.class));
+    }
+
+    private void goToServices() {
+        startActivity(new Intent(AdminActivity.this, ManageServicesAdmin.class));
+    }
+
+    private void goToCashFlow() {
+        startActivity(new Intent(AdminActivity.this, CashFlowActivity.class));
     }
 
     @Override

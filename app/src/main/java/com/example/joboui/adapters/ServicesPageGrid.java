@@ -41,7 +41,13 @@ public class ServicesPageGrid extends BaseAdapter {
                     if (services.isPresent()) {
                         if (!services.get().isEmpty()) {
                             allServiceList.clear();
-                            services.get().forEach(s -> allServiceList.put(services.get().indexOf(s), s));
+
+                            for (Domain.Services s: services.get()) {
+                                if (!s.getDisabled()) {
+                                    allServiceList.put(services.get().indexOf(s), s);
+                                }
+                            }
+
                             serviceList.putAll(allServiceList);
                             try {
                                 System.out.println(getObjectMapper().writeValueAsString(serviceList) + " all");

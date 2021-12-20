@@ -1,12 +1,14 @@
 package com.example.joboui.db.service;
 
 import static com.example.joboui.globals.GlobalDb.application;
+import static com.example.joboui.globals.GlobalDb.jobApi;
 import static com.example.joboui.globals.GlobalDb.serviceApi;
 import static com.example.joboui.globals.GlobalDb.serviceRepository;
 import static com.example.joboui.globals.GlobalVariables.REFRESH_TOKEN;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
 import static com.example.joboui.login.SignInActivity.getSp;
+import static com.example.joboui.utils.DataOps.getAuthorization;
 
 import android.app.Application;
 
@@ -32,6 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import retrofit2.Call;
@@ -116,7 +119,7 @@ public class ServiceRepository {
                 }
 
                 if (jsonResponse.getData() == null) {
-                   // servicesMutable.setValue(Optional.empty());
+                    // servicesMutable.setValue(Optional.empty());
                     System.out.println("FAILED TO GET SERVICE DATA");
                     return;
                 }
@@ -166,6 +169,127 @@ public class ServiceRepository {
     }
 
 
+    private MutableLiveData<List<Models.ServicesModel>> getServicesLive() {
+        MutableLiveData<List<Models.ServicesModel>> allServices = new MutableLiveData<>();
+        List<Models.ServicesModel> servicesList = new ArrayList<>();
+        serviceApi.getAllServices(getAuthorization()).enqueue(new Callback<JsonResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
+                JsonResponse jsonResponse = response.body();
+
+                if (jsonResponse == null) {
+                    //servicesMutable.setValue(Optional.empty());
+                    System.out.println("FAILED TO GET SERVICE RESPONSE");
+                    return;
+                }
+
+                if (jsonResponse.getData() == null) {
+                    // servicesMutable.setValue(Optional.empty());
+                    System.out.println("FAILED TO GET SERVICE DATA");
+                    return;
+                }
+
+                try {
+                    JsonArray serviceArray = new JsonArray(getObjectMapper().writeValueAsString(jsonResponse.getData()));
+                    for (int i = 0; i < serviceArray.size(); i++) {
+                        try {
+                            System.out.println("count " + i);
+                            Models.ServicesModel service = getObjectMapper().readValue(new JsonObject(serviceArray.getJsonObject(i).getMap()).toString(), Models.ServicesModel.class);
+                            servicesList.add(service);
+
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    allServices.setValue(servicesList);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
+                System.out.println(t.getMessage());
+                //servicesMutable.setValue(Optional.empty());
+            }
+        });
+        return allServices;
+    }
+
+    private MutableLiveData<Optional<Boolean>> updateService(String currentServiceName, Models.ServiceUpdateForm form) {
+        MutableLiveData<Optional<Boolean>> mutableLiveData = new MutableLiveData<>();
+
+        serviceApi.updateAService(currentServiceName, form, getAuthorization()).enqueue(new Callback<JsonResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
+                JsonResponse jsonResponse = response.body();
+
+                if (jsonResponse == null || jsonResponse.getData() == null || !jsonResponse.isSuccess() || jsonResponse.isHas_error()) {
+                    mutableLiveData.setValue(Optional.of(false));
+                    return;
+                }
+
+                mutableLiveData.setValue(Optional.of(true));
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
+                mutableLiveData.setValue(Optional.empty());
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    private MutableLiveData<List<Models.ServiceCashFlow>> getServiceFlows () {
+        MutableLiveData<List<Models.ServiceCashFlow>> mutableLiveData = new MutableLiveData<>();
+        List<Models.ServiceCashFlow> serviceCashFlowList = new ArrayList<>();
+
+        jobApi.getPaymentFlows(getAuthorization()).enqueue(new Callback<JsonResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
+                JsonResponse jsonResponse = response.body();
+
+                if (jsonResponse == null || jsonResponse.getData() == null || !jsonResponse.isSuccess() || jsonResponse.isHas_error()) {
+                    mutableLiveData.setValue(new ArrayList<>());
+                    return;
+                }
+
+
+                try {
+                    JsonArray serviceArray = new JsonArray(getObjectMapper().writeValueAsString(jsonResponse.getData()));
+                    for (int i = 0; i < serviceArray.size(); i++) {
+                        try {
+                            System.out.println("count " + i);
+                            Models.ServiceCashFlow service = getObjectMapper().readValue(new JsonObject(serviceArray.getJsonObject(i).getMap()).toString(), Models.ServiceCashFlow.class);
+                            serviceCashFlowList.add(service);
+
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    mutableLiveData.setValue(serviceCashFlowList);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                    mutableLiveData.setValue(new ArrayList<>());
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
+                mutableLiveData.setValue(new ArrayList<>());
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+
+
     //Used Methods
     public void insert(Domain.Services services) {
         insertService(services);
@@ -198,6 +322,18 @@ public class ServiceRepository {
 
     public Optional<Domain.Services> getServiceByName(String name) {
         return serviceDao.findServiceByName(name);
+    }
+
+    public LiveData<List<Models.ServicesModel>> getServicesLiveData() {
+        return getServicesLive();
+    }
+
+    public LiveData<Optional<Boolean>> updateAService (String currentServiceName, Models.ServiceUpdateForm form) {
+        return updateService(currentServiceName, form);
+    }
+
+    public LiveData<List<Models.ServiceCashFlow>> getServiceFlowsLiveData () {
+        return getServiceFlows();
     }
 
 

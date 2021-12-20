@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".admin.CashFlowActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:titleTextColor="@color/white"
+            app:title="@string/cash_flow"
+            app:titleMarginStart="20dp"
+            app:navigationIcon="@drawable/ic_back"
+            android:layout_gravity="center"
+            app:subtitleTextColor="@color/grey"
+            android:background="@color/deep_purple"/>
+
+
+        <com.anychart.AnyChartView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/pieChart"/>
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pieChartPb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/deep_purple"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

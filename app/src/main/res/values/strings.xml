@@ -136,8 +136,11 @@
     <string name="reviews">Reviews</string>
     <string name="info">Info</string>
     <string name="report">Reports</string>
-    <string name="chats" >Chat</string>
+    <string name="chats">Chat</string>
     <string name="service_providers_review_label">Client\'s Review : </string>
     <string name="client_review_label">Service Provider\'s Review : </string>
     <string name="not_rated_yet">Not rated yet</string>
+    <string name="deleted">Deleted</string>
+    <string name="job">Job</string>
+    <string name="action">Action</string>
 </resources>

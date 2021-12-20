@@ -23,7 +23,7 @@ import java.util.Set;
 
 public class Models {
 
-    public static class NewUserForm implements Serializable{
+    public static class NewUserForm implements Serializable {
 
         private String names;
 
@@ -140,7 +140,7 @@ public class Models {
         }
     }
 
-    public static class RoleCreationForm implements Serializable{
+    public static class RoleCreationForm implements Serializable {
 
 
         private String name;
@@ -173,7 +173,7 @@ public class Models {
         }
     }
 
-    public static class RoleToUserForm implements Serializable{
+    public static class RoleToUserForm implements Serializable {
 
         private String username;
 
@@ -200,7 +200,7 @@ public class Models {
         }
     }
 
-    public static class UsernameAndPasswordAuthenticationRequest implements Serializable{
+    public static class UsernameAndPasswordAuthenticationRequest implements Serializable {
         private String username;
         private String password;
 
@@ -229,7 +229,7 @@ public class Models {
         }
     }
 
-    public static class UserUpdateForm implements Serializable{
+    public static class UserUpdateForm implements Serializable {
 
         private String names;
 
@@ -299,6 +299,10 @@ public class Models {
 
         public UserUpdateForm(Boolean verified) {
             this.verified = verified;
+        }
+
+        public UserUpdateForm(LinkedList<String> specialities) {
+            this.specialities = specialities;
         }
 
         public Boolean getVerified() {
@@ -713,7 +717,7 @@ public class Models {
         }
     }
 
-    public static class ServiceRequestForm implements Serializable{
+    public static class ServiceRequestForm implements Serializable {
 
         private String description;
 
@@ -745,7 +749,7 @@ public class Models {
         }
     }
 
-    public static class ServiceUpdateForm implements Serializable{
+    public static class ServiceUpdateForm implements Serializable {
 
         private String name;
 
@@ -754,6 +758,10 @@ public class Models {
         private String description;
 
         public ServiceUpdateForm() {
+        }
+
+        public ServiceUpdateForm(Boolean disabled) {
+            this.disabled = disabled;
         }
 
         public ServiceUpdateForm(String name, Boolean disabled, String description) {
@@ -787,7 +795,7 @@ public class Models {
         }
     }
 
-    public static class ServicesModel implements Serializable{
+    public static class ServicesModel implements Serializable {
 
         private Long id;
         private String name;
@@ -857,7 +865,7 @@ public class Models {
         }
     }
 
-    public static class JobRequestForm implements Serializable{
+    public static class JobRequestForm implements Serializable {
 
         private String local_service_provider_username;
 
@@ -934,7 +942,7 @@ public class Models {
         }
     }
 
-    public static class JobUpdateForm implements Serializable{
+    public static class JobUpdateForm implements Serializable {
 
         private String job_location;
 
@@ -1212,7 +1220,7 @@ public class Models {
         }
     }
 
-    public static class Payment implements Serializable{
+    public static class Payment implements Serializable {
 
         private Long id;
 
@@ -1489,7 +1497,7 @@ public class Models {
         }
     }
 
-    public static class MessageBundle implements Serializable{
+    public static class MessageBundle implements Serializable {
         private final LinkedList<Models.Messages> messagesList = new LinkedList<>();
         private Domain.User me;
         private AppUser you;
@@ -1527,7 +1535,7 @@ public class Models {
         }
     }
 
-    public static class Review implements Serializable{
+    public static class Review implements Serializable {
         private Long id;
         private String local_service_provider_username;
         private String local_service_provider_review;
@@ -1704,6 +1712,36 @@ public class Models {
 
         public void setTransaction_desc(String transaction_desc) {
             this.transaction_desc = transaction_desc;
+        }
+    }
+
+    public static class ServiceCashFlow {
+
+        private ServicesModel service;
+        private BigDecimal amount;
+
+        public ServiceCashFlow() {
+        }
+
+        public ServiceCashFlow(ServicesModel service, BigDecimal amount) {
+            this.service = service;
+            this.amount = amount;
+        }
+
+        public ServicesModel getService() {
+            return service;
+        }
+
+        public void setService(ServicesModel service) {
+            this.service = service;
+        }
+
+        public BigDecimal getAmount() {
+            return amount;
+        }
+
+        public void setAmount(BigDecimal amount) {
+            this.amount = amount;
         }
     }
 }

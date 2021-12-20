@@ -65,7 +65,7 @@ public class AdminPageGrid extends BaseAdapter {
 
         map.put("Manage Services", R.drawable.ic_service);
         map.put("Reported", R.drawable.ic_customer_complaint);
-        map.put("Chat", R.drawable.ic_chat);
+       // map.put("Chat", R.drawable.ic_chat);
 
         return map;
     }

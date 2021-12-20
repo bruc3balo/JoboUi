@@ -22,12 +22,14 @@ import com.example.joboui.R;
 import com.example.joboui.adapters.ServiceProviderPageGrid;
 import com.example.joboui.databinding.ActivityServiceProviderBinding;
 import com.example.joboui.serviceProviderUi.pages.JobRequests;
+import com.example.joboui.serviceProviderUi.pages.ManageServicesProvider;
 
 
 public class ServiceProviderActivity extends AppCompatActivity {
 
     private ActivityServiceProviderBinding serviceProviderBinding;
     private ServiceProviderPageGrid serviceProviderPageGrid;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,10 @@ public class ServiceProviderActivity extends AppCompatActivity {
 
                 case 0:
                     goToRequests();
+                    break;
+
+                case 3:
+                    goToServices();
                     break;
             }
         });
@@ -78,6 +84,10 @@ public class ServiceProviderActivity extends AppCompatActivity {
         startActivity(new Intent(ServiceProviderActivity.this, JobRequests.class));
     }
 
+    private void goToServices() {
+        startActivity(new Intent(ServiceProviderActivity.this, ManageServicesProvider.class));
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -98,5 +108,6 @@ public class ServiceProviderActivity extends AppCompatActivity {
         getWindow().setNavigationBarColor(getColor(R.color.purple));
 
     }
+
 
 }
