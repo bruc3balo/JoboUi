@@ -8,6 +8,9 @@ import static com.example.joboui.globals.GlobalVariables.ID;
 import static com.example.joboui.globals.GlobalVariables.JOB_STATUS;
 import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_ID;
 import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_USERNAME;
+import static com.example.joboui.globals.GlobalVariables.PAGE_NO;
+import static com.example.joboui.globals.GlobalVariables.PAGE_SIZE;
+import static com.example.joboui.globals.GlobalVariables.UID;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
 import static com.example.joboui.utils.DataOps.*;
 
@@ -44,8 +47,105 @@ public class JobViewModel extends AndroidViewModel {
     }
 
 
+    private MutableLiveData<Optional<JsonResponse>> saveFeedBack(Models.FeedbackForm form) {
+        MutableLiveData<Optional<JsonResponse>> mutableLiveData = new MutableLiveData<>();
 
+        jobApi.saveFeedback(form, getAuthorization()).enqueue(new Callback<JsonResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
+                JsonResponse jsonResponse = response.body();
 
+                if (response.code() != 200) {
+                    mutableLiveData.setValue(Optional.empty());
+                    return;
+                }
+
+                if (jsonResponse == null || jsonResponse.getData() == null) {
+                    mutableLiveData.setValue(Optional.empty());
+                    return;
+                }
+
+                mutableLiveData.setValue(Optional.of(jsonResponse));
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
+                mutableLiveData.setValue(Optional.empty());
+
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    private MutableLiveData<Optional<JsonResponse>> getFeedBack(Integer rating, Long userId, Integer pageNo, Integer pageSize, Long id) {
+        MutableLiveData<Optional<JsonResponse>> mutableLiveData = new MutableLiveData<>();
+
+        HashMap params = new HashMap();
+        if (rating != null) params.put("rating", rating);
+        if (userId != null) params.put(UID, userId);
+        if (pageNo != null) params.put(PAGE_NO, pageNo);
+        if (pageSize != null) params.put(PAGE_SIZE, pageSize);
+        if (id != null) params.put(ID, id);
+
+        jobApi.getFeedback(params, getAuthorization()).enqueue(new Callback<JsonResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
+                JsonResponse jsonResponse = response.body();
+
+                if (response.code() != 200) {
+                    mutableLiveData.setValue(Optional.empty());
+                    return;
+                }
+
+                if (jsonResponse == null || jsonResponse.getData() == null) {
+                    mutableLiveData.setValue(Optional.empty());
+                    return;
+                }
+
+                mutableLiveData.setValue(Optional.of(jsonResponse));
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
+                mutableLiveData.setValue(Optional.empty());
+
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    private MutableLiveData<Optional<JsonResponse>> getFeedBackChart() {
+        MutableLiveData<Optional<JsonResponse>> mutableLiveData = new MutableLiveData<>();
+
+        jobApi.getFeedbackChart(getAuthorization()).enqueue(new Callback<JsonResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
+                JsonResponse jsonResponse = response.body();
+
+                if (response.code() != 200) {
+                    mutableLiveData.setValue(Optional.empty());
+                    return;
+                }
+
+                if (jsonResponse == null || jsonResponse.getData() == null) {
+                    mutableLiveData.setValue(Optional.empty());
+                    return;
+                }
+
+                mutableLiveData.setValue(Optional.of(jsonResponse));
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
+                mutableLiveData.setValue(Optional.empty());
+
+            }
+        });
+
+        return mutableLiveData;
+    }
 
 
     private MutableLiveData<Optional<Boolean>> requestPayment(Models.MakeStkRequest request) {
@@ -56,7 +156,7 @@ public class JobViewModel extends AndroidViewModel {
         jobApi.postPayment(request, getAuthorization()).enqueue(new Callback<JsonResponse>() {
             @Override
             public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
-                    mutableLiveData.setValue(Optional.of(response.code() == 200));
+                mutableLiveData.setValue(Optional.of(response.code() == 200));
             }
 
             @Override
@@ -466,7 +566,19 @@ public class JobViewModel extends AndroidViewModel {
         return getAReviewJobId(jobId);
     }
 
-    public LiveData<Optional<Boolean>> makePayment(Models.MakeStkRequest request){
+    public LiveData<Optional<Boolean>> makePayment(Models.MakeStkRequest request) {
         return requestPayment(request);
+    }
+
+    public LiveData<Optional<JsonResponse>> saveAFeedback(Models.FeedbackForm form) {
+        return saveFeedBack(form);
+    }
+
+    public LiveData<Optional<JsonResponse>> getAFeedback(Integer rating, Long userId, Integer pageNo, Integer pageSize, Long id) {
+        return getFeedBack(rating, userId, pageNo, pageSize, id);
+    }
+
+    public LiveData<Optional<JsonResponse>> getAFeedbackChart () {
+        return getFeedBackChart();
     }
 }

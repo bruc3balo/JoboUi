@@ -35,12 +35,14 @@ public class Domain {
         private String preferred_working_hours;
         private String last_known_location;
         private String password;
+        private float rating;
+
 
 
         public User() {
         }
 
-        public User(@NotNull Long id, String id_number, String phone_number, String bio, String email_address, String names, String username, String role, String createdAt, String updatedAt, boolean is_deleted, boolean is_disabled, boolean verified, String specialities, String preferred_working_hours, String last_known_location, String password) {
+        public User(@NotNull Long id, String id_number, String phone_number, String bio, String email_address, String names, String username, String role, String createdAt, String updatedAt, boolean is_deleted, boolean is_disabled, boolean verified, String specialities, String preferred_working_hours, String last_known_location, String password,float rating) {
             this.id = id;
             this.id_number = id_number;
             this.phone_number = phone_number;
@@ -58,6 +60,7 @@ public class Domain {
             this.preferred_working_hours = preferred_working_hours;
             this.last_known_location = last_known_location;
             this.password = password;
+            this.rating = rating;
         }
 
 
@@ -69,6 +72,14 @@ public class Domain {
 
         public void setId(@NonNull Long id) {
             this.id = id;
+        }
+
+        public float getRating() {
+            return rating;
+        }
+
+        public void setRating(float rating) {
+            this.rating = rating;
         }
 
         public String getId_number() {

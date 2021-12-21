@@ -46,6 +46,7 @@ public class ReviewActivity extends AppCompatActivity {
     private Domain.User user;
     private String commentS = "";
     private boolean exists = false;
+    private boolean feedback = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,10 +83,16 @@ public class ReviewActivity extends AppCompatActivity {
                 });
 
             }
+        } else {
+            feedback = true;
+            binding.toolbar.setTitle("Feedback");
+            binding.toolbar.setSubtitle("How would you rate us?");
+            userRepository.getUserLive().observe(this, optionalUser -> optionalUser.ifPresent(u -> user = u));
         }
 
         //rating
         RatingBar ratingBar = binding.ratingBar;
+        if (feedback) ratingBar.setStepSize(1.0F);
         ratingBar.setOnRatingBarChangeListener((ratingBar1, rating, fromUser) -> ReviewActivity.this.rating = rating);
 
         //comment
@@ -109,23 +116,34 @@ public class ReviewActivity extends AppCompatActivity {
 
         //send
         Button send = binding.sendButton;
-
         send.setOnClickListener(v -> {
-            Map<Double, String> rev = new HashMap<>();
-            rev.put(rating, commentS);
+            if (feedback) {
+                //send feedback
+                inProgress();
+                new ViewModelProvider(this).get(JobViewModel.class).saveAFeedback(new Models.FeedbackForm(user.getUsername(), commentS, (int) rating)).observe(this, jsonResponse -> {
+                    if (jsonResponse.isPresent()) {
+                        Toast.makeText(ReviewActivity.this, "Thank you for your feedback !", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        outProgress();
+                        Toast.makeText(ReviewActivity.this, "Failed to pos feedback", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Map<Double, String> rev = new HashMap<>();
+                rev.put(rating, commentS);
+                try {
+                    if (isClient) {
+                        review.setClient_review(getObjectMapper().writeValueAsString(rev));
+                    } else {
+                        review.setLocal_service_provider_review(getObjectMapper().writeValueAsString(rev));
+                    }
 
-            try {
-                if (isClient) {
-                    review.setClient_review(getObjectMapper().writeValueAsString(rev));
-                } else {
-                    review.setLocal_service_provider_review(getObjectMapper().writeValueAsString(rev));
+                    sendReview(review);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
                 }
-
-                sendReview(review);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
             }
-
         });
 
         outProgress();

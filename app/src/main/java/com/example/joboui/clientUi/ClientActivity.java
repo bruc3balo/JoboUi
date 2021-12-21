@@ -45,10 +45,12 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.joboui.R;
+import com.example.joboui.ReviewActivity;
 import com.example.joboui.adapters.ServicesPageGrid;
 import com.example.joboui.databinding.ActivityClientBinding;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.login.ServiceProviderAdditionalActivity;
+import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.material.navigation.NavigationView;
 
@@ -66,7 +68,7 @@ public class ClientActivity extends AppCompatActivity {
     private boolean backPressed = false;
 
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "NonConstantResourceId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,6 +152,11 @@ public class ClientActivity extends AppCompatActivity {
                     goToMyJobs();
                     break;
 
+                case R.id.feedback:
+                    closeDrawer(drawerLayout);
+                    goToFeedback();
+                    break;
+
             }
 
             return false;
@@ -191,6 +198,10 @@ public class ClientActivity extends AppCompatActivity {
 
     private void goToMyJobs() {
         startActivity(new Intent(ClientActivity.this, MyJobs.class));
+    }
+
+    private void goToFeedback() {
+        startActivity(new Intent(ClientActivity.this, ReviewActivity.class));
     }
 
     private SpannableStringBuilder getWelcomeGreeting(String username) {

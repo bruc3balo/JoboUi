@@ -66,13 +66,13 @@ public class ProviderRVAdapter extends RecyclerView.Adapter<ProviderRVAdapter.Vi
         }
 
         String nameLabel = "Name : ";
-        holder.name.setText(getBoldSpannable(nameLabel,userList.get(position).getNames()));
+        holder.name.setText(getBoldSpannable(nameLabel,user.getNames()));
 
         String bioLabel = "Bio : ";
-        holder.bio.setText(getBoldSpannable(bioLabel,userList.get(position).getBio()));
+        holder.bio.setText(getBoldSpannable(bioLabel,user.getBio()));
 
         String ratingLabel = "Rating : ";
-        holder.rating.setText(getBoldSpannable(ratingLabel,"0"));
+        holder.rating.setText(getBoldSpannable(ratingLabel,String.valueOf(user.getRating())));
 
         StringBuilder workingHours = new StringBuilder();
         getMapFromString(user.getPreferred_working_hours()).forEach((d, t) -> workingHours.append(d).append("=").append(t).append("\n"));

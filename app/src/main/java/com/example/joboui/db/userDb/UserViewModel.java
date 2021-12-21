@@ -30,6 +30,7 @@ import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
 import com.example.joboui.model.Models.LoginResponse;
 import com.example.joboui.model.Models.UserUpdateForm;
+import com.example.joboui.utils.DataOps;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -102,7 +103,7 @@ public class UserViewModel extends AndroidViewModel {
                     //save user to offline db
                     Models.AppUser user = mapper.readValue(userJson.toString(), Models.AppUser.class);
 
-                    userRepository.insert(new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getVerified(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword()));
+                    userRepository.insert(DataOps.getDomainUserFromModelUser(user));
 
                     Thread.sleep(2000);
 
@@ -170,7 +171,7 @@ public class UserViewModel extends AndroidViewModel {
                     //save user to offline db
                     Models.AppUser user = mapper.readValue(userJson.toString(), Models.AppUser.class);
 
-                    userRepository.insert(new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getVerified(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword()));
+                    userRepository.insert(DataOps.getDomainUserFromModelUser(user));
 
                     Thread.sleep(2000);
 
@@ -330,12 +331,13 @@ public class UserViewModel extends AndroidViewModel {
 
                 JsonResponse jsonResponse = response.body();
                 try {
-                    Models.AppUser createdUser = mapper.readValue(new JsonObject(mapper.writeValueAsString(jsonResponse.getData())).toString(), Models.AppUser.class);
-                    Domain.User user = new Domain.User(createdUser.getId(), createdUser.getId_number(), createdUser.getPhone_number(), createdUser.getBio(), createdUser.getEmail_address(), createdUser.getNames(), createdUser.getUsername(), createdUser.getRole().getName(), createdUser.getCreated_at().toString(), createdUser.getUpdated_at().toString(), createdUser.getDeleted(), createdUser.getDisabled(), createdUser.getVerified(), createdUser.getSpecialities(), createdUser.getPreferred_working_hours(), createdUser.getLast_known_location(), createdUser.getPassword());
+                    Models.AppUser user = mapper.readValue(new JsonObject(mapper.writeValueAsString(jsonResponse.getData())).toString(), Models.AppUser.class);
+                    Domain.User createdUser = DataOps.getDomainUserFromModelUser(user);
+
+                    userRepository.insert(DataOps.getDomainUserFromModelUser(user));
 
                     System.out.println("NEW USER : " + mapper.writeValueAsString(user));
 
-                    userRepository.insert(user);
 
                     Map<String, String> map = new HashMap<>();
 
@@ -346,7 +348,7 @@ public class UserViewModel extends AndroidViewModel {
 
                     Thread.sleep(2000);
 
-                    mutableLiveData.setValue(Optional.of(user));
+                    mutableLiveData.setValue(Optional.of(createdUser));
                 } catch (JsonProcessingException | InterruptedException e) {
                     e.printStackTrace();
                     mutableLiveData.setValue(Optional.empty());
@@ -397,15 +399,14 @@ public class UserViewModel extends AndroidViewModel {
                     }
 
                     JsonResponse jsonResponse = response.body();
-                    Models.AppUser updatedUser = mapper.readValue(new JsonObject(mapper.writeValueAsString(jsonResponse.getData())).toString(), Models.AppUser.class);
-                    Domain.User user = new Domain.User(updatedUser.getId(), updatedUser.getId_number(), updatedUser.getPhone_number(), updatedUser.getBio(), updatedUser.getEmail_address(), updatedUser.getNames(), updatedUser.getUsername(), updatedUser.getRole().getName(), updatedUser.getCreated_at().toString(), updatedUser.getUpdated_at().toString(), updatedUser.getDeleted(), updatedUser.getDisabled(), updatedUser.getVerified(), updatedUser.getSpecialities(), updatedUser.getPreferred_working_hours(), updatedUser.getLast_known_location(), updatedUser.getPassword());
+                    Models.AppUser user = mapper.readValue(new JsonObject(mapper.writeValueAsString(jsonResponse.getData())).toString(), Models.AppUser.class);
+                    Domain.User updatedUser = DataOps.getDomainUserFromModelUser(user);
 
-
-                    userRepository.update(user);
+                    userRepository.update(DataOps.getDomainUserFromModelUser(user));
 
                     Thread.sleep(2000);
 
-                    mutableLiveData.setValue(Optional.of(user));
+                    mutableLiveData.setValue(Optional.of(updatedUser));
                 } catch (JsonProcessingException | InterruptedException e) {
                     e.printStackTrace();
                     Toast.makeText(application, "Error updating account", Toast.LENGTH_SHORT).show();

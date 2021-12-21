@@ -30,9 +30,6 @@ public class ManageServicesProvider extends AppCompatActivity {
         servicesProviderRvAdapter = new ServicesProviderRvAdapter(ManageServicesProvider.this);
         servicesPager.setAdapter(servicesProviderRvAdapter);
         servicesProviderRvAdapter.registerAdapterDataObserver(binding.indicator.getAdapterDataObserver());
-
-
-
         servicesProviderRvAdapter.notifyDataSetChanged();
 
 

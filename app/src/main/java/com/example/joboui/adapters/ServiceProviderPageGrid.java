@@ -18,9 +18,11 @@ import java.util.Optional;
 public class ServiceProviderPageGrid extends BaseAdapter {
 
     private final String username;
+    private final int jobs;
 
-    public ServiceProviderPageGrid(String username) {
+    public ServiceProviderPageGrid(String username,int jobs) {
         this.username = username;
+        this.jobs = jobs;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class ServiceProviderPageGrid extends BaseAdapter {
 
         MyLinkedMap<String, Integer> map = new MyLinkedMap<>();
 
-        map.put("Job Offers", R.drawable.ic_mailbox);
+        map.put("Job Offers ("+jobs +")", R.drawable.ic_mailbox);
         map.put(username, R.drawable.ic_worker);
         map.put("History", R.drawable.ic_history);
 

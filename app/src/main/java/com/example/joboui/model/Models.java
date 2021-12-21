@@ -472,11 +472,13 @@ public class Models {
 
         private Boolean verified;
 
+        private float rating;
+
         public AppUser() {
 
         }
 
-        public AppUser(Long id, String names, String username, String id_number, String email_address, String phone_number, String password, String bio, String last_known_location, Date created_at, Date updated_at, AppRole role, String preferred_working_hours, String specialities, Boolean disabled, Boolean deleted, Boolean verified) {
+        public AppUser(Long id, String names, String username, String id_number, String email_address, String phone_number, String password, String bio, String last_known_location, Date created_at, Date updated_at, AppRole role, String preferred_working_hours, String specialities, Boolean disabled, Boolean deleted, Boolean verified,float rating) {
             this.id = id;
             this.names = names;
             this.username = username;
@@ -494,6 +496,7 @@ public class Models {
             this.disabled = disabled;
             this.deleted = deleted;
             this.verified = verified;
+            this.rating = rating;
         }
 
         public Long getId() {
@@ -630,6 +633,14 @@ public class Models {
 
         public void setDeleted(Boolean deleted) {
             this.deleted = deleted;
+        }
+
+        public float getRating() {
+            return rating;
+        }
+
+        public void setRating(float rating) {
+            this.rating = rating;
         }
     }
 
@@ -1744,4 +1755,137 @@ public class Models {
             this.amount = amount;
         }
     }
+
+    public static class FeedbackForm {
+        private String username;
+
+        private String comment;
+
+        private Integer rating;
+
+        public FeedbackForm() {
+        }
+
+        public FeedbackForm(String username, String comment, Integer rating) {
+            this.username = username;
+            this.comment = comment;
+            this.rating = rating;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getComment() {
+            return comment;
+        }
+
+        public void setComment(String comment) {
+            this.comment = comment;
+        }
+
+        public Integer getRating() {
+            return rating;
+        }
+
+        public void setRating(Integer rating) {
+            this.rating = rating;
+        }
+    }
+
+    public static class Feedback {
+
+        private Long id;
+
+        private Models.AppUser user;
+
+        private Integer rating;
+
+        private String comment;
+
+        public Feedback() {
+        }
+
+        public Feedback(Long id, AppUser user, Integer rating) {
+            this.id = id;
+            this.user = user;
+            this.rating = rating;
+        }
+
+        public Feedback(AppUser user, Integer rating, String comment) {
+            this.user = user;
+            this.rating = rating;
+            this.comment = comment;
+        }
+
+        public Feedback(Long id, AppUser user, Integer rating, String comment) {
+            this.id = id;
+            this.user = user;
+            this.rating = rating;
+            this.comment = comment;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public AppUser getUser() {
+            return user;
+        }
+
+        public void setUser(AppUser user) {
+            this.user = user;
+        }
+
+        public Integer getRating() {
+            return rating;
+        }
+
+        public void setRating(Integer rating) {
+            this.rating = rating;
+        }
+
+        public String getComment() {
+            return comment;
+        }
+
+        public void setComment(String comment) {
+            this.comment = comment;
+        }
+    }
+
+    public static class FeedbackChart {
+
+        private int rating;
+
+        private int amount;
+
+        public FeedbackChart() {
+        }
+
+        public int getRating() {
+            return rating;
+        }
+
+        public void setRating(int rating) {
+            this.rating = rating;
+        }
+
+        public int getAmount() {
+            return amount;
+        }
+
+        public void setAmount(int amount) {
+            this.amount = amount;
+        }
+    }
+
 }

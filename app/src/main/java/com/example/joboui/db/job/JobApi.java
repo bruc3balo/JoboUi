@@ -62,4 +62,12 @@ public interface JobApi {
     @GET("pay/cashflow")
     Call<JsonResponse> getPaymentFlows(@Header(AUTHORIZATION) String token);
 
+    @POST(base + "/feedback")
+    Call<JsonResponse> saveFeedback(@Body Models.FeedbackForm form, @Header(AUTHORIZATION) String token);
+
+    @GET(base + "/feedback")
+    Call<JsonResponse> getFeedback(@QueryMap HashMap<String, String> params, @Header(AUTHORIZATION) String token);
+
+    @GET(base + "/feedback_chart")
+    Call<JsonResponse> getFeedbackChart(@Header(AUTHORIZATION) String token);
 }

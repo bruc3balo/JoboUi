@@ -3,5 +3,6 @@
 
     <group android:id="@+id/client" >
     <item android:id="@+id/myJobs" android:title="@string/my_jobs" />
+    <item android:id="@+id/feedback" android:title="@string/feedback" />
     </group>
 </menu>

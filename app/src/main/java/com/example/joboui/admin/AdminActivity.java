@@ -20,6 +20,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.joboui.R;
 import com.example.joboui.adapters.AdminPageGrid;
 import com.example.joboui.adapters.ServiceProviderPageGrid;
+import com.example.joboui.admin.feedback.FeedbackActivity;
 import com.example.joboui.databinding.ActivityAdminBinding;
 
 
@@ -68,6 +69,10 @@ public class AdminActivity extends AppCompatActivity {
                 case 3:
                     goToServices();
                     break;
+
+                case 5:
+                    goToFeedback();
+                    break;
             }
         });
 
@@ -94,6 +99,10 @@ public class AdminActivity extends AppCompatActivity {
 
     private void goToServices() {
         startActivity(new Intent(AdminActivity.this, ManageServicesAdmin.class));
+    }
+
+    private void goToFeedback() {
+        startActivity(new Intent(AdminActivity.this, FeedbackActivity.class));
     }
 
     private void goToCashFlow() {

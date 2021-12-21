@@ -116,6 +116,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".serviceProviderUi.pages.ManageServicesProvider" />
+        <activity android:name=".admin.feedback.FeedbackActivity" />
 
         <receiver
             android:name=".broadcast.SMSBroadcastReceiver"
