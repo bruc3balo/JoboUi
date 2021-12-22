@@ -214,8 +214,8 @@ public class JobsRvAdminAdapter extends RecyclerView.Adapter<JobsRvAdminAdapter.
 
         d.setOnShowListener(dialog -> {
             progressBar.setVisibility(View.VISIBLE);
-
             new ViewModelProvider((ViewModelStoreOwner) activity).get(JobViewModel.class).getReviewByJobId(job.getId()).observe((LifecycleOwner) activity, optionalReview -> {
+
                 if (!optionalReview.isPresent()) {
                     Toast.makeText(activity, "No review available", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);

@@ -68,6 +68,7 @@ dependencies {
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-auth'
 
+
     implementation 'com.google.android.libraries.places:places:2.5.0'
 
 
@@ -96,6 +97,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.3.5'
     implementation 'androidx.navigation:navigation-ui:2.3.5'
     implementation 'com.google.firebase:firebase-database:20.0.3'
+    implementation 'androidx.lifecycle:lifecycle-service:2.4.0'
 
     //Room
     dependencies {

@@ -7,6 +7,7 @@ import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.SignInActivity.clearSp;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,9 +35,9 @@ import com.example.joboui.databinding.ActivityAdminBinding;
 
 public class AdminActivity extends AppCompatActivity {
 
-    ActivityAdminBinding adminBinding;
-    private AdminPageGrid adminPageGrid;
+    private ActivityAdminBinding adminBinding;
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,9 +46,10 @@ public class AdminActivity extends AppCompatActivity {
 
         Toolbar adminToolbar = adminBinding.adminToolbar;
         setSupportActionBar(adminToolbar);
+        adminToolbar.setOverflowIcon(getDrawable(R.drawable.more));
 
         GridView serviceProviderGrid = adminBinding.adminGrid;
-        adminPageGrid = new AdminPageGrid();
+        AdminPageGrid adminPageGrid = new AdminPageGrid();
         serviceProviderGrid.setAdapter(adminPageGrid);
         serviceProviderGrid.setOnItemClickListener((parent, view, position, id) -> {
             switch (position) {

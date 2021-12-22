@@ -24,6 +24,7 @@ import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.squareup.picasso.Transformation;
 
 
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -31,6 +32,14 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 public class DataOps {
+
+    public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd HH:mm:ss a";
+    public static final DateTimeFormatter LDT_FORMATTER = DateTimeFormatter.ofPattern(TIMESTAMP_PATTERN);
+
+    public static final String DATE_PATTERN = "yyyy-MM-dd";
+    public static final DateTimeFormatter LD_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN);
+
+
     public static String getStringFromList(LinkedList<String> specialities) {
         if (specialities.isEmpty()) {
             return "";

@@ -56,6 +56,7 @@ public class ServiceProviderActivity extends AppCompatActivity {
 
         Toolbar serviceProviderToolbar = serviceProviderBinding.serviceProviderToolbar;
         setSupportActionBar(serviceProviderToolbar);
+        serviceProviderToolbar.setOverflowIcon(getDrawable(R.drawable.more));
 
         GridView serviceProviderGrid = serviceProviderBinding.serviceProviderGrid;
         serviceProviderGrid.setOnItemClickListener((parent, view, position, id) -> {

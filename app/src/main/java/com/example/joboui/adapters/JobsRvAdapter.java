@@ -3,10 +3,12 @@ package com.example.joboui.adapters;
 import static com.example.joboui.clientUi.MyJobs.populateClientJobs;
 import static com.example.joboui.clientUi.request.LocationRequest.getAddressFromLocation;
 import static com.example.joboui.globals.GlobalDb.userRepository;
+import static com.example.joboui.globals.GlobalVariables.ASAP;
 import static com.example.joboui.globals.GlobalVariables.JOB;
 import static com.example.joboui.globals.GlobalVariables.REPORTED;
 import static com.example.joboui.serviceProviderUi.pages.JobRequests.populateMyJobs;
 import static com.example.joboui.tutorial.VerificationActivity.editSingleValue;
+import static com.example.joboui.utils.DataOps.TIMESTAMP_PATTERN;
 import static com.example.joboui.utils.JobStatus.CLIENT_REPORTED;
 import static com.example.joboui.utils.JobStatus.SERVICE_COMPLETE;
 import static com.example.joboui.utils.JobStatus.SERVICE_REPORTED;
@@ -46,6 +48,7 @@ import com.example.joboui.domain.Domain;
 import com.example.joboui.globals.GlobalVariables;
 import com.example.joboui.model.Models;
 import com.example.joboui.serviceProviderUi.pages.ChatActivity;
+import com.example.joboui.utils.ConvertDate;
 import com.example.joboui.utils.JobStatus;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -147,7 +150,7 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
         if (job.getScheduled_at() != null) {
             String urgencyLabel = activity.getString(R.string.urgency);
-            holder.urgency.setText(getBoldSpannable(urgencyLabel, job.getScheduled_at()));
+            holder.urgency.setText(getBoldSpannable(urgencyLabel,job.getScheduled_at()));
         }
 
         if (job.getClient_username() != null) {

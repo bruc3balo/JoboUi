@@ -3,6 +3,7 @@ package com.example.joboui.db.userDb;
 import static com.example.joboui.globals.GlobalVariables.API_URL;
 import static com.example.joboui.globals.GlobalVariables.AUTHORIZATION;
 import static com.example.joboui.globals.GlobalVariables.CONTEXT_URL;
+import static com.example.joboui.globals.GlobalVariables.ID;
 import static com.example.joboui.globals.GlobalVariables.SPECIALITIES;
 import static com.example.joboui.globals.GlobalVariables.USERNAME;
 
@@ -67,4 +68,9 @@ public interface UserApi {
     @DELETE(base + "/disable")
     Call<JsonResponse> disableUser(@QueryMap Map<String, String> parameters, @HeaderMap Map<String, String> headers);
 
+    @GET(API_URL + CONTEXT_URL + "notification")
+    Call<JsonResponse> getMyNotifications(@Query(USERNAME) String username, @Header(AUTHORIZATION) String header);
+
+    @POST(API_URL + CONTEXT_URL + "notification")
+    Call<JsonResponse> updateNotifications(@Query(USERNAME) String username, @Query(ID) Long id, @Header(AUTHORIZATION) String header);
 }

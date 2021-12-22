@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">JoboUi</string>
+    <string name="app_name">@string/jobo</string>
     <string name="jobo">Jobo</string>
     <string name="welcome_jobo">\n Welcome, \n Get a service provider from the \n convenience of your home</string>
     <string name="register">Register</string>
@@ -144,4 +144,9 @@
     <string name="job">Job</string>
     <string name="action">Action</string>
     <string name="filter_by_rating">Filter By Rating</string>
+
+    <string name="media_channel_description">This is to notify you about relevant media in app</string>
+    <string name="user_channel_description">This is to notify you about relevant activity related to you</string>
+    <string name="synch_notification_description">To show you when synchronization is occurring</string>
+
 </resources>

@@ -1,6 +1,5 @@
 package com.example.joboui.db.userDb;
 
-
 import static com.example.joboui.globals.GlobalDb.userApi;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.ACCESS_TOKEN;
@@ -212,7 +211,6 @@ public class UserViewModel extends AndroidViewModel {
 
         String header = "Bearer " + Objects.requireNonNull(getSp(USER_DB, application).get(REFRESH_TOKEN)).toString();
 
-
         userApi.getProviders(parameters,header).enqueue(new Callback<JsonResponse>() {
             @Override
             public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
@@ -238,6 +236,7 @@ public class UserViewModel extends AndroidViewModel {
                             e.printStackTrace();
                         }
                     });
+
                     mutableLiveData.setValue(Optional.of(userList));
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();

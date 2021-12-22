@@ -1888,4 +1888,102 @@ public class Models {
         }
     }
 
+    public static class NotificationModels {
+
+        private String documentId;
+
+        private Long id;
+
+        private String description;
+
+        private String title;
+
+        private String sub_text;
+
+        private String uid;
+
+        private Date created_at;
+
+        private boolean notified;
+
+        public NotificationModels() {
+
+        }
+
+        public NotificationModels(String documentId, Long id, String description, String title, String sub_text, String uid, Date created_at, boolean notified) {
+            this.documentId = documentId;
+            this.id = id;
+            this.description = description;
+            this.title = title;
+            this.sub_text = sub_text;
+            this.uid = uid;
+            this.created_at = created_at;
+            this.notified = notified;
+        }
+
+        public String getDocumentId() {
+            return documentId;
+        }
+
+        public void setDocumentId(String documentId) {
+            this.documentId = documentId;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getSub_text() {
+            return sub_text;
+        }
+
+        public void setSub_text(String sub_text) {
+            this.sub_text = sub_text;
+        }
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public Date getCreated_at() {
+            return created_at;
+        }
+
+        public void setCreated_at(Date created_at) {
+            this.created_at = created_at;
+        }
+
+        public boolean isNotified() {
+            return notified;
+        }
+
+        public void setNotified(boolean notified) {
+            this.notified = notified;
+        }
+    }
+
 }

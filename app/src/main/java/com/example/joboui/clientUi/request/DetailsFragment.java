@@ -3,6 +3,7 @@ package com.example.joboui.clientUi.request;
 import static com.example.joboui.clientUi.ServiceRequestActivity.jobRequestForm;
 import static com.example.joboui.globals.GlobalVariables.ASAP;
 import static com.example.joboui.globals.GlobalVariables.HY;
+import static com.example.joboui.utils.DataOps.TIMESTAMP_PATTERN;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 import com.example.joboui.R;
 import com.example.joboui.databinding.FragmentDetailsBinding;
 import com.example.joboui.domain.Domain;
+import com.example.joboui.utils.ConvertDate;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -102,8 +104,9 @@ public class DetailsFragment extends Fragment {
                     hourS[0] = hourOfDay;
                     minS[0] = minute;
                     scheduledDate.set(yearS[0], monthS[0], dayS[0], hourS[0], minS[0]);
-                    binding.scheduledTimeTv.setText(scheduledDate.getTime().toString());
-                    jobRequestForm.setScheduled_at(scheduledDate.getTime().toString());
+                    String date = ConvertDate.formatDate(scheduledDate.getTime(),TIMESTAMP_PATTERN);
+                    binding.scheduledTimeTv.setText(date);
+                    jobRequestForm.setScheduled_at(date);
                 }, hr, min, true);
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
