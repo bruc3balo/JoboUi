@@ -12,9 +12,11 @@ import static com.example.joboui.utils.NotificationChannelClass.getPopUri;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.HasDefaultViewModelProviderFactory;
 import androidx.lifecycle.LifecycleService;
@@ -68,46 +70,51 @@ public class NotificationService extends LifecycleService implements ViewModelSt
 
     private void getAllNotifications(String username) {
 
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                System.out.println("Getting notifications");
-                userApi.getMyNotifications(username, getAuthorization()).enqueue(new Callback<JsonResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
+        try {
+            new Timer().scheduleAtFixedRate(new TimerTask() {
+                @RequiresApi(api = Build.VERSION_CODES.O)
+                @Override
+                public void run() {
+                    System.out.println("Getting notifications");
+                    userApi.getMyNotifications(username, getAuthorization()).enqueue(new Callback<JsonResponse>() {
+                        @Override
+                        public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
 
-                        JsonResponse jsonResponse = response.body();
+                            JsonResponse jsonResponse = response.body();
 
-                        if (response.code() != 200 || jsonResponse == null || jsonResponse.isHas_error() || !jsonResponse.isSuccess() || jsonResponse.getData() == null) {
-                            return;
+                            if (response.code() != 200 || jsonResponse == null || jsonResponse.isHas_error() || !jsonResponse.isSuccess() || jsonResponse.getData() == null) {
+                                return;
+                            }
+
+                            try {
+                                JsonArray users = new JsonArray(getObjectMapper().writeValueAsString(jsonResponse.getData()));
+                                if (!users.isEmpty()) notificationList.clear();
+                                System.out.println("Getting notifications " + users.size());
+                                users.forEach(u -> {
+                                    try {
+                                        Models.NotificationModels models = getObjectMapper().readValue(u.toString(), Models.NotificationModels.class);
+                                        notificationList.add(models);
+                                        showNotification(models);
+                                    } catch (JsonProcessingException e) {
+                                        e.printStackTrace();
+                                    }
+                                });
+                            } catch (JsonProcessingException e) {
+                                e.printStackTrace();
+                            }
+
                         }
 
-                        try {
-                            JsonArray users = new JsonArray(getObjectMapper().writeValueAsString(jsonResponse.getData()));
-                            if (!users.isEmpty()) notificationList.clear();
-                            System.out.println("Getting notifications "+users.size());
-                            users.forEach(u -> {
-                                try {
-                                    Models.NotificationModels models = getObjectMapper().readValue(u.toString(), Models.NotificationModels.class);
-                                    notificationList.add(models);
-                                    showNotification(models);
-                                } catch (JsonProcessingException e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                        } catch (JsonProcessingException e) {
-                            e.printStackTrace();
+                        @Override
+                        public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
+                            t.printStackTrace();
                         }
+                    });
+                }
+            }, 0, 10000);
+        } catch (NullPointerException ignore) {
 
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
-                        t.printStackTrace();
-                    }
-                });
-            }
-        }, 0, 10000);
+        }
     }
 
 
@@ -131,10 +138,12 @@ public class NotificationService extends LifecycleService implements ViewModelSt
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setAutoCancel(true)
                 .setGroup(SYNCH_NOTIFICATION_CHANNEL)
+                .setGroupSummary(true)
                 .setOnlyAlertOnce(true)
                 .setSubText(notificationModel.getSub_text() != null ? notificationModel.getSub_text() : notificationModel.getUid())
                 .setContentIntent(pendingIntent)
                 .setSound(getPopUri(getApplicationContext()).getKey(0));
+
 
         notificationManager.notify(Integer.parseInt(String.valueOf(notificationModel.getId())), notificationBuilder.build());
         updateNotification(notificationModel);

@@ -265,6 +265,10 @@ public class Models {
             this.verified = verified;
         }
 
+        public UserUpdateForm(LinkedHashMap<String, String> preferred_working_hours) {
+            this.preferred_working_hours = preferred_working_hours;
+        }
+
         public UserUpdateForm(String phone_number) {
             this.phone_number = phone_number;
         }
@@ -276,6 +280,8 @@ public class Models {
             this.specialities = specialities;
             this.verified = verified;
         }
+
+
 
         public UserUpdateForm(String id_number, String bio, LinkedHashMap<String, String> preferred_working_hours, LinkedList<String> specialities) {
             this.id_number = id_number;
@@ -977,6 +983,10 @@ public class Models {
             this.job_price = job_price;
             this.job_price_range = job_price_range;
             this.job_status = job_status;
+        }
+
+        public JobUpdateForm(String job_price_range) {
+            this.job_price_range = job_price_range;
         }
 
         public JobUpdateForm() {

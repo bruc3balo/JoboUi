@@ -55,6 +55,7 @@
                             android:text="@string/good_morning_wafula"/>
 
                         <ImageButton
+                            android:id="@+id/notifications"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:layout_gravity="center"

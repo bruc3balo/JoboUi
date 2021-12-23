@@ -28,6 +28,9 @@
         android:theme="@style/Theme.JoboUi"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".serviceProviderUi.pages.ServiceProviderProfile"
+            android:exported="false" />
+        <activity
             android:name=".NotificationActivity"
             android:exported="false" />
 

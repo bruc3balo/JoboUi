@@ -2,49 +2,44 @@ package com.example.joboui.serviceProviderUi.pages;
 
 import static com.example.joboui.globals.GlobalDb.application;
 import static com.example.joboui.globals.GlobalDb.db;
-import static com.example.joboui.globals.GlobalDb.jobApi;
 import static com.example.joboui.globals.GlobalDb.userApi;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.globals.GlobalVariables.JOB;
 import static com.example.joboui.globals.GlobalVariables.REFRESH_TOKEN;
-import static com.example.joboui.globals.GlobalVariables.USERNAME;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
 import static com.example.joboui.login.SignInActivity.getSp;
 import static com.example.joboui.model.Models.Messages.MESSAGES;
-import static com.example.joboui.model.Models.Messages.RECEIVER_UID;
-import static com.example.joboui.model.Models.Messages.SENDER_UID;
 import static com.example.joboui.model.Models.Messages.SENT;
+import static com.example.joboui.tutorial.VerificationActivity.editSingleValue;
 import static com.example.joboui.utils.DataOps.animate;
 import static com.example.joboui.utils.DataOps.getMessageId;
-import static com.example.joboui.utils.DataOps.getMyIdFromThreadId;
-import static com.example.joboui.utils.DataOps.getThreadId;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.joboui.adapters.ChatRvAdapter;
 import com.example.joboui.databinding.ActivityChatBinding;
-import com.example.joboui.db.chat.ChatViewModel;
-import com.example.joboui.domain.Domain;
+import com.example.joboui.db.job.JobViewModel;
 import com.example.joboui.model.Models;
+import com.example.joboui.utils.AppRolesEnum;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,12 +52,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -104,13 +96,26 @@ public class ChatActivity extends AppCompatActivity {
         setEditFieldAnimation(messageField, sendButton);
         sendButton.setOnClickListener(v1 -> validateMessage(messageField));
 
+        ImageButton optionsButton = binding.optionsButton;
+
 
         if (getIntent().getExtras() != null) {
             job = (Models.Job) getIntent().getExtras().get(JOB);
 
+            binding.toolbar.setSubtitle(job.getJob_price_range());
             userRepository.getUserLive().observe(this, user -> {
                 if (user.isPresent()) {
                     chat.setMe(user.get());
+
+                   if (user.get().getRole().equals(AppRolesEnum.ROLE_CLIENT.name())) {
+                       optionsButton.setOnClickListener(v -> editSingleValue(InputType.TYPE_CLASS_NUMBER, "Enter new price", this, price -> {
+                           updatePrice(price);
+                           return null;
+                       }));
+                   } else {
+                       optionsButton.setVisibility(View.GONE);
+                   }
+
                     populateThread(job);
                     if (job.getClient_username().equals(user.get().getUsername())) {
                         if (user.get().getRole().equals("ROLE_CLIENT")) {
@@ -131,6 +136,26 @@ public class ChatActivity extends AppCompatActivity {
             });
         }
 
+    }
+
+
+    private void updatePrice(String price) {
+        new ViewModelProvider(this).get(JobViewModel.class).updateJob(job.getId(), new Models.JobUpdateForm(price)).observe(this, jsonResponse -> {
+
+            if (!jsonResponse.isPresent() || jsonResponse.get().getData() == null || !jsonResponse.get().isSuccess() || jsonResponse.get().isHas_error()) {
+                Toast.makeText(ChatActivity.this, "Failed to get response", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
+                JsonObject jobJson = new JsonObject(getObjectMapper().writeValueAsString(jsonResponse.get().getData()));
+                this.job = getObjectMapper().readValue(jobJson.toString(), Models.Job.class);
+                binding.toolbar.setSubtitle(job.getJob_price_range());
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+
+        });
     }
 
     private void setEditFieldAnimation(final EditText field, final ImageButton button) {

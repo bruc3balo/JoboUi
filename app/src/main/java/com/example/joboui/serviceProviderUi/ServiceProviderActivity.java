@@ -8,6 +8,7 @@ import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.SignInActivity.clearSp;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
+import com.example.joboui.NotificationActivity;
 import com.example.joboui.R;
 import com.example.joboui.ReviewActivity;
 import com.example.joboui.adapters.JobsRvAdapter;
@@ -35,6 +37,7 @@ import com.example.joboui.db.job.JobViewModel;
 import com.example.joboui.model.Models;
 import com.example.joboui.serviceProviderUi.pages.JobRequests;
 import com.example.joboui.serviceProviderUi.pages.ManageServicesProvider;
+import com.example.joboui.serviceProviderUi.pages.ServiceProviderProfile;
 import com.example.joboui.utils.JobStatus;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -48,6 +51,7 @@ public class ServiceProviderActivity extends AppCompatActivity {
     private ServiceProviderPageGrid serviceProviderPageGrid;
 
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,12 +72,20 @@ public class ServiceProviderActivity extends AppCompatActivity {
                     goToRequests();
                     break;
 
+                case 1:
+                    goToProfile();
+                    break;
+
                 case 3:
                     goToServices();
                     break;
 
                 case 4:
                     goToFeedback();
+                    break;
+
+                case 5:
+                    goToNotifications();
                     break;
             }
         });
@@ -158,6 +170,14 @@ public class ServiceProviderActivity extends AppCompatActivity {
 
     private void goToFeedback() {
         startActivity(new Intent(ServiceProviderActivity.this, ReviewActivity.class));
+    }
+
+    private void goToNotifications() {
+        startActivity(new Intent(ServiceProviderActivity.this, NotificationActivity.class));
+    }
+
+    private void goToProfile() {
+        startActivity(new Intent(ServiceProviderActivity.this, ServiceProviderProfile.class));
     }
 
     @Override

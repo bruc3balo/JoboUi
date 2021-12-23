@@ -10,12 +10,15 @@ import static com.example.joboui.model.Models.Messages.MESSAGE_SUR;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
+
+import androidx.annotation.RequiresApi;
 
 import com.example.joboui.R;
 import com.example.joboui.domain.Domain;
@@ -142,6 +145,10 @@ public class DataOps {
         }
     }
 
+    public static String getWorkingTimeFromString(boolean start,String time) {
+       return time.split(HY)[start ? 0 : 1];
+    }
+
     public static SpannableString getBoldSpannable(String normal, String bold) {
         StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
         int end = normal.length() + bold.length();
@@ -152,7 +159,13 @@ public class DataOps {
     }
 
     public static String getAuthorization() {
-        return "Bearer " + Objects.requireNonNull(getSp(USER_DB, application).get(REFRESH_TOKEN)).toString();
+        if (getSp(USER_DB, application) != null &&  getSp(USER_DB, application).get(REFRESH_TOKEN) != null) {
+            String token = (String) getSp(USER_DB, application).get(REFRESH_TOKEN);
+            return "Bearer " + token;
+        } else {
+            return "Bearer ";
+        }
+
     }
 
     public static Domain.User getDomainUserFromModelUser(Models.AppUser user) {

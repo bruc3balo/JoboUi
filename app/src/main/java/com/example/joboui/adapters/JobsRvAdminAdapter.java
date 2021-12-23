@@ -185,8 +185,8 @@ public class JobsRvAdminAdapter extends RecyclerView.Adapter<JobsRvAdminAdapter.
     private void goToReview(Models.Job job) {
         Dialog d = new Dialog(activity);
         d.setContentView(R.layout.job_review);
-        d.setCancelable(false);
-        d.setCanceledOnTouchOutside(false);
+        d.setCancelable(true);
+        d.setCanceledOnTouchOutside(true);
 
         RatingBar clientRating = d.findViewById(R.id.clientRating);
 
@@ -216,7 +216,8 @@ public class JobsRvAdminAdapter extends RecyclerView.Adapter<JobsRvAdminAdapter.
             progressBar.setVisibility(View.VISIBLE);
             new ViewModelProvider((ViewModelStoreOwner) activity).get(JobViewModel.class).getReviewByJobId(job.getId()).observe((LifecycleOwner) activity, optionalReview -> {
 
-                if (!optionalReview.isPresent()) {
+                if (d.isShowing()) {
+                    if (!optionalReview.isPresent()) {
                     Toast.makeText(activity, "No review available", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                     ratingLayout.setVisibility(View.GONE);
@@ -274,7 +275,7 @@ public class JobsRvAdminAdapter extends RecyclerView.Adapter<JobsRvAdminAdapter.
                     if (review.getLocal_service_provider_review() != null) {
                         MyLinkedMap serviceRatingObj = getObjectMapper().readValue(review.getLocal_service_provider_review(), MyLinkedMap.class);
                         Map.Entry serviceEntry = serviceRatingObj.getEntry(0);
-                        clientPartyContent.setText(String.valueOf(serviceEntry.getValue()));
+                        clientPartyContent.setText(getBoldSpannable(clientReviewLabel,String.valueOf(serviceEntry.getValue())));
                         clientRatingContent.setText(String.valueOf(serviceEntry.getKey()));
                         clientRating.setRating(Float.parseFloat(String.valueOf(serviceEntry.getKey())));
                         clientRating.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
@@ -290,6 +291,7 @@ public class JobsRvAdminAdapter extends RecyclerView.Adapter<JobsRvAdminAdapter.
                     e.printStackTrace();
                 }
 
+                }
 
             });
         });

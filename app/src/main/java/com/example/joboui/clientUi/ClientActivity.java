@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +45,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.joboui.NotificationActivity;
 import com.example.joboui.R;
 import com.example.joboui.ReviewActivity;
 import com.example.joboui.adapters.ServicesPageGrid;
@@ -114,6 +116,8 @@ public class ClientActivity extends AppCompatActivity {
             }
         });
 
+        ImageButton notifications = clientBinding.notifications;
+        notifications.setOnClickListener(v -> startActivity(new Intent(ClientActivity.this, NotificationActivity.class)));
 
         drawerLayout = clientBinding.getRoot();
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {

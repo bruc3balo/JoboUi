@@ -17,6 +17,7 @@
     <string name="service_provider">Service Provider</string>
     <string name="additional_details">Additional Details</string>
     <string name="preferred_days">1. Preferred Working Days</string>
+    <string name="preferred_days_label">Preferred Working Days</string>
     <string name="preferred_time">Preferred Working Time</string>
     <string name="specialities">2. Specialities</string>
     <string name="speciality">Speciality</string>
@@ -73,6 +74,7 @@
     <string name="accept">Accept</string>
     <string name="cancel">Cancel</string>
     <string name="bio">4. Bio</string>
+    <string name="bio_label">Bio</string>
     <string name="bio_hint">Tell us a bit about your left i.e. cover letter</string>
     <string name="id_hint">3540264</string>
     <string name="id_number">3. Identity Number</string>
@@ -148,5 +150,7 @@
     <string name="media_channel_description">This is to notify you about relevant media in app</string>
     <string name="user_channel_description">This is to notify you about relevant activity related to you</string>
     <string name="synch_notification_description">To show you when synchronization is occurring</string>
+    <string name="id">Identity Number</string>
+    <string name="rating">Rating</string>
 
 </resources>

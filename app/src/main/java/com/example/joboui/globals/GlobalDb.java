@@ -50,7 +50,7 @@ public class GlobalDb extends Application {
             serviceRepository = new ServiceRepository(application);
             
             db = FirebaseDatabase.getInstance();
-            db.setPersistenceEnabled(true);
+            db.setPersistenceEnabled(false);
 
             initialized = true;
 

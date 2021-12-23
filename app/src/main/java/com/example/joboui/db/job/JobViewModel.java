@@ -2,12 +2,7 @@ package com.example.joboui.db.job;
 
 import static com.example.joboui.globals.GlobalDb.application;
 import static com.example.joboui.globals.GlobalDb.jobApi;
-import static com.example.joboui.globals.GlobalVariables.CLIENT_ID;
-import static com.example.joboui.globals.GlobalVariables.CLIENT_USERNAME;
 import static com.example.joboui.globals.GlobalVariables.ID;
-import static com.example.joboui.globals.GlobalVariables.JOB_STATUS;
-import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_ID;
-import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_USERNAME;
 import static com.example.joboui.globals.GlobalVariables.PAGE_NO;
 import static com.example.joboui.globals.GlobalVariables.PAGE_SIZE;
 import static com.example.joboui.globals.GlobalVariables.UID;
@@ -23,7 +18,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.joboui.model.Models;
-import com.example.joboui.utils.DataOps;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
@@ -31,14 +25,10 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Optional;
 
-import javax.xml.transform.sax.SAXResult;
-
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.Query;
 
 public class JobViewModel extends AndroidViewModel {
 
@@ -262,6 +252,8 @@ public class JobViewModel extends AndroidViewModel {
         return mutableLiveData;
     }
 
+
+
     private MutableLiveData<Optional<JsonResponse>> getProviderJobs(String username, Integer jobStatus) {
         MutableLiveData<Optional<JsonResponse>> mutableLiveData = new MutableLiveData<>();
 
@@ -293,7 +285,7 @@ public class JobViewModel extends AndroidViewModel {
         return mutableLiveData;
     }
 
-    private MutableLiveData<Optional<JsonResponse>> getAJobs(Long jobId) {
+    private MutableLiveData<Optional<JsonResponse>> getOneJob(Long jobId) {
         MutableLiveData<Optional<JsonResponse>> mutableLiveData = new MutableLiveData<>();
 
 
@@ -534,12 +526,13 @@ public class JobViewModel extends AndroidViewModel {
         return getClientJobs(username, jobStatus);
     }
 
+
     public LiveData<Optional<JsonResponse>> getAllProviderJobs(String username, Integer jobStatus) {
         return getProviderJobs(username, jobStatus);
     }
 
     public LiveData<Optional<JsonResponse>> getAJob(Long jobId) {
-        return getAJobs(jobId);
+        return getOneJob(jobId);
     }
 
     public LiveData<Optional<JsonResponse>> updateJob(Long jobId, Models.JobUpdateForm jobUpdateForm) {
