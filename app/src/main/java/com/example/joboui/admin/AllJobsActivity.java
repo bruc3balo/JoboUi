@@ -10,14 +10,18 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.joboui.adapters.JobsRvAdminAdapter;
+import com.example.joboui.clientUi.MyJobs;
 import com.example.joboui.databinding.ActivityAllJobsBinding;
 import com.example.joboui.db.job.JobViewModel;
+import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,6 +37,8 @@ public class AllJobsActivity extends AppCompatActivity {
     private ActivityAllJobsBinding binding;
     private final LinkedList<Models.Job> allJobs = new LinkedList<>();
     private JobsRvAdminAdapter adapter;
+    public static MutableLiveData<Optional<Boolean>> refreshJobListAdmin = new MutableLiveData<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,7 @@ public class AllJobsActivity extends AppCompatActivity {
         binding.jobsRv.setAdapter(adapter);
 
         getAllJobs(null,null,null);
+        addRefreshListener();
 
     }
 
@@ -101,6 +108,21 @@ public class AllJobsActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    private void addRefreshListener() {
+        refreshData().observe(this, refresh -> {
+            if (refresh.isPresent()) {
+                if (!AllJobsActivity.this.isDestroyed() && !AllJobsActivity.this.isFinishing()) {
+                    System.out.println("update message refresh");
+                    getAllJobs(null, null, null);
+                }
+            }
+        });
+    }
+
+    private LiveData<Optional<Boolean>> refreshData() {
+        return refreshJobListAdmin;
     }
 
 }

@@ -6,6 +6,7 @@ import static com.example.joboui.SplashScreen.directToLogin;
 import static com.example.joboui.SplashScreen.removeListener;
 import static com.example.joboui.adapters.ServicesPageGrid.allServiceList;
 import static com.example.joboui.adapters.ServicesPageGrid.serviceList;
+import static com.example.joboui.admin.AdminActivity.logout;
 import static com.example.joboui.globals.GlobalDb.serviceRepository;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.LOGGED_IN;
@@ -53,6 +54,7 @@ import com.example.joboui.databinding.ActivityClientBinding;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.login.ServiceProviderAdditionalActivity;
 import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
+import com.example.joboui.services.NotificationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.material.navigation.NavigationView;
 
@@ -248,8 +250,7 @@ public class ClientActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Logout").setOnMenuItemClickListener(menuItem -> {
-            userRepository.deleteUserDb();
-            clearSp(USER_DB, getApplication());
+            logout(getApplication());
             return false;
         }).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         return super.onCreateOptionsMenu(menu);

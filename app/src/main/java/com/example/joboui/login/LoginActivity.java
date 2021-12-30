@@ -5,6 +5,7 @@ import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.login.RegisterActivity.goToAdditionalInfoActivity;
 import static com.example.joboui.login.RegisterActivity.goToVerificationPage;
+import static com.example.joboui.services.NotificationService.notificationServiceRunning;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import com.example.joboui.admin.AdminActivity;
 import com.example.joboui.clientUi.ClientActivity;
 import com.example.joboui.databinding.ActivityLoginBinding;
 import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
+import com.example.joboui.services.NotificationService;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -77,11 +79,18 @@ public class LoginActivity extends AppCompatActivity {
 
 
             if (appUser.get().isIs_deleted() || appUser.get().isIs_disabled()) {
+                if (!notificationServiceRunning) {
+                    activity.startService(new Intent(activity, NotificationService.class));
+                }
                 goToDisabledPage(activity);
             } else {
                 switch (appUser.get().getRole()) {
                     case "ROLE_CLIENT":
                         if (appUser.get().isVerified()) {
+
+                            if (!notificationServiceRunning) {
+                                activity.startService(new Intent(activity, NotificationService.class));
+                            }
                             goToClientPage(activity);
                         } else {
                             goToVerificationPage(activity);
@@ -98,6 +107,9 @@ public class LoginActivity extends AppCompatActivity {
                                 goToAdditionalInfoActivity(activity);
                             } else {
                                 goToServiceProviderPage(activity);
+                                if (!notificationServiceRunning) {
+                                    activity.startService(new Intent(activity, NotificationService.class));
+                                }
                             }
                         } else {
                             goToVerificationPage(activity);
@@ -106,6 +118,9 @@ public class LoginActivity extends AppCompatActivity {
 
                     case "ROLE_ADMIN":
                     case "ROLE_ADMIN_TRAINEE":
+                        if (!notificationServiceRunning) {
+                            activity.startService(new Intent(activity, NotificationService.class));
+                        }
                         goToAdminPage(activity);
                         break;
                 }

@@ -216,7 +216,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
             String hour = hourOfDay < 10 ? "0".concat(String.valueOf(hourOfDay)) : String.valueOf(hourOfDay);
             String min = minute < 10 ? "0".concat(String.valueOf(minute)) : String.valueOf(minute);
 
-            startTime[0] = hour + "^" + min;
+            startTime[0] = hour.concat(min);
             startTimeTv.setText(hour + min + " hrs");
             start.setBackground(getDrawable(R.drawable.circle_day_bg_selected));
         }, nowHour[0], nowMinute[0], true).show());
@@ -229,7 +229,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
             String min = minute < 10 ? "0".concat(String.valueOf(minute)) : String.valueOf(minute);
 
 
-            endTime[0] = hour + "^" + min;
+            endTime[0] = hour.concat(min);
             endTimeTv.setText(hour + min + " hrs");
             end.setBackground(getDrawable(R.drawable.circle_day_bg_selected));
         }, nowHour[0], nowMinute[0], true).show());

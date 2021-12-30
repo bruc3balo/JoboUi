@@ -114,7 +114,6 @@ public class UserViewModel extends AndroidViewModel {
                     e.printStackTrace();
                     Toast.makeText(application, "Something went wrong", Toast.LENGTH_SHORT).show();
                     userMutableLiveData.setValue(Optional.empty());
-
                 }
             }
 

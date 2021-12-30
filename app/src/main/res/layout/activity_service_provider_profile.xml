@@ -45,7 +45,7 @@
                 android:padding="10dp"
                 android:gravity="center_vertical"
                 android:textColor="@color/black"
-                android:text="@string/names"/>
+                android:text="@string/to_be_filled"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -65,7 +65,7 @@
                 android:padding="10dp"
                 android:gravity="center_vertical"
                 android:textColor="@color/black"
-                android:text="@string/username"/>
+                android:text="@string/to_be_filled"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -85,7 +85,7 @@
                 android:padding="10dp"
                 android:gravity="center_vertical"
                 android:textColor="@color/black"
-                android:text="@string/id"/>
+                android:text="@string/to_be_filled"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -125,7 +125,7 @@
                 android:padding="10dp"
                 android:gravity="center_vertical"
                 android:textColor="@color/black"
-                android:text="@string/phone_number"/>
+                android:text="@string/to_be_filled"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -165,7 +165,7 @@
                 android:padding="10dp"
                 android:gravity="center_vertical"
                 android:textColor="@color/black"
-                android:text="@string/rating"/>
+                android:text="@string/to_be_filled"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -185,7 +185,7 @@
                 android:padding="10dp"
                 android:gravity="center_vertical"
                 android:textColor="@color/black"
-                android:text="@string/speciality"/>
+                android:text="@string/to_be_filled"/>
 
 
             <TextView

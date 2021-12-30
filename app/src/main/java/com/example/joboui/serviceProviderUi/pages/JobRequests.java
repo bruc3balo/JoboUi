@@ -1,28 +1,37 @@
 package com.example.joboui.serviceProviderUi.pages;
 
 import static com.example.joboui.globals.GlobalDb.userRepository;
+import static com.example.joboui.globals.GlobalVariables.JOB;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.joboui.JobTrackActivity;
 import com.example.joboui.adapters.JobsRvAdapter;
+import com.example.joboui.clientUi.MyJobs;
 import com.example.joboui.databinding.ActivityJobRequestsBinding;
 import com.example.joboui.db.job.JobViewModel;
+import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
 import com.example.joboui.utils.JobStatus;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.LinkedList;
+import java.util.Optional;
 
 import io.vertx.core.json.JsonArray;
 
@@ -31,6 +40,7 @@ public class JobRequests extends AppCompatActivity {
     private ActivityJobRequestsBinding binding;
     private static final LinkedList<Models.Job> myJobsList = new LinkedList<>();
     private JobsRvAdapter jobsRvAdapter;
+    public static MutableLiveData<Optional<Boolean>> refreshJobListProvider = new MutableLiveData<>();
 
 
     //todo confirmation prompt
@@ -61,6 +71,7 @@ public class JobRequests extends AppCompatActivity {
 
                 jobsRvAdapter.setUsername(user.get().getUsername());
                 populateMyJobs(JobRequests.this, user.get().getUsername(), jobsRvAdapter);
+                addRefreshListener(user.get());
             });
         }
 
@@ -107,6 +118,21 @@ public class JobRequests extends AppCompatActivity {
 
         });
 
+    }
+
+    private void addRefreshListener(Domain.User user) {
+        refreshData().observe(this, refresh -> {
+            if (refresh.isPresent()) {
+                if (!JobRequests.this.isDestroyed() && !JobRequests.this.isFinishing()) {
+                    System.out.println("update message refresh");
+                    populateMyJobs(JobRequests.this, user.getUsername(), jobsRvAdapter);
+                }
+            }
+        });
+    }
+
+    private LiveData<Optional<Boolean>> refreshData() {
+        return refreshJobListProvider;
     }
 
     @Override

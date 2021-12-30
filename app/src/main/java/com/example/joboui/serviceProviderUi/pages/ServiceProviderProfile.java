@@ -1,6 +1,5 @@
 package com.example.joboui.serviceProviderUi.pages;
 
-import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.FRIDAY;
 import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.globals.GlobalVariables.MONDAY;
@@ -8,7 +7,9 @@ import static com.example.joboui.globals.GlobalVariables.SATURDAY;
 import static com.example.joboui.globals.GlobalVariables.SUNDAY;
 import static com.example.joboui.globals.GlobalVariables.THURSDAY;
 import static com.example.joboui.globals.GlobalVariables.TUESDAY;
+import static com.example.joboui.globals.GlobalVariables.USERNAME;
 import static com.example.joboui.globals.GlobalVariables.WEDNESDAY;
+import static com.example.joboui.utils.DataOps.getDomainUserFromModelUser;
 import static com.example.joboui.utils.DataOps.getListFromString;
 import static com.example.joboui.utils.DataOps.getWorkingTimeFromString;
 
@@ -48,6 +49,8 @@ public class ServiceProviderProfile extends AppCompatActivity {
     private LinkedHashMap<String, String> workingHours = new LinkedHashMap<>();
     private Domain.User user;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,10 +59,10 @@ public class ServiceProviderProfile extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
-        binding.toolbar.setNavigationOnClickListener(v->finish());
+        binding.toolbar.setNavigationOnClickListener(v -> finish());
 
-        if (userRepository != null) {
-            userRepository.getUserLive().observe(this, optionalUser -> optionalUser.ifPresent(this::setUserData));
+        if (getIntent().getExtras() != null) {
+            new ViewModelProvider(this).get(UserViewModel.class).getUserByUsername(getIntent().getExtras().getString(USERNAME)).observe(this, userOptional -> userOptional.ifPresent(u-> setUserData(getDomainUserFromModelUser(u))));
         }
 
     }
@@ -87,24 +90,23 @@ public class ServiceProviderProfile extends AppCompatActivity {
         for (int i = 0; i < tv.length; i++) {
             int finalI = i;
             tv[i].setOnClickListener(v -> showDayLayout(tv[finalI], days[finalI]));
-            if (selectedWorkingDays.contains(days[finalI].toUpperCase())) {
+            if (selectedWorkingDays.contains(days[finalI])) {
                 tv[i].setBackground(getDrawable(R.drawable.circle_day_bg_selected));
-                System.out.println("Day is selected "+days[finalI]);
+                System.out.println("Day is selected " + days[finalI]);
             } else {
                 tv[i].setBackground(getDrawable(R.drawable.circle_day_bg_unselected));
-                System.out.println("Day is not selected "+days[finalI]);
-
+                System.out.println("Day is not selected " + days[finalI]);
             }
         }
 
-        workingHours.forEach((d, t) -> System.out.println("Day is "+d + " time is "+ getWorkingTimeFromString(true,t) + " and "+getWorkingTimeFromString(false,t)));
+        workingHours.forEach((d, t) -> System.out.println("Day is " + d + " time is " + getWorkingTimeFromString(true, t) + " and " + getWorkingTimeFromString(false, t)));
         System.out.println("Day is " + workingHours.keySet().stream().filter(Objects::nonNull).collect(Collectors.toList()));
     }
 
     private void showDayLayout(TextView dayTv, String day) {
         List<String> selectedWorkingDays = workingHours.keySet().stream().filter(Objects::nonNull).collect(Collectors.toList());
 
-        if (selectedWorkingDays.contains(day.toUpperCase())) {
+        if (selectedWorkingDays.contains(day)) {
             confirmDialog(day + " already added. \n Do you want to remove it ?", user -> {
                 workingHours.remove(day);
                 updateUser(new Models.UserUpdateForm(workingHours));
@@ -147,7 +149,7 @@ public class ServiceProviderProfile extends AppCompatActivity {
                 String hour = hourOfDay < 10 ? "0".concat(String.valueOf(hourOfDay)) : String.valueOf(hourOfDay);
                 String min = minute < 10 ? "0".concat(String.valueOf(minute)) : String.valueOf(minute);
 
-                startTime[0] = hour + "^" + min;
+                startTime[0] = hour.concat(min);
                 startTimeTv.setText(hour + min + " hrs");
                 start.setBackground(getDrawable(R.drawable.circle_day_bg_selected));
             }, nowHour[0], nowMinute[0], true).show());
@@ -159,8 +161,7 @@ public class ServiceProviderProfile extends AppCompatActivity {
                 String hour = hourOfDay < 10 ? "0".concat(String.valueOf(hourOfDay)) : String.valueOf(hourOfDay);
                 String min = minute < 10 ? "0".concat(String.valueOf(minute)) : String.valueOf(minute);
 
-
-                endTime[0] = hour + "^" + min;
+                endTime[0] = hour.concat(min);
                 endTimeTv.setText(hour + min + " hrs");
                 end.setBackground(getDrawable(R.drawable.circle_day_bg_selected));
             }, nowHour[0], nowMinute[0], true).show());
@@ -182,7 +183,6 @@ public class ServiceProviderProfile extends AppCompatActivity {
 
             Button cancel_button = binding.cancelButton;
             cancel_button.setOnClickListener(view -> {
-                dayTv.setBackground(getDrawable(R.drawable.circle_day_bg_unselected));
                 dialog.dismiss();
             });
         }
@@ -207,7 +207,7 @@ public class ServiceProviderProfile extends AppCompatActivity {
     }
 
     private void updateUser(Models.UserUpdateForm form) {
-        new ViewModelProvider(this).get(UserViewModel.class).updateExistingUser(form).observe(this, optionalUser -> optionalUser.ifPresent(u-> Toast.makeText(ServiceProviderProfile.this, "Updated", Toast.LENGTH_SHORT).show()));
+        new ViewModelProvider(this).get(UserViewModel.class).updateExistingUser(form).observe(this, optionalUser -> optionalUser.ifPresent(this::setUserData));
     }
 
 }

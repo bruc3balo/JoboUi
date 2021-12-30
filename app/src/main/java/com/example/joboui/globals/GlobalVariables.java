@@ -4,7 +4,7 @@ public class GlobalVariables {
 
     /*** BASE URL OF API ***/
 
-    public static final String API_URL = "https://81f9-197-232-244-229.ngrok.io";
+    public static final String API_URL = "https://9315-197-232-244-229.ngrok.io";
     public static final String CONTEXT_URL = "/api/v1/";
     public static final String PAGE_NO = "pageNo";
     public static final String PAGE_SIZE = "pageSize";
@@ -66,6 +66,7 @@ public class GlobalVariables {
     public static final String TITLE = "title";
     public static final String SUBTEXT = "sub_text";
     public static final String NOTIFIED = "notified";
+    public static final String UPDATE = "update";
 
 
     public static final String LOGGED_IN = "logged_in";

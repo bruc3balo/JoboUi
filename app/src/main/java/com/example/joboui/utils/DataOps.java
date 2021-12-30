@@ -146,7 +146,7 @@ public class DataOps {
     }
 
     public static String getWorkingTimeFromString(boolean start,String time) {
-       return time.split(HY)[start ? 0 : 1];
+           return time.split(HY)[start ? 0 : 1];
     }
 
     public static SpannableString getBoldSpannable(String normal, String bold) {
@@ -169,7 +169,7 @@ public class DataOps {
     }
 
     public static Domain.User getDomainUserFromModelUser(Models.AppUser user) {
-        return new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getVerified(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword(),user.getRating());
+        return new Domain.User(user.getId(), user.getId_number(), user.getPhone_number(), user.getBio(), user.getEmail_address(), user.getNames(), user.getUsername(), user.getRole().getName(), user.getCreated_at().toString(), user.getUpdated_at().toString(), user.getDeleted(), user.getDisabled(), user.getVerified(), user.getSpecialities(), user.getPreferred_working_hours(), user.getLast_known_location(), user.getPassword(),user.getRating(),user.getStrikes());
     }
 
 

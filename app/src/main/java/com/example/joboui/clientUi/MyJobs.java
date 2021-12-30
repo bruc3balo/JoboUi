@@ -1,29 +1,32 @@
 package com.example.joboui.clientUi;
 
 import static com.example.joboui.globals.GlobalDb.userRepository;
+import static com.example.joboui.globals.GlobalVariables.JOB;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
 import static com.example.joboui.utils.JobStatus.CLIENT_CANCELLED_IN_PROGRESS;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.example.joboui.R;
+import com.example.joboui.JobTrackActivity;
 import com.example.joboui.adapters.JobsRvAdapter;
 import com.example.joboui.databinding.ActivityMyJobsBinding;
 import com.example.joboui.db.job.JobViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
+import com.example.joboui.serviceProviderUi.pages.JobRequests;
 import com.example.joboui.utils.JobStatus;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,6 +41,7 @@ public class MyJobs extends AppCompatActivity {
     private ActivityMyJobsBinding binding;
     private static final LinkedList<Models.Job> myJobsList = new LinkedList<>();
     private JobsRvAdapter jobsRvAdapter;
+    public static MutableLiveData<Optional<Boolean>> refreshJobListClient = new MutableLiveData<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,7 @@ public class MyJobs extends AppCompatActivity {
         jobsRvAdapter = new JobsRvAdapter(MyJobs.this, myJobsList);
         jobsRv.setAdapter(jobsRvAdapter);
 
+
         if (userRepository != null) {
             userRepository.getUserLive().observe(this, user -> {
                 if (!user.isPresent()) {
@@ -64,8 +69,8 @@ public class MyJobs extends AppCompatActivity {
                 }
 
                 jobsRvAdapter.setUsername(user.get().getUsername());
-                populateClientJobs(MyJobs.this,user.get().getUsername(),jobsRvAdapter);
-
+                populateClientJobs(MyJobs.this, user.get().getUsername(), jobsRvAdapter);
+                addRefreshListener(user.get());
             });
         }
     }
@@ -90,13 +95,13 @@ public class MyJobs extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 JsonArray jobs = new JsonArray(getObjectMapper().writeValueAsString(response.getData()));
                 jobs.forEach(u -> {
-                    System.out.println("JOBS ARE "+jobs.size());
+                    System.out.println("JOBS ARE " + jobs.size());
 
                     try {
                         Models.Job job = getObjectMapper().readValue(u.toString(), Models.Job.class);
                         if (!(CLIENT_CANCELLED_IN_PROGRESS.getCode() == job.getJob_status()) && !(job.getJob_status() == JobStatus.CLIENT_REPORTED.getCode()) && !(job.getJob_status() == JobStatus.SERVICE_REPORTED.getCode())) {
                             myJobsList.add(job);
-                            System.out.println("PAYMENT FOR JOB "+job.getId() +" is "+getObjectMapper().writeValueAsString(job.getPayments()));
+                            System.out.println("PAYMENT FOR JOB " + job.getId() + " is " + getObjectMapper().writeValueAsString(job.getPayments()));
                         }
 
                         adapter.notifyDataSetChanged();
@@ -114,9 +119,25 @@ public class MyJobs extends AppCompatActivity {
 
     }
 
+    private void addRefreshListener(Domain.User user) {
+        refreshData().observe(this, refresh -> {
+            if (refresh.isPresent()) {
+                if (!MyJobs.this.isDestroyed() && !MyJobs.this.isFinishing()) {
+                    System.out.println("update message refresh");
+                    populateClientJobs(MyJobs.this, user.getUsername(), jobsRvAdapter);
+                }
+            }
+        });
+    }
+
+    private LiveData<Optional<Boolean>> refreshData() {
+        return refreshJobListClient;
+    }
+
     @Override
     protected void onDestroy() {
         myJobsList.clear();
         super.onDestroy();
     }
+
 }

@@ -23,126 +23,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/statusTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:textStyle="bold"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/status"/>
-
-            <TextView
-                android:id="@+id/statusContent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/job_status_label"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/jdTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:textStyle="bold"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/job_description"/>
-
-            <TextView
-                android:id="@+id/jdContent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/job_description_label"/>
-
-        </LinearLayout>
-
-
-
-            <TextView
-                android:id="@+id/partyTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:textStyle="bold"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/parties"/>
-
-            <TextView
-                android:id="@+id/clientPartyContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/client_label"/>
-
-            <TextView
-                android:id="@+id/providerPartyContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/service_provider_label"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/locationTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:textStyle="bold"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/location"/>
-
-            <TextView
-                android:id="@+id/locationContent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/location_label"/>
-        </LinearLayout>
 
 
         <LinearLayout
@@ -151,136 +31,6 @@
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/specialityTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:textStyle="bold"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/speciality"/>
-
-            <TextView
-                android:id="@+id/specialityContent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/speciality_label"/>
-
-        </LinearLayout>
-
-
-
-            <TextView
-                android:id="@+id/priceTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:padding="10dp"
-                android:textStyle="bold"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/price"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center"
-                android:gravity="center_vertical">
-
-
-
-                <TextView
-                    android:id="@+id/priceContent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:padding="10dp"
-                    android:textStyle="bold"
-                    android:gravity="center_vertical"
-                    android:textColor="@android:color/holo_green_dark"
-                    android:text="@string/price_label"/>
-
-                <ImageButton
-                    android:id="@+id/edit"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:layout_margin="5dp"
-                    android:backgroundTint="@android:color/transparent"
-                    android:src="@drawable/ic_edit"
-                    tools:ignore="SpeakableTextPresentCheck" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center"
-                android:gravity="center_vertical">
-
-
-
-                <TextView
-                    android:id="@+id/pricePaidContent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:padding="10dp"
-                    android:visibility="gone"
-                    android:textStyle="bold"
-                    android:gravity="center_vertical"
-                    android:textColor="@android:color/holo_green_dark"
-                    android:text="@string/price_label"/>
-
-
-            </LinearLayout>
-
-           <!-- <TextView
-                android:id="@+id/priceRangeContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/price_range_label"/>-->
-
-            <TextView
-                android:id="@+id/timeTv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:textStyle="bold"
-                android:gravity="center_vertical"
-                android:textColor="@color/black"
-                android:text="@string/time"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/createdAtContent"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:padding="10dp"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/black"
-                    android:text="@string/createdat_label"/>
 
                 <TextView
                     android:id="@+id/completedAtContent"
@@ -297,97 +47,111 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/partyTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:text="@string/parties"/>
+
+            <LinearLayout
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/clientPartyContent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:text="@string/client_label"/>
+
+                <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/providerPartyContent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:text="@string/service_provider_label"/>
+
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/specialityContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:text="@string/speciality_label"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/jdContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:text="@string/job_description_label"/>
+
+
+            <TextView
+                android:id="@+id/locationContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:text="@string/location_label"/>
+
+
+
+            <ImageButton
+                android:id="@+id/more"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_back"
+                android:rotation="180"
+                android:background="@drawable/circle"
+                app:tint="@color/purple" />
+
+            <TextView
                 android:id="@+id/urgency"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="10dp"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:textColor="@color/black"
                 android:text="@string/urgency"/>
-
-            <LinearLayout
-                android:layout_margin="10dp"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:id="@+id/serviceProviderControls"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:layout_margin="10dp"
-                    android:id="@+id/decline"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:padding="10dp"
-                    android:gravity="center"
-                    android:textSize="12sp"
-                    android:fontFamily="sans-serif-condensed-medium"
-                    android:background="@drawable/login_bg_button_white"
-                    android:backgroundTint="@color/red"
-                    android:textColor="@color/white"
-                    android:text="@string/decline"/>
-
-                <LinearLayout
-                    android:layout_gravity="center"
-                    android:layout_width="0dp"
-                    android:gravity="center"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <ImageButton
-                        android:id="@+id/chat"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:layout_margin="5dp"
-                        android:backgroundTint="@android:color/transparent"
-                        android:src="@drawable/ic_chat"
-                        tools:ignore="SpeakableTextPresentCheck" />
-
-                    <Button
-                        android:id="@+id/negotiate"
-                        android:layout_width="match_parent"
-                        android:fontFamily="sans-serif-condensed-medium"
-                        android:layout_height="0dp"
-                        android:layout_gravity="center"
-                        android:layout_margin="10dp"
-                        android:textSize="12sp"
-                        android:layout_weight="1"
-                        android:background="@drawable/login_bg_button_white"
-                        android:backgroundTint="@android:color/holo_blue_dark"
-                        android:gravity="center"
-                        android:padding="10dp"
-                        android:text="@string/negotiate"
-                        android:textColor="@color/white"
-                        android:visibility="visible"
-                        tools:ignore="NestedWeights" />
-
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/accept"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:padding="10dp"
-                    android:textSize="12sp"
-                    android:layout_margin="10dp"
-                    android:fontFamily="sans-serif-condensed-medium"
-                    android:background="@drawable/login_bg_button_white"
-                    android:backgroundTint="@color/quantum_lightgreen"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:text="@string/accept"/>
-
-
-
-            </LinearLayout>
 
         </LinearLayout>
 

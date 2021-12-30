@@ -6,7 +6,6 @@ import static com.example.joboui.globals.GlobalVariables.HY;
 import androidx.annotation.NonNull;
 
 import com.example.joboui.domain.Domain;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -480,11 +479,13 @@ public class Models {
 
         private float rating;
 
+        private int strikes;
+
         public AppUser() {
 
         }
 
-        public AppUser(Long id, String names, String username, String id_number, String email_address, String phone_number, String password, String bio, String last_known_location, Date created_at, Date updated_at, AppRole role, String preferred_working_hours, String specialities, Boolean disabled, Boolean deleted, Boolean verified,float rating) {
+        public AppUser(Long id, String names, String username, String id_number, String email_address, String phone_number, String password, String bio, String last_known_location, Date created_at, Date updated_at, AppRole role, String preferred_working_hours, String specialities, Boolean disabled, Boolean deleted, Boolean verified,float rating,int strikes) {
             this.id = id;
             this.names = names;
             this.username = username;
@@ -503,6 +504,7 @@ public class Models {
             this.deleted = deleted;
             this.verified = verified;
             this.rating = rating;
+            this.strikes = strikes;
         }
 
         public Long getId() {
@@ -647,6 +649,14 @@ public class Models {
 
         public void setRating(float rating) {
             this.rating = rating;
+        }
+
+        public int getStrikes() {
+            return strikes;
+        }
+
+        public void setStrikes(int strikes) {
+            this.strikes = strikes;
         }
     }
 
@@ -1916,6 +1926,8 @@ public class Models {
 
         private boolean notified;
 
+        private String updating;
+
         public NotificationModels() {
 
         }
@@ -1993,6 +2005,14 @@ public class Models {
 
         public void setNotified(boolean notified) {
             this.notified = notified;
+        }
+
+        public String getUpdating() {
+            return updating;
+        }
+
+        public void setUpdating(String updating) {
+            this.updating = updating;
         }
     }
 

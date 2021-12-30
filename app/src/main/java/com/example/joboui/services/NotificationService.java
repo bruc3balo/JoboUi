@@ -1,8 +1,12 @@
 package com.example.joboui.services;
 
 import static android.app.PendingIntent.FLAG_IMMUTABLE;
+import static com.example.joboui.broadcast.UpdateBroadcast.UPDATE_INTENT;
 import static com.example.joboui.globals.GlobalDb.userApi;
 import static com.example.joboui.globals.GlobalDb.userRepository;
+import static com.example.joboui.globals.GlobalVariables.ROLE;
+import static com.example.joboui.globals.GlobalVariables.UPDATE;
+import static com.example.joboui.globals.GlobalVariables.USERNAME;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
 import static com.example.joboui.utils.DataOps.getAuthorization;
 import static com.example.joboui.utils.NotificationChannelClass.SYNCH_NOTIFICATION_CHANNEL;
@@ -26,6 +30,8 @@ import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.example.joboui.NotificationActivity;
 import com.example.joboui.R;
+import com.example.joboui.broadcast.UpdateBroadcast;
+import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -47,6 +53,8 @@ public class NotificationService extends LifecycleService implements ViewModelSt
     private NotificationManager notificationManager;
     private BulkViewModel bulkViewModel;
     private final LinkedHashSet<Models.NotificationModels> notificationList = new LinkedHashSet<>();
+    private Domain.User myUser;
+    public static boolean notificationServiceRunning = false;
 
 
     public NotificationService() {
@@ -58,11 +66,15 @@ public class NotificationService extends LifecycleService implements ViewModelSt
         super.onStartCommand(intent, flags, startId);
         System.out.println("NOTIFICATION STARTED START");
 
+        notificationServiceRunning = true;
         bulkViewModel = getDefaultViewModelProviderFactory().create(BulkViewModel.class);
         notificationManager = getSystemService(NotificationManager.class);
 
         if (userRepository != null) {
-            userRepository.getUserLive().observe(this, optionalUser -> optionalUser.ifPresent(user -> getAllNotifications(user.getUsername())));
+            userRepository.getUserLive().observe(this, optionalUser -> optionalUser.ifPresent(user -> {
+                myUser = user;
+                getAllNotifications(user.getUsername());
+            }));
         }
 
         return START_STICKY;
@@ -131,6 +143,7 @@ public class NotificationService extends LifecycleService implements ViewModelSt
         Intent notificationIntent = new Intent(this, NotificationActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, FLAG_IMMUTABLE);
 
+        sendBroadcast(new Intent(this, UpdateBroadcast.class).setAction(UPDATE_INTENT).putExtra(USERNAME,myUser.getUsername()).putExtra(UPDATE, notificationModel.getUpdating()).putExtra(ROLE, myUser.getRole()));
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, USER_NOTIFICATION_CHANNEL)
                 .setContentTitle(notificationModel.getTitle())
@@ -175,4 +188,10 @@ public class NotificationService extends LifecycleService implements ViewModelSt
         return mViewModelStore;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        notificationServiceRunning = false;
+
+    }
 }

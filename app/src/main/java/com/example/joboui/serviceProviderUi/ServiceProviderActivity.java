@@ -3,7 +3,9 @@ package com.example.joboui.serviceProviderUi;
 import static com.example.joboui.SplashScreen.addListener;
 import static com.example.joboui.SplashScreen.addLogoutListener;
 import static com.example.joboui.SplashScreen.removeListener;
+import static com.example.joboui.admin.AdminActivity.logout;
 import static com.example.joboui.globals.GlobalDb.userRepository;
+import static com.example.joboui.globals.GlobalVariables.USERNAME;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.SignInActivity.clearSp;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
@@ -22,11 +24,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
+import com.example.joboui.JobTrackActivity;
 import com.example.joboui.NotificationActivity;
 import com.example.joboui.R;
 import com.example.joboui.ReviewActivity;
@@ -34,13 +38,17 @@ import com.example.joboui.adapters.JobsRvAdapter;
 import com.example.joboui.adapters.ServiceProviderPageGrid;
 import com.example.joboui.databinding.ActivityServiceProviderBinding;
 import com.example.joboui.db.job.JobViewModel;
+import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
 import com.example.joboui.serviceProviderUi.pages.JobRequests;
 import com.example.joboui.serviceProviderUi.pages.ManageServicesProvider;
 import com.example.joboui.serviceProviderUi.pages.ServiceProviderProfile;
+import com.example.joboui.services.NotificationService;
 import com.example.joboui.utils.JobStatus;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import java.util.Optional;
 
 import io.vertx.core.json.JsonArray;
 
@@ -49,6 +57,8 @@ public class ServiceProviderActivity extends AppCompatActivity {
 
     private ActivityServiceProviderBinding serviceProviderBinding;
     private ServiceProviderPageGrid serviceProviderPageGrid;
+    private Domain.User user;
+    public static MutableLiveData<Optional<Boolean>> refreshCount = new MutableLiveData<>();
 
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -63,48 +73,72 @@ public class ServiceProviderActivity extends AppCompatActivity {
         serviceProviderToolbar.setOverflowIcon(getDrawable(R.drawable.more));
 
         GridView serviceProviderGrid = serviceProviderBinding.serviceProviderGrid;
-        serviceProviderGrid.setOnItemClickListener((parent, view, position, id) -> {
-            switch (position) {
-                default:
-                    break;
-
-                case 0:
-                    goToRequests();
-                    break;
-
-                case 1:
-                    goToProfile();
-                    break;
-
-                case 3:
-                    goToServices();
-                    break;
-
-                case 4:
-                    goToFeedback();
-                    break;
-
-                case 5:
-                    goToNotifications();
-                    break;
-            }
-        });
 
         if (userRepository != null) {
             userRepository.getUserLive().observe(this, user -> {
                 if (user.isPresent()) {
+                    this.user = user.get();
                     serviceProviderToolbar.setTitle(user.get().getRole());
                     serviceProviderToolbar.setSubtitle(user.get().getUsername());
-                    getJobCount(user.get().getUsername()).observe(ServiceProviderActivity.this, count -> {
-                        serviceProviderPageGrid = new ServiceProviderPageGrid(user.get().getUsername(), count);
-                        serviceProviderGrid.setAdapter(serviceProviderPageGrid);
+                    getGridData(user.get());
+                    serviceProviderGrid.setOnItemClickListener((parent, view, position, id) -> {
+                        switch (position) {
+                            default:
+                                break;
+
+                            case 0:
+                                goToRequests();
+                                break;
+
+                            case 1:
+                                goToProfile(user.get().getUsername());
+                                break;
+
+                            case 3:
+                                goToServices();
+                                break;
+
+                            case 4:
+                                goToFeedback();
+                                break;
+
+                            case 5:
+                                goToNotifications();
+                                break;
+                        }
                     });
+                    addRefreshListener();
                 }
             });
         }
 
         setWindowColors();
+    }
 
+
+
+
+
+    private void addRefreshListener() {
+        refreshData().observe(this, refresh -> {
+            if (refresh.isPresent()) {
+                if (!ServiceProviderActivity.this.isDestroyed() && !ServiceProviderActivity.this.isFinishing()) {
+                    getGridData(user);
+                }
+            }
+        });
+    }
+
+    private LiveData<Optional<Boolean>> refreshData() {
+        return refreshCount;
+    }
+
+    private void getGridData(Domain.User user) {
+        getJobCount(user.getUsername()).observe(ServiceProviderActivity.this, count -> {
+            serviceProviderPageGrid = new ServiceProviderPageGrid(user.getUsername(), count);
+            serviceProviderBinding.serviceProviderGrid.setAdapter(serviceProviderPageGrid);
+            serviceProviderPageGrid.notifyDataSetChanged();
+        });
     }
 
     private MutableLiveData<Integer> getJobCount(String username) {
@@ -153,8 +187,7 @@ public class ServiceProviderActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Logout").setOnMenuItemClickListener(menuItem -> {
-            userRepository.deleteUserDb();
-            clearSp(USER_DB, getApplication());
+            logout(getApplication());
             return false;
         }).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         return super.onCreateOptionsMenu(menu);
@@ -176,8 +209,8 @@ public class ServiceProviderActivity extends AppCompatActivity {
         startActivity(new Intent(ServiceProviderActivity.this, NotificationActivity.class));
     }
 
-    private void goToProfile() {
-        startActivity(new Intent(ServiceProviderActivity.this, ServiceProviderProfile.class));
+    private void goToProfile(String username) {
+        startActivity(new Intent(ServiceProviderActivity.this, ServiceProviderProfile.class).putExtra(USERNAME,username));
     }
 
     @Override
@@ -185,6 +218,9 @@ public class ServiceProviderActivity extends AppCompatActivity {
         super.onResume();
         addListener();
         addLogoutListener(ServiceProviderActivity.this);
+        if (user != null) {
+            getGridData(user);
+        }
     }
 
     @Override

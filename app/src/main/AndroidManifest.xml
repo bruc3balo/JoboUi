@@ -28,6 +28,21 @@
         android:theme="@style/Theme.JoboUi"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".JobTrackActivity"
+            android:exported="false"
+            android:label="@string/title_activity_job_track"
+            android:theme="@style/Theme.JoboUi.NoActionBar" />
+
+        <receiver
+            android:name=".broadcast.UpdateBroadcast"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <activity
             android:name=".serviceProviderUi.pages.ServiceProviderProfile"
             android:exported="false" />
         <activity

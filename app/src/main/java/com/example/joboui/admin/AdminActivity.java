@@ -23,6 +23,7 @@ import com.example.joboui.adapters.AdminPageGrid;
 import com.example.joboui.adapters.ServiceProviderPageGrid;
 import com.example.joboui.admin.feedback.FeedbackActivity;
 import com.example.joboui.databinding.ActivityAdminBinding;
+import com.example.joboui.services.NotificationService;
 
 
 //1. Manage Services
@@ -123,6 +124,7 @@ public class AdminActivity extends AppCompatActivity {
     public static void logout(Application application) {
         userRepository.deleteUserDb();
         clearSp(USER_DB, application);
+        application.stopService(new Intent(application, NotificationService.class));
     }
 
     @Override
