@@ -20,9 +20,13 @@
                 android:id="@+id/clientToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:gravity="center"
                 android:background="@color/white">
 
                 <LinearLayout
+                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -52,7 +56,7 @@
                             android:textColor="@color/deep_purple"
                             android:textSize="18sp"
                             android:fontFamily="@font/roboto_medium"
-                            android:text="@string/good_morning_wafula"/>
+                            android:text="Good morning"/>
 
                         <ImageButton
                             android:id="@+id/notifications"
@@ -88,7 +92,8 @@
                         <androidx.appcompat.widget.SearchView
                             android:id="@+id/clientSearch"
                             android:layout_width="0dp"
-                            android:layout_weight="0.5"
+                            android:minWidth="70dp"
+                            android:layout_weight="0.7"
                             android:layout_height="match_parent"
                             android:layout_gravity="center|end"
                             app:queryHint="@string/search"
@@ -122,10 +127,10 @@
 
 
                 <GridView
+                    android:padding="10dp"
                     android:id="@+id/servicesGrid"
-                    android:layout_margin="10dp"
-                    android:horizontalSpacing="10dp"
-                    android:verticalSpacing="10dp"
+                    android:horizontalSpacing="20dp"
+                    android:verticalSpacing="40dp"
                     android:layout_height="match_parent"
                     android:layout_width="match_parent"
                     android:layout_gravity="center"

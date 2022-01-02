@@ -4,6 +4,8 @@ import static android.app.PendingIntent.FLAG_IMMUTABLE;
 import static com.example.joboui.broadcast.UpdateBroadcast.UPDATE_INTENT;
 import static com.example.joboui.globals.GlobalDb.userApi;
 import static com.example.joboui.globals.GlobalDb.userRepository;
+import static com.example.joboui.globals.GlobalVariables.LATITUDE;
+import static com.example.joboui.globals.GlobalVariables.LONGITUDE;
 import static com.example.joboui.globals.GlobalVariables.ROLE;
 import static com.example.joboui.globals.GlobalVariables.UPDATE;
 import static com.example.joboui.globals.GlobalVariables.USERNAME;
@@ -13,14 +15,20 @@ import static com.example.joboui.utils.NotificationChannelClass.SYNCH_NOTIFICATI
 import static com.example.joboui.utils.NotificationChannelClass.USER_NOTIFICATION_CHANNEL;
 import static com.example.joboui.utils.NotificationChannelClass.getPopUri;
 
+import android.Manifest;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Build;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.HasDefaultViewModelProviderFactory;
 import androidx.lifecycle.LifecycleService;
@@ -31,12 +39,22 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import com.example.joboui.NotificationActivity;
 import com.example.joboui.R;
 import com.example.joboui.broadcast.UpdateBroadcast;
+import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
+import com.example.joboui.utils.DataOps;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -56,6 +74,7 @@ public class NotificationService extends LifecycleService implements ViewModelSt
     private Domain.User myUser;
     public static boolean notificationServiceRunning = false;
 
+    public static LatLng myLocation = null;
 
     public NotificationService() {
 
@@ -74,6 +93,7 @@ public class NotificationService extends LifecycleService implements ViewModelSt
             userRepository.getUserLive().observe(this, optionalUser -> optionalUser.ifPresent(user -> {
                 myUser = user;
                 getAllNotifications(user.getUsername());
+                getDeviceLocation();
             }));
         }
 
@@ -130,6 +150,51 @@ public class NotificationService extends LifecycleService implements ViewModelSt
     }
 
 
+    private void getDeviceLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) { //check if location is allowed
+            try {
+                new Timer().scheduleAtFixedRate(new TimerTask() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
+                    @Override
+                    public void run() {
+                        FusedLocationProviderClient mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(NotificationService.this);
+                        final Task<Location> location = mFusedLocationProviderClient.getLastLocation();
+                        location.addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Location currentLocation = task.getResult();
+                                if (currentLocation != null) {
+                                    LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                                    myLocation = latLng;
+                                    LinkedHashMap<String, String> locationMap = new LinkedHashMap<>();
+                                    locationMap.put(LATITUDE, String.valueOf(latLng.latitude));
+                                    locationMap.put(LONGITUDE, String.valueOf(latLng.latitude));
+
+                                    String loc = DataOps.getStringFromMap(locationMap);
+
+                                    userApi.updateUser(myUser.getUsername(), getAuthorization(), new Models.UserUpdateForm(null, loc)).enqueue(new Callback<JsonResponse>() {
+                                        @Override
+                                        public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
+                                            System.out.println("Updated user location");
+                                        }
+
+                                        @Override
+                                        public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
+                                            t.printStackTrace();
+                                            System.out.println("Failed to update usre location");
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }, 0, 10000);
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
     private void showAllNotifications() {
         notificationList.forEach(this::showNotification);
     }
@@ -143,7 +208,7 @@ public class NotificationService extends LifecycleService implements ViewModelSt
         Intent notificationIntent = new Intent(this, NotificationActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, FLAG_IMMUTABLE);
 
-        sendBroadcast(new Intent(this, UpdateBroadcast.class).setAction(UPDATE_INTENT).putExtra(USERNAME,myUser.getUsername()).putExtra(UPDATE, notificationModel.getUpdating()).putExtra(ROLE, myUser.getRole()));
+        sendBroadcast(new Intent(this, UpdateBroadcast.class).setAction(UPDATE_INTENT).putExtra(USERNAME, myUser.getUsername()).putExtra(UPDATE, notificationModel.getUpdating()).putExtra(ROLE, myUser.getRole()));
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, USER_NOTIFICATION_CHANNEL)
                 .setContentTitle(notificationModel.getTitle())

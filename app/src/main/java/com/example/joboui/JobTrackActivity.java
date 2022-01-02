@@ -1113,11 +1113,11 @@ public class JobTrackActivity extends AppCompatActivity {
     }
 
     private void goToReview(Models.Job job) {
-        startActivity(new Intent(JobTrackActivity.this, Review.class).putExtra(JOB, job));
+        startActivity(new Intent(JobTrackActivity.this, ReviewActivity.class).putExtra(JOB, job));
     }
 
     private void goToReport(Models.Job job) {
-        startActivity(new Intent(JobTrackActivity.this, Review.class).putExtra(JOB, job).putExtra(REPORTED, true));
+        startActivity(new Intent(JobTrackActivity.this, ReviewActivity.class).putExtra(JOB, job).putExtra(REPORTED, true));
     }
 
     private void refreshJob() {

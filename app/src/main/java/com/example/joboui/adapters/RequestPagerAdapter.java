@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.joboui.clientUi.request.DetailsFragment;
 import com.example.joboui.clientUi.request.LocationRequest;
 import com.example.joboui.clientUi.request.ProviderChoosing;
 import com.example.joboui.domain.Domain;
@@ -17,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class RequestPagerAdapter extends FragmentStateAdapter {
 
 
-    public static final String[] mainTitles = new String[]{"Location", " Details ", "Provider"};
+    public static final String[] mainTitles = new String[]{"Details", "Local service provider"};
     private Domain.Services services;
 
 
@@ -38,9 +37,6 @@ public class RequestPagerAdapter extends FragmentStateAdapter {
                 return new LocationRequest();
 
             case 1:
-                return new DetailsFragment();
-
-            case 2:
                 return new ProviderChoosing();
         }
     }

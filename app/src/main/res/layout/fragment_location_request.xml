@@ -5,39 +5,166 @@
     android:layout_height="match_parent"
     tools:context=".clientUi.request.LocationRequest">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <SearchView
+        android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/edit_text_field_white"
-            android:layout_margin="20dp"
-            android:id="@+id/locationSearch"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/locationPickedTv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="15dp"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="-"
-            android:textColor="@color/deep_purple"
-            android:textStyle="bold" />
+            <SearchView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_field_white"
+                android:layout_margin="20dp"
+                android:id="@+id/locationSearch"/>
 
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/serviceLocationMap"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:background="@color/deep_purple" />
+            <TextView
+                android:id="@+id/locationPickedTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="15dp"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="-"
+                android:textColor="@color/deep_purple"
+                android:textStyle="bold" />
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/serviceLocationMap"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_gravity="center"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginTop="20dp"
+                android:background="@color/deep_purple" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/purple"
+                    android:text="@string/job_description_label"
+                    android:textStyle="bold"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="20dp"/>
+
+                <EditText
+                    android:id="@+id/descriptionField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="20dp"
+                    android:background="@drawable/edit_text_field_white_thin"
+                    android:gravity="center"
+                    android:hint="@string/provide_a_description_of_your_job"
+                    android:minWidth="48dp"
+                    android:padding="30dp" />
 
 
-    </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/purple"
+                    android:text="@string/suggest_price"
+                    android:textStyle="bold"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="20dp"/>
+
+
+                <LinearLayout
+                    android:layout_margin="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+                    <EditText
+                        android:id="@+id/estimate"
+                        android:minWidth="100dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:inputType="numberDecimal"
+                        android:layout_margin="5dp"
+                        android:textColor="@color/black"
+                        android:hint="@string/_0"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/purple"
+                    android:text="@string/timeLabel"
+                    android:textStyle="bold"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="20dp"/>
+
+                <RadioGroup
+                    android:id="@+id/timeGroup"
+                    android:layout_margin="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <RadioButton
+                        android:id="@+id/asap"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/black"
+                        android:checked="true"
+                        android:buttonTint="@color/deep_purple"
+                        android:text="@string/as_soon_as_possible"/>
+
+                    <RadioButton
+                        android:id="@+id/schedules"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:buttonTint="@color/deep_purple"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/black"
+                        android:text="@string/scheduled"/>
+
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/scheduledTimeTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textSize="30sp"
+                    android:textColor="@color/deep_purple"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

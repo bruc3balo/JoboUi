@@ -4,7 +4,7 @@ public class GlobalVariables {
 
     /*** BASE URL OF API ***/
 
-    public static final String API_URL = "https://9315-197-232-244-229.ngrok.io";
+    public static final String API_URL = "https://0ba0-197-232-244-229.ngrok.io";
     public static final String CONTEXT_URL = "/api/v1/";
     public static final String PAGE_NO = "pageNo";
     public static final String PAGE_SIZE = "pageSize";
@@ -76,5 +76,8 @@ public class GlobalVariables {
     public static final String AUTHORIZATION = "Authorization";
     public static final String CONTENT_TYPE_ME = "Content-Type";
     public static final String transactionType = "CustomerPayBillOnline";
+
+    public static final String LATITUDE = "LATITUDE";
+    public static final String LONGITUDE = "LONGITUDE";
 
 }

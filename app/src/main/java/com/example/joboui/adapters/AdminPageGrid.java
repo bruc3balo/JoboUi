@@ -40,7 +40,7 @@ public class AdminPageGrid extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_row, null);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_row_card, null);
         }
 
 

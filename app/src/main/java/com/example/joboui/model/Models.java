@@ -254,6 +254,8 @@ public class Models {
 
         private Boolean deleted;
 
+        private String last_known_location;
+
         public UserUpdateForm() {
 
         }
@@ -268,8 +270,9 @@ public class Models {
             this.preferred_working_hours = preferred_working_hours;
         }
 
-        public UserUpdateForm(String phone_number) {
+        public UserUpdateForm(String phone_number,String last_known_location) {
             this.phone_number = phone_number;
+            this.last_known_location = last_known_location;
         }
 
         public UserUpdateForm(String id_number, String bio, LinkedHashMap<String, String> preferred_working_hours, LinkedList<String> specialities, Boolean verified) {
@@ -320,6 +323,14 @@ public class Models {
 
         public String getNames() {
             return names;
+        }
+
+        public String getLast_known_location() {
+            return last_known_location;
+        }
+
+        public void setLast_known_location(String last_known_location) {
+            this.last_known_location = last_known_location;
         }
 
         public void setNames(String names) {

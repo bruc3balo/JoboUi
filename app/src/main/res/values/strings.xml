@@ -247,5 +247,6 @@
     <string name="service_has_started">Service has started</string>
     <string name="paying_review">Paying and Review</string>
     <string name="complete">Complete</string>
+    <string name="confirm_job">Confirm Job</string>
 
 </resources>

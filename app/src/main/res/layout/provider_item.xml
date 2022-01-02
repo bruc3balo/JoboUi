@@ -8,6 +8,7 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -44,23 +45,6 @@
                     android:gravity="center_vertical"
                     android:textColor="@color/purple"/>
 
-                <TextView
-                    android:id="@+id/bio"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Bio"
-                    android:textColor="@color/purple"
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical" />
-
-                <TextView
-                    android:id="@+id/rating"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Rating"
-                    android:textColor="@color/purple"
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical" />
 
                 <TextView
                     android:id="@+id/workingHours"
@@ -70,6 +54,27 @@
                     android:layout_gravity="center"
                     android:gravity="center_vertical"
                     android:textColor="@color/purple"/>
+
+                <TextView
+                    android:id="@+id/distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Distance"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/purple"/>
+
+                <RatingBar
+                    android:id="@+id/rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:progressTint="@color/deep_purple"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical" />
+
+
 
 
             </LinearLayout>

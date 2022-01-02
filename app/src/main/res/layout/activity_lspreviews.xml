@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".clientUi.review.LSPReviews">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:background="@drawable/toolbar_bg"
+            app:navigationIcon="@drawable/ic_back"
+            app:titleTextColor="@color/white"
+            app:subtitleTextColor="@color/grey"
+            android:layout_width="match_parent"
+            app:title="Review Profile"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/semi_white"
+            app:tabIndicatorFullWidth="true"
+            app:tabIndicatorColor="@color/black"
+            app:tabSelectedTextColor="@color/black"
+            app:tabTextColor="@color/grey"/>
+
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/viewPager"
+            android:layout_gravity="center"/>
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="15dp"
+            android:background="@drawable/login_bg_button"
+            android:backgroundTint="@color/deep_purple"
+            android:gravity="center"
+            android:id="@+id/confirm"
+            android:text="@string/confirm_job"
+            android:textColor="@color/white"/>
+
+    </LinearLayout>
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

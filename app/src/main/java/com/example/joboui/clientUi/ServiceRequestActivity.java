@@ -1,6 +1,7 @@
 package com.example.joboui.clientUi;
 
 import static com.example.joboui.adapters.RequestPagerAdapter.mainTitles;
+import static com.example.joboui.clientUi.review.LSPReviews.serviceRequested;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.SERVICE_DB;
 
@@ -48,6 +49,8 @@ public class ServiceRequestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityServiceReuestBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        jobRequestForm = new JobRequestForm();
 
         Toolbar toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
@@ -130,6 +133,10 @@ public class ServiceRequestActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         onBackPressed = false;
+
+        if (serviceRequested) {
+            finish();
+        }
     }
 
 

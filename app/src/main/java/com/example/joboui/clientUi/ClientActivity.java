@@ -233,7 +233,7 @@ public class ClientActivity extends AppCompatActivity {
             welcome = "Hello";
         }
 
-        ForegroundColorSpan foregroundColorSpanRed = new ForegroundColorSpan(getColor(R.color.bright_purple));
+        ForegroundColorSpan foregroundColorSpanRed = new ForegroundColorSpan(getColor(R.color.deep_purple));
         StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
 
         SpannableStringBuilder welcomeText = new SpannableStringBuilder(welcome.concat(username));

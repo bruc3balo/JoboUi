@@ -1,45 +1,32 @@
 package com.example.joboui.clientUi.request;
 
-import static com.example.joboui.clientUi.ServiceRequestActivity.jobRequestForm;
 import static com.example.joboui.clientUi.ServiceRequestActivity.service;
+import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_USERNAME;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.joboui.R;
 import com.example.joboui.adapters.ProviderRVAdapter;
-import com.example.joboui.clientUi.ServiceRequestActivity;
+import com.example.joboui.clientUi.review.LSPReviews;
 import com.example.joboui.databinding.FragmentProviderChoosingBinding;
-import com.example.joboui.databinding.YesNoInfoLayoutBinding;
-import com.example.joboui.db.job.JobViewModel;
 import com.example.joboui.db.userDb.UserViewModel;
-import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
-import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.gson.Gson;
 
 import org.json.JSONException;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 
 public class ProviderChoosing extends Fragment {
@@ -77,77 +64,13 @@ public class ProviderChoosing extends Fragment {
         }
 
         adapter.setClickListener((view, position) -> {
-            jobRequestForm.setLocal_service_provider_username(providerList.get(position).getUsername());
-            if (jobRequestForm.getLocal_service_provider_username() == null) {
-                Toast.makeText(requireContext(), "You need to pick a service provider", Toast.LENGTH_SHORT).show();
-            } else if (jobRequestForm.getClient_username() == null) {
-                Toast.makeText(requireContext(), "We had a problem getting your data", Toast.LENGTH_SHORT).show();
-            } else if (jobRequestForm.getJob_location() == null) {
-                Toast.makeText(requireContext(), "Pick a location for the job", Toast.LENGTH_SHORT).show();
-            } else if (jobRequestForm.getSpecialities() == null) {
-                Toast.makeText(requireContext(), "We had a problem picking your job", Toast.LENGTH_SHORT).show();
-            } else if (jobRequestForm.getJob_description() == null || jobRequestForm.getJob_description().isEmpty()) {
-                Toast.makeText(requireContext(), "You need to give a description of the job", Toast.LENGTH_SHORT).show();
-            } else if (jobRequestForm.getJob_price_range() == null) {
-                Toast.makeText(requireContext(), "You need to suggest a price for the job", Toast.LENGTH_SHORT).show();
-            } else {
-                confirmationDialog(providerList.get(position).getNames() + " is going to be requested with for service " + service.getName() + " scheduled for " + jobRequestForm.getScheduled_at() + " with description " + jobRequestForm.getJob_description());
-            }
+            startActivity(new Intent(requireContext(), LSPReviews.class).putExtra(LOCAL_SERVICE_PROVIDER_USERNAME,providerList.get(position)));
         });
 
         return binding.getRoot();
     }
 
-    private void confirmationDialog(String info) {
-        Dialog d = new Dialog(requireContext());
-        d.getWindow().setBackgroundDrawableResource(R.color.transparent);
-        YesNoInfoLayoutBinding binding = YesNoInfoLayoutBinding.inflate(getLayoutInflater());
-        d.setContentView(binding.getRoot());
-        d.show();
 
-        TextView infoTv = binding.newInfoTv;
-        infoTv.setText(info);
-
-        Button no = binding.noButton;
-        Button yes = binding.yesButton;
-        yes.setOnClickListener(v -> {
-            addJobRequest();
-            d.dismiss();
-        });
-
-
-        no.setOnClickListener(v -> d.dismiss());
-    }
-
-
-    private void addJobRequest() {
-        Toast.makeText(requireContext(), "Sending your request", Toast.LENGTH_SHORT).show();
-
-        System.out.println(new Gson().toJson(jobRequestForm));
-
-        new ViewModelProvider(this).get(JobViewModel.class).sendJobRequestLive(jobRequestForm).observe(getViewLifecycleOwner(), jsonResponse -> {
-            if (!jsonResponse.isPresent()) {
-                Toast.makeText(requireContext(), "Failed to get response", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            JsonResponse response = jsonResponse.get();
-
-            if (response.isHas_error() && !response.isSuccess()) {
-                Toast.makeText(requireContext(), response.getApi_code_description(), Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (response.getData() == null) {
-                Toast.makeText(requireContext(), "Failed to get data from server", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            Toast.makeText(requireContext(), "Request successfully created", Toast.LENGTH_SHORT).show();
-            requireActivity().finish();
-        });
-
-    }
 
     @SuppressLint("NotifyDataSetChanged")
     private void getProviders(String speciality, Integer page, Integer pageSize) throws JSONException, JsonProcessingException {

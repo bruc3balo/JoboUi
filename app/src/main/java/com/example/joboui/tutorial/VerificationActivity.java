@@ -869,7 +869,7 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
 
     private void changePhoneNumber(String phoneNumber) {
         showPb();
-        userViewModel.updateExistingUser(new Models.UserUpdateForm(phoneNumber)).observe(this, user -> {
+        userViewModel.updateExistingUser(new Models.UserUpdateForm(phoneNumber,null)).observe(this, user -> {
             hidePb();
             if (!user.isPresent()) {
                 Toast.makeText(VerificationActivity.this, "Failed to change phone number", Toast.LENGTH_SHORT).show();
