@@ -8,17 +8,13 @@ import static com.example.joboui.login.SignInActivity.getSp;
 import static com.example.joboui.model.Models.Messages.MESSAGE_SUR;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
-
-import androidx.annotation.RequiresApi;
 
 import com.example.joboui.R;
 import com.example.joboui.domain.Domain;
@@ -32,7 +28,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Objects;
 
 public class DataOps {
 

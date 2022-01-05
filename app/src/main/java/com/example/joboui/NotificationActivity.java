@@ -5,26 +5,23 @@ import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
 import static com.example.joboui.utils.DataOps.getAuthorization;
 
+import android.os.Build;
+import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Build;
-import android.os.Bundle;
-
 import com.example.joboui.adapters.NotificationRvAdapter;
 import com.example.joboui.databinding.ActivityNotificationBinding;
-import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.LinkedList;
-import java.util.Optional;
 
 import io.vertx.core.json.JsonArray;
 import retrofit2.Call;

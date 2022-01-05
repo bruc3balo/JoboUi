@@ -54,6 +54,7 @@ import com.example.joboui.databinding.ActivityClientBinding;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.login.ServiceProviderAdditionalActivity;
 import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
+import com.example.joboui.serviceProviderUi.pages.HistoryActivity;
 import com.example.joboui.services.NotificationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.material.navigation.NavigationView;
@@ -163,6 +164,11 @@ public class ClientActivity extends AppCompatActivity {
                     goToFeedback();
                     break;
 
+                case R.id.history:
+                    closeDrawer(drawerLayout);
+                    goToHistory();
+                    break;
+
             }
 
             return false;
@@ -172,15 +178,15 @@ public class ClientActivity extends AppCompatActivity {
 
         if (userRepository != null) {
             userRepository.getUserLive().observe(this, user -> {
-            if (user.isPresent()) {
-                me = user.get();
-                clientBinding.welcomeText.setText(getWelcomeGreeting(me.getUsername()));
-                TextView username = view.findViewById(R.id.username);
-                username.setText(me.getUsername());
-                TextView email = view.findViewById(R.id.emailAddress);
-                email.setText(me.getEmail_address());
-            }
-        });
+                if (user.isPresent()) {
+                    me = user.get();
+                    clientBinding.welcomeText.setText(getWelcomeGreeting(me.getUsername(), ClientActivity.this));
+                    TextView username = view.findViewById(R.id.username);
+                    username.setText(me.getUsername());
+                    TextView email = view.findViewById(R.id.emailAddress);
+                    email.setText(me.getEmail_address());
+                }
+            });
         }
 
     }
@@ -194,7 +200,7 @@ public class ClientActivity extends AppCompatActivity {
             serviceList.clear();
             servicesPageGridAdapter.notifyDataSetChanged();
             allServiceList.forEach((position, services) -> {
-                if (alike(query,services.getName())) {
+                if (alike(query, services.getName())) {
                     serviceList.put(position, services);
                     servicesPageGridAdapter.notifyDataSetChanged();
                 }
@@ -210,7 +216,11 @@ public class ClientActivity extends AppCompatActivity {
         startActivity(new Intent(ClientActivity.this, ReviewActivity.class));
     }
 
-    private SpannableStringBuilder getWelcomeGreeting(String username) {
+    private void goToHistory() {
+        startActivity(new Intent(ClientActivity.this, HistoryActivity.class));
+    }
+
+    public static SpannableStringBuilder getWelcomeGreeting(String username, Activity activity) {
         String welcome;
         int hour;
 
@@ -221,7 +231,7 @@ public class ClientActivity extends AppCompatActivity {
             hour = Calendar.getInstance().getTime().getHours();
         }
 
-        Toast.makeText(this, String.valueOf(hour), Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, String.valueOf(hour), Toast.LENGTH_SHORT).show();
 
         if (hour < 12) {
             welcome = "Good Morning ";
@@ -233,7 +243,7 @@ public class ClientActivity extends AppCompatActivity {
             welcome = "Hello";
         }
 
-        ForegroundColorSpan foregroundColorSpanRed = new ForegroundColorSpan(getColor(R.color.deep_purple));
+        ForegroundColorSpan foregroundColorSpanRed = new ForegroundColorSpan(activity.getColor(R.color.deep_purple));
         StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
 
         SpannableStringBuilder welcomeText = new SpannableStringBuilder(welcome.concat(username));
@@ -299,28 +309,7 @@ public class ClientActivity extends AppCompatActivity {
         servicesPageGridAdapter.notifyDataSetChanged();
     }
 
-    public static void checkToLogoutUser(Activity activity, Application application) {
 
-        //todo use live data instead
-        Map<String, ?> map = getSp(USER_DB, application);
-
-        if (map == null) {
-            System.out.println("No user sp");
-            //todo rectify
-            return;
-        }
-
-        Boolean loggedIn = (Boolean) map.get(LOGGED_IN);
-        if (loggedIn == null) {
-            System.out.println("No logged in value sp");
-            //todo rectify
-            return;
-        }
-
-        if (!loggedIn) {
-            directToLogin(activity);
-        }
-    }
 
     private void setWindowColors() {
         getWindow().setStatusBarColor(getColor(R.color.purple));

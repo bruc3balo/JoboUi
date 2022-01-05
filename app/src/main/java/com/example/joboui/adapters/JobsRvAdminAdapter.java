@@ -43,6 +43,7 @@ import com.example.joboui.admin.AllJobsActivity;
 import com.example.joboui.db.job.JobViewModel;
 import com.example.joboui.model.Models;
 import com.example.joboui.serviceProviderUi.pages.ChatActivity;
+import com.example.joboui.utils.ConvertDate;
 import com.example.joboui.utils.JobStatus;
 import com.example.joboui.utils.JsonResponse;
 import com.example.joboui.utils.MyLinkedMap;
@@ -153,12 +154,12 @@ public class JobsRvAdminAdapter extends RecyclerView.Adapter<JobsRvAdminAdapter.
 
         if (job.getCreated_at() != null) {
             String createdAtLabel = activity.getString(R.string.createdat_label);
-            holder.createdAtContent.setText(getBoldSpannable(createdAtLabel, job.getCreated_at()));
+            holder.createdAtContent.setText(getBoldSpannable(createdAtLabel, ConvertDate.formatDateReadable(job.getCreated_at())));
         }
 
         String completedAtLabel = activity.getString(R.string.completedat_label);
         if (job.getCompleted_at() != null) {
-            holder.completedAtContent.setText(getBoldSpannable(completedAtLabel, job.getCompleted_at()));
+            holder.completedAtContent.setText(getBoldSpannable(completedAtLabel, ConvertDate.formatDateReadable(job.getCompleted_at())));
         } else {
             holder.completedAtContent.setText(getBoldSpannable(completedAtLabel, "NOT YET COMPLETE"));
         }

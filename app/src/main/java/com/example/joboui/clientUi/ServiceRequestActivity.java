@@ -121,7 +121,6 @@ public class ServiceRequestActivity extends AppCompatActivity {
     }
 
     private void goNext () {
-        //todo
         if (pager2.getCurrentItem() < mainTitles.length - 1) {
             pager2.setCurrentItem(pager2.getCurrentItem() + 1);
         } else {

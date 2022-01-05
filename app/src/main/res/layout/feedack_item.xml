@@ -51,6 +51,7 @@
                 android:progress="0"
                 android:stepSize="0.5"
                 android:numStars="5"
+                android:isIndicator="true"
                 android:layout_margin="5dp"
                 android:layout_marginBottom="5dp"
                 android:layout_width="wrap_content"

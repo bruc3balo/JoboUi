@@ -53,7 +53,7 @@
                 android:layout_gravity="center"
                 android:padding="10dp"
                 android:textStyle="bold"
-                android:gravity="center"
+                android:gravity="center_vertical"
                 android:textColor="@color/black"
                 android:text="@string/parties"/>
 
@@ -69,9 +69,9 @@
                     android:id="@+id/clientPartyContent"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_vertical"
                     android:padding="10dp"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
                     android:textColor="@color/black"
                     android:text="@string/client_label"/>
 
@@ -80,9 +80,9 @@
                     android:id="@+id/providerPartyContent"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_vertical"
                     android:padding="10dp"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
                     android:textColor="@color/black"
                     android:text="@string/service_provider_label"/>
 
@@ -90,10 +90,6 @@
             </LinearLayout>
 
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_gravity="center"/>
 
             <TextView
                 android:id="@+id/specialityContent"
@@ -101,14 +97,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="10dp"
-                android:gravity="center"
+                android:gravity="center_vertical"
                 android:textColor="@color/black"
                 android:text="@string/speciality_label"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_gravity="center"/>
 
             <TextView
                 android:id="@+id/jdContent"
@@ -116,7 +108,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="10dp"
-                android:gravity="center"
+                android:gravity="center_vertical"
                 android:textColor="@color/black"
                 android:text="@string/job_description_label"/>
 
@@ -127,10 +119,19 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="10dp"
-                android:gravity="center"
+                android:gravity="center_vertical"
                 android:textColor="@color/black"
                 android:text="@string/location_label"/>
 
+            <TextView
+                android:id="@+id/urgency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:text="@string/urgency"/>
 
 
             <ImageButton
@@ -143,15 +144,7 @@
                 android:background="@drawable/circle"
                 app:tint="@color/purple" />
 
-            <TextView
-                android:id="@+id/urgency"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:gravity="center"
-                android:textColor="@color/black"
-                android:text="@string/urgency"/>
+
 
         </LinearLayout>
 

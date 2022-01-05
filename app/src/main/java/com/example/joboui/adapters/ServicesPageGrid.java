@@ -28,8 +28,6 @@ public class ServicesPageGrid extends BaseAdapter {
     public final static MyLinkedMap<Integer, Domain.Services> serviceList = new MyLinkedMap<>();
 
 
-    //todo solve bug
-    //todo send request
 
     public ServicesPageGrid(LifecycleOwner lifecycleOwner) {
         try {

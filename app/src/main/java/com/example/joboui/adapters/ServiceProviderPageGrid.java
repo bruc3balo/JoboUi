@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.joboui.R;
-import com.example.joboui.domain.Domain;
 import com.example.joboui.utils.MyLinkedMap;
 
 import java.util.Optional;
@@ -45,7 +44,7 @@ public class ServiceProviderPageGrid extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_row_card, null);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_row, null);
         }
 
 
@@ -65,13 +64,12 @@ public class ServiceProviderPageGrid extends BaseAdapter {
 
         MyLinkedMap<String, Integer> map = new MyLinkedMap<>();
 
-        map.put("Job Offers ("+jobs +")", R.drawable.ic_mailbox);
-        map.put(username, R.drawable.ic_worker);
-        map.put("History", R.drawable.ic_history);
+        map.put("Job Offers ("+jobs +")", R.drawable.ic_request);
+        map.put("Profile", R.drawable.ic_person_circle);
+        map.put("History", R.drawable.ic_history_svgrepo_com);
 
-        map.put("Services", R.drawable.ic_service);
         map.put("Feedback", R.drawable.ic_person_feedback);
-        map.put("Notification", R.drawable.ic_bell_notification);
+        //map.put("Notification", R.drawable.ic_bell_notification);
 
         return map;
     }

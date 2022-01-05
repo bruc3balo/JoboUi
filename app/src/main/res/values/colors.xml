@@ -2,6 +2,8 @@
 <resources>
     <color name="purple">#34306E</color>
     <color name="deep_purple">#2B185B</color>
+    <color name="deep_purple_trans">#372B185B</color>
+    <color name="deep_purple_trans2">#2C2B185B</color>
     <color name="bright_purple">#8548DC</color>
     <color name="transparent">#00000000</color>
     <color name="black">#FF000000</color>

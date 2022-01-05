@@ -4,50 +4,44 @@ import static com.example.joboui.SplashScreen.addListener;
 import static com.example.joboui.SplashScreen.addLogoutListener;
 import static com.example.joboui.SplashScreen.removeListener;
 import static com.example.joboui.admin.AdminActivity.logout;
+import static com.example.joboui.clientUi.ClientActivity.getWelcomeGreeting;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.USERNAME;
-import static com.example.joboui.globals.GlobalVariables.USER_DB;
-import static com.example.joboui.login.SignInActivity.clearSp;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
+import static com.example.joboui.serviceProviderUi.pages.HistoryActivity.completedStatus;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 
-import com.example.joboui.JobTrackActivity;
 import com.example.joboui.NotificationActivity;
 import com.example.joboui.R;
 import com.example.joboui.ReviewActivity;
-import com.example.joboui.adapters.JobsRvAdapter;
 import com.example.joboui.adapters.ServiceProviderPageGrid;
 import com.example.joboui.databinding.ActivityServiceProviderBinding;
 import com.example.joboui.db.job.JobViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
+import com.example.joboui.serviceProviderUi.pages.HistoryActivity;
 import com.example.joboui.serviceProviderUi.pages.JobRequests;
 import com.example.joboui.serviceProviderUi.pages.ManageServicesProvider;
 import com.example.joboui.serviceProviderUi.pages.ServiceProviderProfile;
-import com.example.joboui.services.NotificationService;
 import com.example.joboui.utils.JobStatus;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import io.vertx.core.json.JsonArray;
@@ -70,16 +64,19 @@ public class ServiceProviderActivity extends AppCompatActivity {
 
         Toolbar serviceProviderToolbar = serviceProviderBinding.serviceProviderToolbar;
         setSupportActionBar(serviceProviderToolbar);
-        serviceProviderToolbar.setOverflowIcon(getDrawable(R.drawable.more));
+        //serviceProviderToolbar.setOverflowIcon(getDrawable(R.drawable.more));
 
         GridView serviceProviderGrid = serviceProviderBinding.serviceProviderGrid;
+
+        ImageButton notifications = serviceProviderBinding.notifications;
+        notifications.setOnClickListener(v -> goToNotifications());
+
 
         if (userRepository != null) {
             userRepository.getUserLive().observe(this, user -> {
                 if (user.isPresent()) {
                     this.user = user.get();
-                    serviceProviderToolbar.setTitle(user.get().getRole());
-                    serviceProviderToolbar.setSubtitle(user.get().getUsername());
+                    serviceProviderBinding.welcomeText.setText(getWelcomeGreeting(user.get().getUsername(), this));
                     getGridData(user.get());
                     serviceProviderGrid.setOnItemClickListener((parent, view, position, id) -> {
                         switch (position) {
@@ -94,17 +91,15 @@ public class ServiceProviderActivity extends AppCompatActivity {
                                 goToProfile(user.get().getUsername());
                                 break;
 
-                            case 3:
-                                goToServices();
+                            case 2:
+                                goToHistory();
                                 break;
 
-                            case 4:
+                            case 3:
                                 goToFeedback();
                                 break;
 
-                            case 5:
-                                goToNotifications();
-                                break;
+
                         }
                     });
                     addRefreshListener();
@@ -114,9 +109,6 @@ public class ServiceProviderActivity extends AppCompatActivity {
 
         setWindowColors();
     }
-
-
-
 
 
     private void addRefreshListener() {
@@ -165,9 +157,11 @@ public class ServiceProviderActivity extends AppCompatActivity {
                 jobs.forEach(u -> {
                     try {
                         Models.Job job = getObjectMapper().readValue(u.toString(), Models.Job.class);
-                        if (!(job.getJob_status().equals(JobStatus.DECLINED.code)) && !(job.getJob_status().equals(JobStatus.CANCELLED.code)) && !(job.getJob_status().equals(JobStatus.SERVICE_REPORTED.code)) || !(job.getJob_status() == JobStatus.SERVICE_REPORTED.getCode() || !(job.getJob_status() == JobStatus.CLIENT_REPORTED.getCode()))) {
+
+                        if (!Arrays.asList(completedStatus).contains(job.getJob_status())) {
                             c[0]++;
                         }
+
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
@@ -190,6 +184,7 @@ public class ServiceProviderActivity extends AppCompatActivity {
             logout(getApplication());
             return false;
         }).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -205,12 +200,16 @@ public class ServiceProviderActivity extends AppCompatActivity {
         startActivity(new Intent(ServiceProviderActivity.this, ReviewActivity.class));
     }
 
+    private void goToHistory() {
+        startActivity(new Intent(ServiceProviderActivity.this, HistoryActivity.class));
+    }
+
     private void goToNotifications() {
         startActivity(new Intent(ServiceProviderActivity.this, NotificationActivity.class));
     }
 
     private void goToProfile(String username) {
-        startActivity(new Intent(ServiceProviderActivity.this, ServiceProviderProfile.class).putExtra(USERNAME,username));
+        startActivity(new Intent(ServiceProviderActivity.this, ServiceProviderProfile.class).putExtra(USERNAME, username));
     }
 
     @Override
@@ -222,6 +221,7 @@ public class ServiceProviderActivity extends AppCompatActivity {
             getGridData(user);
         }
     }
+
 
     @Override
     protected void onPause() {

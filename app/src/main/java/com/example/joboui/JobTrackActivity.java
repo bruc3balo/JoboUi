@@ -4,6 +4,7 @@ import static android.graphics.Color.RED;
 import static com.example.joboui.adapters.JobsRvAdapter.getUnderlinedSpannableBuilder;
 import static com.example.joboui.clientUi.request.LocationRequest.getAddressFromLocation;
 import static com.example.joboui.globals.GlobalDb.userRepository;
+import static com.example.joboui.globals.GlobalVariables.ASAP;
 import static com.example.joboui.globals.GlobalVariables.JOB;
 import static com.example.joboui.globals.GlobalVariables.REPORTED;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
@@ -41,10 +42,9 @@ import com.example.joboui.db.job.JobViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.globals.GlobalVariables;
 import com.example.joboui.model.Models;
-import com.example.joboui.model.Models.Review;
 import com.example.joboui.serviceProviderUi.pages.ChatActivity;
-import com.example.joboui.serviceProviderUi.pages.JobRequests;
 import com.example.joboui.utils.AppRolesEnum;
+import com.example.joboui.utils.ConvertDate;
 import com.example.joboui.utils.JobStatus;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.appbar.AppBarLayout;
@@ -52,6 +52,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -70,10 +71,9 @@ public class JobTrackActivity extends AppCompatActivity {
     private LinearLayout providerLayout;
     private Button decline, accept, negotiation;
     private JobViewModel jobViewModel;
-    private View line1,line2,line3,line4;
-    private ImageView circle1,circle2,circle3,circle4,circle5;
+    private View line1, line2, line3, line4;
+    private ImageView circle1, circle2, circle3, circle4, circle5;
     public static MutableLiveData<Optional<Boolean>> refreshJobTracking = new MutableLiveData<>();
-
 
 
     @Override
@@ -90,7 +90,7 @@ public class JobTrackActivity extends AppCompatActivity {
 
         Toolbar toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(v->finish());
+        toolbar.setNavigationOnClickListener(v -> finish());
 
         CollapsingToolbarLayout toolBarLayout = binding.toolbarLayout;
         toolBarLayout.setTitle(getTitle());
@@ -179,6 +179,11 @@ public class JobTrackActivity extends AppCompatActivity {
 
     private void setData(Models.Job job) {
 
+        binding.partyTitle.setVisibility(View.GONE);
+        binding.timeTv.setVisibility(View.GONE);
+        binding.priceTv.setVisibility(View.GONE);
+        binding.spec.setVisibility(View.GONE);
+
         statusTitle.setText(getUnderlinedSpannableBuilder(getString(R.string.status)));
         jdTitle.setText(getUnderlinedSpannableBuilder(getString(R.string.job_description)));
         partyTitle.setText(getUnderlinedSpannableBuilder(getString(R.string.parties)));
@@ -232,22 +237,26 @@ public class JobTrackActivity extends AppCompatActivity {
 
         if (job.getCreated_at() != null) {
             String createdAtLabel = getString(R.string.createdat_label);
-            createdAtContent.setText(getBoldSpannable(createdAtLabel, job.getCreated_at()));
+            createdAtContent.setText(getBoldSpannable(createdAtLabel, ConvertDate.formatDateReadable(job.getCreated_at())));
         }
 
         if (job.getCompleted_at() != null) {
             String completedAtLabel = getString(R.string.completedat_label);
-            completedAtContent.setText(getBoldSpannable(completedAtLabel, job.getCompleted_at()));
+            completedAtContent.setText(getBoldSpannable(completedAtLabel, ConvertDate.formatDateReadable(job.getCompleted_at())));
         }
 
         if (job.getScheduled_at() != null) {
             String urgencyLabel = getString(R.string.urgency);
-            urgency.setText(getBoldSpannable(urgencyLabel, job.getScheduled_at()));
+            binding.urgencyLabel.setText(getUnderlinedSpannableBuilder(urgencyLabel));
+
+
+            Date date = ConvertDate.formatDate(job.getScheduled_at());
+            urgency.setText(job.getScheduled_at().equals(ASAP) ? job.getScheduled_at() : ConvertDate.formatDateReadable(date));
         }
 
         if (job.getClient_username() != null) {
             String clientLabel = getString(R.string.client_label);
-            clientPartyContent.setText(getBoldSpannable(clientLabel, job.getClient_username()));
+            clientPartyContent.setText(job.getClient_username());
 
             if (job.getClient_username().equals(me.getUsername())) {
                 setClient(job);
@@ -256,7 +265,7 @@ public class JobTrackActivity extends AppCompatActivity {
 
         if (job.getLocal_service_provider_username() != null) {
             String providerLabel = getString(R.string.service_provider_label);
-            providerPartyContent.setText(getBoldSpannable(providerLabel, job.getLocal_service_provider_username()));
+            providerPartyContent.setText(job.getLocal_service_provider_username());
 
 
             if (job.getLocal_service_provider_username().equals(me.getUsername())) {
@@ -290,6 +299,11 @@ public class JobTrackActivity extends AppCompatActivity {
         edit.setVisibility(View.GONE);
         providerLayout.setVisibility(View.VISIBLE);
 
+        binding.providerPartyContent.setVisibility(View.GONE);
+        binding.providerPartyLabel.setVisibility(View.GONE);
+        binding.createdAtContent.setVisibility(View.GONE);
+        binding.clientPartyLabel.setText(getUnderlinedSpannableBuilder(getString(R.string.client)));
+
 
         circle1.setImageResource(R.drawable.circle);
         circle2.setImageResource(R.drawable.circle);
@@ -309,6 +323,7 @@ public class JobTrackActivity extends AppCompatActivity {
                 return null;
             });
         });
+
         chat.setOnClickListener(v -> goToChat(job));
 
         switch (job.getJob_status()) {
@@ -342,7 +357,7 @@ public class JobTrackActivity extends AppCompatActivity {
 
 
                 if (job.getJob_price_range() != null) {
-                    priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range())));
+                    priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range()).concat(" KSH")));
                 }
 
                 circle1.setImageResource(R.drawable.circle_day_bg_selected);
@@ -391,7 +406,7 @@ public class JobTrackActivity extends AppCompatActivity {
                 line2.setBackgroundColor(getColor(R.color.red));
                 circle2.setImageResource(R.drawable.circle_day_bg_selected);
                 circle3.setImageResource(R.drawable.circle_day_bg_selected);
-                circle3. setImageTintList(ColorStateList.valueOf(RED));
+                circle3.setImageTintList(ColorStateList.valueOf(RED));
 
 
                 break;
@@ -423,7 +438,7 @@ public class JobTrackActivity extends AppCompatActivity {
                 line2.setBackgroundColor(getColor(R.color.red));
                 circle2.setImageResource(R.drawable.circle_day_bg_selected);
                 circle3.setImageResource(R.drawable.circle_day_bg_selected);
-                circle3. setImageTintList(ColorStateList.valueOf(RED));
+                circle3.setImageTintList(ColorStateList.valueOf(RED));
 
 
                 break;
@@ -450,7 +465,7 @@ public class JobTrackActivity extends AppCompatActivity {
                 }));
 
                 if (job.getJob_price_range() != null) {
-                    priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range())));
+                    priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range()).concat(" KSH")));
                 }
 
                 circle1.setImageResource(R.drawable.circle_day_bg_selected);
@@ -718,8 +733,17 @@ public class JobTrackActivity extends AppCompatActivity {
         decline.setVisibility(View.GONE);
         providerLayout.setVisibility(View.VISIBLE);
 
+        binding.clientPartyContent.setVisibility(View.GONE);
+        binding.clientPartyLabel.setVisibility(View.GONE);
 
+        binding.createdAtContent.setVisibility(View.GONE);
+        binding.providerPartyLabel.setText(getUnderlinedSpannableBuilder(getString(R.string.service_provider)));
+        System.out.println("Date is " + ConvertDate.formatDateReadable(job.getCreated_at()));
 
+  
+        binding.urgencyLabel.setText(getUnderlinedSpannableBuilder("Requested on "));
+        binding.urgency.setText(ConvertDate.formatDateReadable(job.getCreated_at()));
+        binding.createdAtContent.setVisibility(View.GONE);
 
         chat.setOnClickListener(v -> goToChat(job));
 
@@ -752,12 +776,11 @@ public class JobTrackActivity extends AppCompatActivity {
                 chat.setVisibility(View.VISIBLE);
 
                 if (job.getJob_price_range() != null) {
-                    priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range())));
+                    priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range()).concat(" KSH")));
                 }
 
 
                 circle1.setImageResource(R.drawable.circle_day_bg_selected);
-
 
 
                 break;
@@ -831,7 +854,7 @@ public class JobTrackActivity extends AppCompatActivity {
 
 
                 if (job.getJob_price_range() != null) {
-                    priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range())));
+                    priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range()).concat(" KSH")));
                 }
 
                 circle1.setImageResource(R.drawable.circle_day_bg_selected);
@@ -840,8 +863,7 @@ public class JobTrackActivity extends AppCompatActivity {
                 line2.setBackgroundColor(getColor(R.color.red));
                 circle2.setImageResource(R.drawable.circle_day_bg_selected);
                 circle3.setImageResource(R.drawable.circle_day_bg_selected);
-                circle3. setImageTintList(ColorStateList.valueOf(RED));
-
+                circle3.setImageTintList(ColorStateList.valueOf(RED));
 
 
                 break;
@@ -855,7 +877,7 @@ public class JobTrackActivity extends AppCompatActivity {
                 line2.setBackgroundColor(getColor(R.color.red));
                 circle2.setImageResource(R.drawable.circle_day_bg_selected);
                 circle3.setImageResource(R.drawable.circle_day_bg_selected);
-                circle3. setImageTintList(ColorStateList.valueOf(RED));
+                circle3.setImageTintList(ColorStateList.valueOf(RED));
 
                 //NEGOTIATING
             case 3:
@@ -881,7 +903,7 @@ public class JobTrackActivity extends AppCompatActivity {
                 edit.setVisibility(View.VISIBLE);
 
                 if (job.getJob_price_range() != null) {
-                    priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range())));
+                    priceContent.setText(getBoldSpannable("Suggested Price : ", String.valueOf(job.getJob_price_range()).concat(" KSH")));
                 }
 
                 circle1.setImageResource(R.drawable.circle_day_bg_selected);

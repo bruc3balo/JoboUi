@@ -28,6 +28,9 @@
         android:theme="@style/Theme.JoboUi"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".serviceProviderUi.pages.HistoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".clientUi.review.LSPReviews"
             android:exported="false" />
         <activity

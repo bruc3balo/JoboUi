@@ -132,7 +132,7 @@ public class ProviderRVAdapter extends RecyclerView.Adapter<ProviderRVAdapter.Vi
     }
 
 
-    private String getDistanceInKm(double distanceInM) {
+    public static String getDistanceInKm(double distanceInM) {
         double dist = Double.parseDouble(String.valueOf(Math.floor(distanceInM)).split("\\.")[0]);
 
         System.out.println("dist is "+dist);
@@ -140,21 +140,21 @@ public class ProviderRVAdapter extends RecyclerView.Adapter<ProviderRVAdapter.Vi
     }
 
 
-    private int getDay(String day) {
+    public static int getDay(String day) {
         String[] days = new String[]{SATURDAY, SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY};
         System.out.println("the day search is " + day);
         List<String> daysArray = new ArrayList<>(Arrays.asList(days));
         return daysArray.indexOf(day);
     }
 
-    private String getDay(int day) {
+    public static String getDay(int day) {
         String[] days = new String[]{SATURDAY, SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY};
         System.out.println("the day search is " + day);
         return days[day];
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private boolean isOpen(LinkedHashMap<String, String> workingHours) {
+    public static boolean isOpen(LinkedHashMap<String, String> workingHours) {
         Calendar c = Calendar.getInstance();
 
         //day == day (keys)

@@ -260,6 +260,13 @@ public class Models {
 
         }
 
+
+        public UserUpdateForm(String email_address, String phone_number, String bio) {
+            this.email_address = email_address;
+            this.phone_number = phone_number;
+            this.bio = bio;
+        }
+
         public UserUpdateForm(Boolean disabled, Boolean deleted, Boolean verified) {
             this.disabled = disabled;
             this.deleted = deleted;
@@ -1096,13 +1103,13 @@ public class Models {
 
         private String specialities;
 
-        private String created_at;
+        private Date created_at;
 
-        private String updated_at;
+        private Date updated_at;
 
         private String scheduled_at;
 
-        private String completed_at;
+        private Date completed_at;
 
         private String job_price_range;
 
@@ -1124,7 +1131,7 @@ public class Models {
             this.reported = reported;
         }
 
-        public Job(Long id, String local_service_provider_username, String client_username, String job_location, String specialities, String created_at, String updated_at, String scheduled_at, String completed_at, String job_price_range, BigDecimal job_price, String job_description, Integer job_status) {
+        public Job(Long id, String local_service_provider_username, String client_username, String job_location, String specialities, Date created_at, Date updated_at, String scheduled_at, Date completed_at, String job_price_range, BigDecimal job_price, String job_description, Integer job_status) {
             this.id = id;
             this.local_service_provider_username = local_service_provider_username;
             this.client_username = client_username;
@@ -1142,7 +1149,6 @@ public class Models {
 
         public Boolean getReported() {
             return reported;
-            //todo reported api
         }
 
         public Set<Payment> getPayments() {
@@ -1197,19 +1203,19 @@ public class Models {
             this.specialities = specialities;
         }
 
-        public String getCreated_at() {
+        public Date getCreated_at() {
             return created_at;
         }
 
-        public void setCreated_at(String created_at) {
+        public void setCreated_at(Date created_at) {
             this.created_at = created_at;
         }
 
-        public String getUpdated_at() {
+        public Date getUpdated_at() {
             return updated_at;
         }
 
-        public void setUpdated_at(String updated_at) {
+        public void setUpdated_at(Date updated_at) {
             this.updated_at = updated_at;
         }
 
@@ -1221,11 +1227,11 @@ public class Models {
             this.scheduled_at = scheduled_at;
         }
 
-        public String getCompleted_at() {
+        public Date getCompleted_at() {
             return completed_at;
         }
 
-        public void setCompleted_at(String completed_at) {
+        public void setCompleted_at(Date completed_at) {
             this.completed_at = completed_at;
         }
 

@@ -4,6 +4,7 @@ import static com.example.joboui.SplashScreen.LOCATION_PERMISSION_CODE;
 import static com.example.joboui.clientUi.ServiceRequestActivity.jobRequestForm;
 import static com.example.joboui.globals.GlobalVariables.ASAP;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
+import static com.example.joboui.services.NotificationService.myLocation;
 import static com.example.joboui.utils.DataOps.TIMESTAMP_PATTERN;
 
 import android.Manifest;
@@ -12,6 +13,7 @@ import android.app.DatePickerDialog;
 import android.app.SearchManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -19,8 +21,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -34,6 +38,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -66,6 +71,7 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -90,20 +96,20 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
     }
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for requireActivity() fragment
 
         binding = FragmentLocationRequestBinding.inflate(inflater);
-        
-        SearchView locationSearch =binding.locationSearch;
+
+        SearchView locationSearch = binding.locationSearch;
         SearchManager searchManager = (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
 
         locationSearch.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().getComponentName()));
@@ -205,15 +211,37 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
                 final int[] yearS = {0};
                 final int[] monthS = {0};
                 final int[] dayS = {0};
+                LocalTime localTime = LocalTime.now();
+
 
                 TimePickerDialog timePickerDialog = new TimePickerDialog(requireContext(), (view, hourOfDay, minute) -> {
                     hourS[0] = hourOfDay;
                     minS[0] = minute;
+
+                    String h = String.valueOf(hourOfDay).length() == 1 ? "0".concat(String.valueOf(hourOfDay)) : String.valueOf(hourOfDay);
+                    String m = String.valueOf(minute).length() == 1 ? "0".concat(String.valueOf(minute)) : String.valueOf(minute);
+
+                    LocalTime picked = LocalTime.parse(h.concat(":").concat(m));
+                    if (picked.isBefore(localTime)) {
+                        binding.asap.setChecked(true);
+                        Toast.makeText(requireContext(), "Time cannot be in the past", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else if (picked.equals(localTime)) {
+                        binding.asap.setChecked(true);
+                        Toast.makeText(requireContext(), "Changed to as soon as possible", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     scheduledDate.set(yearS[0], monthS[0], dayS[0], hourS[0], minS[0]);
-                    String date = ConvertDate.formatDate(scheduledDate.getTime(),TIMESTAMP_PATTERN);
+                    String date = ConvertDate.formatDateReadable(scheduledDate.getTime());
                     binding.scheduledTimeTv.setText(date);
                     jobRequestForm.setScheduled_at(date);
                 }, hr, min, true);
+
+
+
+
+
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
                     yearS[0] = year;
@@ -221,6 +249,8 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
                     dayS[0] = dayOfMonth;
                     timePickerDialog.show();
                 }, yearM, monthM, dayM);
+
+                datePickerDialog.setOnShowListener(dialog -> datePickerDialog.getDatePicker().setMinDate(Calendar.getInstance().getTimeInMillis()));
 
                 datePickerDialog.show();
                 datePickerDialog.setOnCancelListener(dialog -> {
@@ -249,7 +279,7 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if (binding.estimate.getText().toString().isEmpty() ) {
+                if (binding.estimate.getText().toString().isEmpty()) {
                     return;
                 }
 
@@ -292,7 +322,7 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
             if (address.isPresent()) {
                 LatLng lat = new LatLng(address.get().getLatitude(), address.get().getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lat, 15));
-                addMarkerToMap(mMap,lat);
+                addMarkerToMap(mMap, lat);
                 jobRequestForm.setJob_location(new Gson().toJson(lat));
             }
 
@@ -337,6 +367,8 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
         googleMap.setOnInfoWindowClickListener(this::getFromMarker);
         googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.getUiSettings().setZoomGesturesEnabled(true);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation,15));
+        addMarkerToMap(googleMap,myLocation);
     }
 
     private void addMarkerToMap(GoogleMap googleMap, LatLng latLng) {
@@ -353,7 +385,7 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
             Snackbar.make(binding.getRoot(), address.getAddressLine(0), Snackbar.LENGTH_LONG).show();
             binding.locationPickedTv.setText(address.getAddressLine(0));
             try {
-                jobRequestForm.setJob_location(getObjectMapper().writeValueAsString(new LatLng(marker.getPosition().latitude,marker.getPosition().longitude)));
+                jobRequestForm.setJob_location(getObjectMapper().writeValueAsString(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude)));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -384,14 +416,14 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    public static Address getAddressFromLocation (Context context,LatLng latLng) {
+    public static Address getAddressFromLocation(Context context, LatLng latLng) {
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
         try {
             List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
             if (!addresses.isEmpty()) {
                 return addresses.get(0);
             } else {
-               return null;
+                return null;
             }
         } catch (IOException | IllegalArgumentException e) {
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -433,8 +465,7 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    
-    
+
     @Override
     public void onStart() {
         super.onStart();
@@ -458,7 +489,6 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
 
         showSuggestions(anchor);
     }
-
 
 
     @Override

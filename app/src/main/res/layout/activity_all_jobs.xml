@@ -17,6 +17,7 @@
             android:layout_gravity="top"
             app:subtitleTextColor="@color/grey"
             app:titleTextColor="@color/white"
+            app:title="@string/jobs"
             android:background="@color/deep_purple"
             app:navigationIcon="@drawable/ic_back"
             android:id="@+id/toolbar"/>

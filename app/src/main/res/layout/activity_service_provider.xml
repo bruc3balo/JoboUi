@@ -16,24 +16,54 @@
             android:id="@+id/serviceProviderToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:titleTextColor="@color/white"
-            app:navigationIcon="@drawable/ic_worker"
-            app:title="@string/service_provider"
             android:layout_gravity="center"
-            app:subtitleTextColor="@color/grey"
-            android:background="@color/deep_purple"/>
+            android:background="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/welcomeText"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/deep_purple"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="Good morning"/>
+
+                <ImageButton
+                    android:id="@+id/notifications"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_bell_notification"
+                    android:background="@android:color/transparent"/>
+
+            </LinearLayout>
+
+
+        </androidx.appcompat.widget.Toolbar>
 
     <GridLayout
+        android:layout_weight="1"
+        android:background="@color/lgrey"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="vertical">
 
 
         <GridView
             android:id="@+id/serviceProviderGrid"
-            android:layout_margin="10dp"
-            android:horizontalSpacing="10dp"
-            android:verticalSpacing="10dp"
+            android:layout_margin="15dp"
+            android:horizontalSpacing="15dp"
+            android:verticalSpacing="15dp"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:layout_gravity="center"

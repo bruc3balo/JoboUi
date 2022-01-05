@@ -218,7 +218,7 @@ public class Domain {
         }
     }
 
-    //todo entity
+
     public static class TutorialModel {
         private String imageId;
         private String explanation;

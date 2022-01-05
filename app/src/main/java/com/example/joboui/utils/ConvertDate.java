@@ -13,6 +13,19 @@ import java.util.Date;
 import java.util.Locale;
 
 public class ConvertDate {
+
+
+    public static String formatDateReadable(Date date){
+        if (date == null)
+            return null;
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy, hh:mm");
+            return format.format(date);
+        }catch (Exception ex){
+            return null;
+        }
+    }
+
     public static String formatDate(Date date, String dateFormat){
         if (date == null)
             return null;

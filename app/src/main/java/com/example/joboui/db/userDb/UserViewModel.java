@@ -1,8 +1,13 @@
 package com.example.joboui.db.userDb;
 
+import static com.example.joboui.adapters.ProviderRVAdapter.getDistanceInKm;
+import static com.example.joboui.adapters.ProviderRVAdapter.isOpen;
 import static com.example.joboui.globals.GlobalDb.userApi;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.ACCESS_TOKEN;
+import static com.example.joboui.globals.GlobalVariables.HY;
+import static com.example.joboui.globals.GlobalVariables.LATITUDE;
+import static com.example.joboui.globals.GlobalVariables.LONGITUDE;
 import static com.example.joboui.globals.GlobalVariables.PAGE_NO;
 import static com.example.joboui.globals.GlobalVariables.PASSWORD;
 import static com.example.joboui.globals.GlobalVariables.REFRESH_TOKEN;
@@ -13,6 +18,9 @@ import static com.example.joboui.login.SignInActivity.decodeToken;
 import static com.example.joboui.login.SignInActivity.editSp;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
 import static com.example.joboui.login.SignInActivity.getSp;
+import static com.example.joboui.services.NotificationService.myLocation;
+import static com.example.joboui.utils.DataOps.getMapFromString;
+import static com.example.joboui.utils.FlatEarthDist.distance;
 
 import android.app.Application;
 import android.os.Build;
@@ -33,6 +41,7 @@ import com.example.joboui.utils.DataOps;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +50,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -82,10 +92,10 @@ public class UserViewModel extends AndroidViewModel {
 
 
                     if (jsonResponse == null) {
-                        System.out.println("NO USER DATA "+response.code());
+                        System.out.println("NO USER DATA " + response.code());
                         userMutableLiveData.setValue(Optional.empty());
                         return;
-                    }  else {
+                    } else {
                         System.out.println("USER  DAA");
                     }
 
@@ -149,10 +159,10 @@ public class UserViewModel extends AndroidViewModel {
 
 
                     if (jsonResponse == null) {
-                        System.out.println("NO USER DATA "+response.code());
+                        System.out.println("NO USER DATA " + response.code());
                         userMutableLiveData.setValue(Optional.empty());
                         return;
-                    }  else {
+                    } else {
                         System.out.println("USER  DAA");
                     }
 
@@ -197,7 +207,7 @@ public class UserViewModel extends AndroidViewModel {
         return userMutableLiveData;
     }
 
-    private MutableLiveData<Optional<List<Models.AppUser>>> getServiceProviders(String speciality, Integer page, Integer pageSize) throws JSONException, JsonProcessingException {
+    private MutableLiveData<Optional<List<Models.AppUser>>> getServiceProviders(String speciality, Integer page, Integer pageSize, Boolean scheduled) throws JSONException, JsonProcessingException {
         MutableLiveData<Optional<List<Models.AppUser>>> mutableLiveData = new MutableLiveData<>();
         List<Models.AppUser> userList = new ArrayList<>();
 
@@ -210,7 +220,8 @@ public class UserViewModel extends AndroidViewModel {
 
         String header = "Bearer " + Objects.requireNonNull(getSp(USER_DB, application).get(REFRESH_TOKEN)).toString();
 
-        userApi.getProviders(parameters,header).enqueue(new Callback<JsonResponse>() {
+        userApi.getProviders(parameters, header).enqueue(new Callback<JsonResponse>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
                 JsonResponse jsonResponse = response.body();
@@ -227,10 +238,30 @@ public class UserViewModel extends AndroidViewModel {
                 try {
 
                     JsonArray users = new JsonArray(getObjectMapper().writeValueAsString(jsonResponse.getData()));
-                    users.forEach(u-> {
+                    users.forEach(u -> {
                         try {
+                            boolean distanceMet = true;
                             Models.AppUser user = getObjectMapper().readValue(u.toString(), Models.AppUser.class);
-                            userList.add(user);
+
+                            if (!user.getLast_known_location().equals(HY)) {
+                                LinkedHashMap<String, String> map = getMapFromString(user.getLast_known_location());
+                                LatLng userLocation = new LatLng(Double.parseDouble(Objects.requireNonNull(map.get(LATITUDE))), Double.parseDouble(Objects.requireNonNull(map.get(LONGITUDE))));
+                                double distance = distance(userLocation, myLocation);
+                                //distanceMet = (distance / 1000) < 50.0;
+                            }
+
+                            LinkedHashMap<String, String> workingHours = getMapFromString(user.getPreferred_working_hours());
+
+                            //only get lsp if distance is met
+
+                            if (distanceMet) {
+                                //if not open and scheduled
+                                //if open
+                                if ((!isOpen(workingHours) && scheduled) || isOpen(workingHours)) {
+                                    userList.add(user);
+                                }
+
+                            }
                         } catch (JsonProcessingException e) {
                             e.printStackTrace();
                         }
@@ -376,7 +407,7 @@ public class UserViewModel extends AndroidViewModel {
         }
 
         ObjectMapper mapper = getObjectMapper();
-        String token = "Bearer " + getSp(USER_DB, getApplication()).get(REFRESH_TOKEN); //todo refresh
+        String token = "Bearer " + getSp(USER_DB, getApplication()).get(REFRESH_TOKEN);
 
         userApi.updateUser(repositoryUser.get().getUsername(), token, form).enqueue(new Callback<JsonResponse>() {
             @Override
@@ -421,7 +452,7 @@ public class UserViewModel extends AndroidViewModel {
         return mutableLiveData;
     }
 
-    private MutableLiveData<Optional<Models.AppUser>> updateAUser(String username,UserUpdateForm form) {
+    private MutableLiveData<Optional<Models.AppUser>> updateAUser(String username, UserUpdateForm form) {
         MutableLiveData<Optional<Models.AppUser>> mutableLiveData = new MutableLiveData<>();
 
         Toast.makeText(application, "Updating request", Toast.LENGTH_SHORT).show();
@@ -581,7 +612,7 @@ public class UserViewModel extends AndroidViewModel {
                     List jsonNumbers = mapper.readValue(new JSONArray(jsonResponse.getData().toString()).toString(), List.class);
 
 
-                    System.out.println("NUMBERS DATA"+jsonResponse.getData().toString());
+                    System.out.println("NUMBERS DATA" + jsonResponse.getData().toString());
 
 
                     for (Object number : jsonNumbers) {
@@ -639,12 +670,12 @@ public class UserViewModel extends AndroidViewModel {
         return updateUser(form);
     }
 
-    public LiveData<Optional<Models.AppUser>> updateAnExistingUser(String username,UserUpdateForm form) {
-        return updateAUser(username,form);
+    public LiveData<Optional<Models.AppUser>> updateAnExistingUser(String username, UserUpdateForm form) {
+        return updateAUser(username, form);
     }
 
-    public LiveData<Optional<List<Models.AppUser>>> getProviders(String speciality, Integer page, Integer pageSize) throws JSONException, JsonProcessingException {
-        return getServiceProviders(speciality, page, pageSize);
+    public LiveData<Optional<List<Models.AppUser>>> getProviders(String speciality, Integer page, Integer pageSize,Boolean scheduled) throws JSONException, JsonProcessingException {
+        return getServiceProviders(speciality, page, pageSize,scheduled);
     }
 
     public LiveData<Optional<JsonResponse>> getLiveAllUsers() {

@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable-v24/black_dot.xml" value="0.403125" />
+        <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable-v24/border_thin.xml" value="0.33" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable-v24/circle.xml" value="0.39114583333333336" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable-v24/edit_text_field_white_thin.xml" value="0.39114583333333336" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable-v24/ic_admin_purple.xml" value="0.3851282051282051" />
@@ -31,6 +32,8 @@
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_gardening.xml" value="0.39114583333333336" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_general_repair.xml" value="0.39114583333333336" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_history.xml" value="0.403125" />
+        <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_history_svgrepo_com.xml" value="0.24722222222222223" />
+        <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_job.xml" value="0.3851282051282051" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_laundry.xml" value="0.39114583333333336" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_list.xml" value="0.39114583333333336" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_mailbox.xml" value="0.403125" />
@@ -45,6 +48,7 @@
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_person_feedback.xml" value="0.3148148148148148" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_plumbing.xml" value="0.39114583333333336" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_post.xml" value="0.403125" />
+        <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_request.xml" value="0.2515625" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_service.xml" value="0.39351851851851855" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_settings.xml" value="0.2212962962962963" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/drawable/ic_tab_indicator.xml" value="0.39114583333333336" />
@@ -71,6 +75,7 @@
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_chat.xml" value="0.375" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_client.xml" value="0.37051282051282053" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_disabled.xml" value="0.3609375" />
+        <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_history.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_job_requests.xml" value="0.375" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_job_track.xml" value="0.33" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_login.xml" value="0.38697916666666665" />
@@ -85,7 +90,7 @@
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_review.xml" value="0.375" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_service_provider.xml" value="0.22" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_service_provider_additional.xml" value="0.38697916666666665" />
-        <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_service_provider_profile.xml" value="0.2635416666666667" />
+        <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_service_provider_profile.xml" value="0.25" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_service_reuest.xml" value="0.375" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_service_view.xml" value="0.21875" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/activity_sign_in.xml" value="0.38697916666666665" />
@@ -110,6 +115,7 @@
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/fragment_provider_choosing.xml" value="0.1" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/grid_row.xml" value="0.375" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/grid_row_card.xml" value="0.375" />
+        <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/history_item.xml" value="0.375" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/job_item.xml" value="0.33" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/job_item_admin.xml" value="0.375" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/job_review.xml" value="0.375" />
@@ -123,10 +129,11 @@
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/report_item.xml" value="0.33" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/role_dialog.xml" value="0.375" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/services_admin_layout.xml" value="0.33" />
+        <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/text_dialog.xml" value="0.21770833333333334" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/tutorial_item.xml" value="0.38697916666666665" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/user_item.xml" value="0.375" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/working_hour_picker.xml" value="0.375" />
-        <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/yes_no_info_layout.xml" value="0.175" />
+        <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/layout/yes_no_info_layout.xml" value="0.5" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/menu/client_drawer.xml" value="0.375" />
         <entry key="..\:/Users/Bruce/AndroidStudioProjects/JoboUi/app/src/main/res/menu/location_search.xml" value="0.375" />
       </map>

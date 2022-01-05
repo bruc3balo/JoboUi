@@ -89,7 +89,6 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
     private String verificationIdS;
     private int RESOLVE_HINT = 13;
     private CountDownTimer timer;
-    //TODO SEND verification on phone and notify
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

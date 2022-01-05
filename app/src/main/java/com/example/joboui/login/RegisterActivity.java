@@ -265,7 +265,6 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, "Failed to sign you in. Sign in to continue", Toast.LENGTH_SHORT).show();
                     finish();
                     System.out.println("No login response for " + request.getUsername());
-                    //todo redirect to sign in page
                 }
             });
         } catch (JSONException | JsonProcessingException | InterruptedException e) {

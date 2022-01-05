@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.joboui.R;
 import com.example.joboui.model.Models;
+import com.example.joboui.utils.ConvertDate;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +42,7 @@ public class NotificationRvAdapter extends RecyclerView.Adapter<NotificationRvAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Models.NotificationModels notification = list.get(position);
         holder.title.setText(notification.getTitle());
-        holder.time.setText(notification.getCreated_at().toString());
+        holder.time.setText(ConvertDate.formatDateReadable(notification.getCreated_at()));
         holder.description.setText(notification.getDescription());
     }
 

@@ -1,5 +1,6 @@
 package com.example.joboui.serviceProviderUi.pages;
 
+import static android.graphics.Color.WHITE;
 import static com.example.joboui.globals.GlobalVariables.FRIDAY;
 import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.globals.GlobalVariables.MONDAY;
@@ -16,8 +17,13 @@ import static com.example.joboui.utils.DataOps.getWorkingTimeFromString;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,10 +37,13 @@ import com.example.joboui.databinding.WorkingHourPickerBinding;
 import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
+import com.example.joboui.serviceProviderUi.ServiceProviderActivity;
+import com.example.joboui.tutorial.VerificationActivity;
 import com.example.joboui.utils.DataOps;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -48,12 +57,15 @@ public class ServiceProviderProfile extends AppCompatActivity {
     private ActivityServiceProviderProfileBinding binding;
     private LinkedHashMap<String, String> workingHours = new LinkedHashMap<>();
     private Domain.User user;
-
+    private UserViewModel userViewModel;
+    private final ArrayList<String> phoneNumberList = new ArrayList<>();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         binding = ActivityServiceProviderProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -62,9 +74,23 @@ public class ServiceProviderProfile extends AppCompatActivity {
         binding.toolbar.setNavigationOnClickListener(v -> finish());
 
         if (getIntent().getExtras() != null) {
-            new ViewModelProvider(this).get(UserViewModel.class).getUserByUsername(getIntent().getExtras().getString(USERNAME)).observe(this, userOptional -> userOptional.ifPresent(u-> setUserData(getDomainUserFromModelUser(u))));
+            new ViewModelProvider(this).get(UserViewModel.class).getUserByUsername(getIntent().getExtras().getString(USERNAME)).observe(this, userOptional -> userOptional.ifPresent(u -> setUserData(getDomainUserFromModelUser(u))));
         }
 
+
+        //todo add updating
+        binding.editSpec.setOnClickListener(v -> goToServices());
+        binding.editBio.setOnClickListener(v -> showBioDialog());
+        binding.editEmail.setOnClickListener(v -> showEmailDialog());
+        binding.editPhone.setOnClickListener(v -> showDialogNumber());
+
+        populatePhoneNumberList();
+
+    }
+
+
+    private void goToServices() {
+        startActivity(new Intent(ServiceProviderProfile.this, ManageServicesProvider.class));
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -81,7 +107,13 @@ public class ServiceProviderProfile extends AppCompatActivity {
         binding.email.setText(user.getEmail_address());
         binding.phone.setText(user.getPhone_number());
         binding.bio.setText(user.getBio());
-        binding.rating.setText(String.valueOf(user.getRating()));
+        binding.rating.setRating(user.getRating());
+        binding.rating.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
+            if (fromUser) {
+                binding.rating.setRating(user.getRating());
+            }
+        });
+
         binding.speciality.setText(specialities.toString());
 
         TextView[] tv = new TextView[]{binding.su, binding.mo, binding.tu, binding.w, binding.th, binding.fr, binding.sa};
@@ -92,9 +124,11 @@ public class ServiceProviderProfile extends AppCompatActivity {
             tv[i].setOnClickListener(v -> showDayLayout(tv[finalI], days[finalI]));
             if (selectedWorkingDays.contains(days[finalI])) {
                 tv[i].setBackground(getDrawable(R.drawable.circle_day_bg_selected));
+                tv[i].setTextColor(WHITE);
                 System.out.println("Day is selected " + days[finalI]);
             } else {
                 tv[i].setBackground(getDrawable(R.drawable.circle_day_bg_unselected));
+                tv[i].setTextColor(Color.BLACK);
                 System.out.println("Day is not selected " + days[finalI]);
             }
         }
@@ -152,6 +186,7 @@ public class ServiceProviderProfile extends AppCompatActivity {
                 startTime[0] = hour.concat(min);
                 startTimeTv.setText(hour + min + " hrs");
                 start.setBackground(getDrawable(R.drawable.circle_day_bg_selected));
+                start.setImageTintList(ColorStateList.valueOf(WHITE));
             }, nowHour[0], nowMinute[0], true).show());
 
             ImageButton end = binding.endPicker;
@@ -164,6 +199,8 @@ public class ServiceProviderProfile extends AppCompatActivity {
                 endTime[0] = hour.concat(min);
                 endTimeTv.setText(hour + min + " hrs");
                 end.setBackground(getDrawable(R.drawable.circle_day_bg_selected));
+                start.setImageTintList(ColorStateList.valueOf(WHITE));
+
             }, nowHour[0], nowMinute[0], true).show());
 
             Button accept_button = binding.acceptButton;
@@ -177,6 +214,8 @@ public class ServiceProviderProfile extends AppCompatActivity {
                     workingHours.put(day, time);
                     updateUser(new Models.UserUpdateForm(workingHours));
                     dayTv.setBackground(getDrawable(R.drawable.circle_day_bg_selected));
+                    start.setImageTintList(ColorStateList.valueOf(WHITE));
+
                     dialog.dismiss();
                 }
             });
@@ -207,7 +246,105 @@ public class ServiceProviderProfile extends AppCompatActivity {
     }
 
     private void updateUser(Models.UserUpdateForm form) {
-        new ViewModelProvider(this).get(UserViewModel.class).updateExistingUser(form).observe(this, optionalUser -> optionalUser.ifPresent(this::setUserData));
+        userViewModel.updateExistingUser(form).observe(this, optionalUser -> optionalUser.ifPresent(this::setUserData));
     }
+
+    private void editValue(boolean isPhone) {
+
+    }
+
+    private void showDialogNumber() {
+        Dialog d = new Dialog(this);
+        d.setContentView(R.layout.number_dialog);
+        d.show();
+
+        EditText phoneNumberField = d.findViewById(R.id.phoneNumberField);
+        Button confirm_button = d.findViewById(R.id.confirm_button);
+        confirm_button.setOnClickListener(v -> {
+            if (phoneNumberField.getText().toString().isEmpty()) {
+                phoneNumberField.setError("Required");
+                phoneNumberField.requestFocus();
+            } else if (!phoneNumberField.getText().toString().startsWith("+254")) {
+                phoneNumberField.setError("Must start with +254");
+                phoneNumberField.setText("+254");
+                phoneNumberField.setSelection(4);
+                phoneNumberField.requestFocus();
+            } else if (phoneNumberField.getText().toString().length() < 12) {
+                phoneNumberField.setError("Invalid phone number");
+                phoneNumberField.requestFocus();
+            } else if (phoneNumberList.contains(phoneNumberField.getText().toString()) || phoneNumberList.contains(phoneNumberField.getText().toString().replace("+", ""))) {
+                phoneNumberField.setError("Phone number already added");
+                phoneNumberField.requestFocus();
+            } else {
+                updateUser(new Models.UserUpdateForm(null, phoneNumberField.getText().toString(), null)); //
+                d.dismiss();
+            }
+        });
+
+        ImageButton cancel = d.findViewById(R.id.cancel);
+        cancel.setOnClickListener(v -> d.dismiss());
+
+    }
+
+    private void showEmailDialog() {
+        Dialog d = new Dialog(this);
+        d.setContentView(R.layout.text_dialog);
+        d.show();
+
+        EditText emailField = d.findViewById(R.id.phoneNumberField);
+        emailField.setHint("Enter new email");
+
+        Button confirm_button = d.findViewById(R.id.confirm_button);
+        confirm_button.setOnClickListener(v -> {
+            if (emailField.getText().toString().isEmpty()) {
+                emailField.setError("Required");
+                emailField.requestFocus();
+            } else if (!emailField.getText().toString().contains("@")) {
+                emailField.setError("Invalid email");
+                emailField.requestFocus();
+            } else {
+                updateUser(new Models.UserUpdateForm(emailField.getText().toString(), null, null)); //
+                d.dismiss();
+            }
+        });
+
+        ImageButton cancel = d.findViewById(R.id.cancel);
+        cancel.setOnClickListener(v -> d.dismiss());
+
+    }
+
+    private void showBioDialog() {
+        Dialog d = new Dialog(this);
+        d.setContentView(R.layout.text_dialog);
+        d.show();
+
+        EditText bioField = d.findViewById(R.id.phoneNumberField);
+        bioField.setHint("Enter new bio");
+
+        Button confirm_button = d.findViewById(R.id.confirm_button);
+        confirm_button.setOnClickListener(v -> {
+            if (bioField.getText().toString().isEmpty()) {
+                bioField.setError("Required");
+                bioField.requestFocus();
+            }else {
+                updateUser(new Models.UserUpdateForm(null, null, bioField.getText().toString())); //
+                d.dismiss();
+            }
+        });
+
+        ImageButton cancel = d.findViewById(R.id.cancel);
+        cancel.setOnClickListener(v -> d.dismiss());
+
+    }
+
+
+    private void populatePhoneNumberList() {
+        userViewModel.getAllPhoneNumbers().observe(this, numbers -> {
+            phoneNumberList.clear();
+            phoneNumberList.addAll(numbers);
+            System.out.println("NUMBERS " + phoneNumberList.toString());
+        });
+    }
+
 
 }

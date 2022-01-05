@@ -40,6 +40,7 @@ import com.example.joboui.databinding.ActivityChatBinding;
 import com.example.joboui.db.job.JobViewModel;
 import com.example.joboui.model.Models;
 import com.example.joboui.utils.AppRolesEnum;
+import com.example.joboui.utils.JobStatus;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -107,7 +108,7 @@ public class ChatActivity extends AppCompatActivity {
                 if (user.isPresent()) {
                     chat.setMe(user.get());
 
-                   if (user.get().getRole().equals(AppRolesEnum.ROLE_CLIENT.name())) {
+                   if (user.get().getRole().equals(AppRolesEnum.ROLE_CLIENT.name()) && job.getJob_status() == JobStatus.NEGOTIATING.getCode()) {
                        optionsButton.setOnClickListener(v -> editSingleValue(InputType.TYPE_CLASS_NUMBER, "Enter new price", this, price -> {
                            updatePrice(price);
                            return null;

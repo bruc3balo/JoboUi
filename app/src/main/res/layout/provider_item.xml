@@ -37,6 +37,8 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
                     android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -47,6 +49,8 @@
 
 
                 <TextView
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
                     android:id="@+id/workingHours"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -56,6 +60,8 @@
                     android:textColor="@color/purple"/>
 
                 <TextView
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
                     android:id="@+id/distance"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -64,16 +70,32 @@
                     android:gravity="center_vertical"
                     android:textColor="@color/purple"/>
 
-                <RatingBar
-                    android:id="@+id/rating"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:progressTint="@color/deep_purple"
-                    android:scaleX="0.5"
-                    android:scaleY="0.5"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical" />
+                <LinearLayout
 
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rating"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/purple"/>
+
+                    <RatingBar
+                        android:layout_marginStart="20dp"
+                        android:id="@+id/rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:progressTint="@color/deep_purple"
+                        android:isIndicator="true"
+                        style="?android:attr/ratingBarStyleSmall"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical" />
+
+                </LinearLayout>
 
 
 

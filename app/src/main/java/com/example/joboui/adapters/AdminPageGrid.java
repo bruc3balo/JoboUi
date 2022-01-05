@@ -40,7 +40,7 @@ public class AdminPageGrid extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_row_card, null);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_row, null);
         }
 
 
@@ -61,9 +61,9 @@ public class AdminPageGrid extends BaseAdapter {
 
         map.put("Cash Flow", R.drawable.ic_cash_flow);
         map.put("Users", R.drawable.ic_person_circle);
-        map.put("jobs", R.drawable.ic_file);
+        map.put("Jobs", R.drawable.ic_job);
 
-        map.put("Manage Services", R.drawable.ic_service);
+        map.put("Manage Services", R.drawable.ic_general_repair);
         map.put("Reported", R.drawable.ic_customer_complaint);
         map.put("Feedback", R.drawable.ic_person_feedback);
 

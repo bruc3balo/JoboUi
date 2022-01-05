@@ -76,7 +76,7 @@ public class NotificationService extends LifecycleService implements ViewModelSt
 
     public static LatLng myLocation = null;
 
-    public NotificationService() {
+    public NotificationService () {
 
     }
 
@@ -150,7 +150,11 @@ public class NotificationService extends LifecycleService implements ViewModelSt
     }
 
 
-    private void getDeviceLocation() {
+    private void getDeviceLocation () {
+        //todo distance limit
+        //todo fencing
+        //todo remind scheduled jobs
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) { //check if location is allowed
             try {
                 new Timer().scheduleAtFixedRate(new TimerTask() {
@@ -167,7 +171,7 @@ public class NotificationService extends LifecycleService implements ViewModelSt
                                     myLocation = latLng;
                                     LinkedHashMap<String, String> locationMap = new LinkedHashMap<>();
                                     locationMap.put(LATITUDE, String.valueOf(latLng.latitude));
-                                    locationMap.put(LONGITUDE, String.valueOf(latLng.latitude));
+                                    locationMap.put(LONGITUDE, String.valueOf(latLng.longitude));
 
                                     String loc = DataOps.getStringFromMap(locationMap);
 
@@ -180,7 +184,7 @@ public class NotificationService extends LifecycleService implements ViewModelSt
                                         @Override
                                         public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
                                             t.printStackTrace();
-                                            System.out.println("Failed to update usre location");
+                                            System.out.println("Failed to update user location");
                                         }
                                     });
                                 }
@@ -257,6 +261,5 @@ public class NotificationService extends LifecycleService implements ViewModelSt
     public void onDestroy() {
         super.onDestroy();
         notificationServiceRunning = false;
-
     }
 }

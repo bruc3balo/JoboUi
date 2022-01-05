@@ -3,6 +3,7 @@ package com.example.joboui.admin;
 import static com.example.joboui.SplashScreen.addListener;
 import static com.example.joboui.SplashScreen.addLogoutListener;
 import static com.example.joboui.SplashScreen.removeListener;
+import static com.example.joboui.clientUi.ClientActivity.getWelcomeGreeting;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.SignInActivity.clearSp;
@@ -38,6 +39,7 @@ public class AdminActivity extends AppCompatActivity {
 
     private ActivityAdminBinding adminBinding;
 
+
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,7 @@ public class AdminActivity extends AppCompatActivity {
 
         Toolbar adminToolbar = adminBinding.adminToolbar;
         setSupportActionBar(adminToolbar);
-        adminToolbar.setOverflowIcon(getDrawable(R.drawable.more));
+        //adminToolbar.setOverflowIcon(getDrawable(R.drawable.more));
 
         GridView serviceProviderGrid = adminBinding.adminGrid;
         AdminPageGrid adminPageGrid = new AdminPageGrid();
@@ -73,6 +75,10 @@ public class AdminActivity extends AppCompatActivity {
                     goToServices();
                     break;
 
+                case 4:
+                    goToReported();
+                    break;
+
                 case 5:
                     goToFeedback();
                     break;
@@ -81,10 +87,7 @@ public class AdminActivity extends AppCompatActivity {
 
         if (userRepository != null) {
             userRepository.getUserLive().observe(this, user -> {
-                if (user.isPresent()) {
-                    adminToolbar.setTitle(user.get().getRole());
-                    adminToolbar.setSubtitle(user.get().getUsername());
-                }
+                user.ifPresent(value -> adminBinding.welcomeText.setText(getWelcomeGreeting(value.getUsername(), this)));
             });
         }
 
@@ -106,6 +109,10 @@ public class AdminActivity extends AppCompatActivity {
 
     private void goToFeedback() {
         startActivity(new Intent(AdminActivity.this, FeedbackActivity.class));
+    }
+
+    private void goToReported() {
+        startActivity(new Intent(AdminActivity.this, ReportedAdminActivity.class));
     }
 
     private void goToCashFlow() {

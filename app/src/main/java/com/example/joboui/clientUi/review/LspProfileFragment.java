@@ -88,9 +88,11 @@ public class LspProfileFragment extends Fragment {
                 binding.rating.setRating(lsp.getRating());
             }
         });
+
+        binding.rating.setIsIndicator(true);
         binding.speciality.setText(specialities.toString());
 
-        TextView[] tv = new TextView[]{binding.su, binding.mo, binding.tu, binding.w, binding.th, binding.fr, binding.sa};
+        /*TextView[] tv = new TextView[]{binding.su, binding.mo, binding.tu, binding.w, binding.th, binding.fr, binding.sa};
         String[] days = new String[]{SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY};
 
         for (int i = 0; i < tv.length; i++) {
@@ -105,7 +107,7 @@ public class LspProfileFragment extends Fragment {
         }
 
         workingHours.forEach((d, t) -> System.out.println("Day is " + d + " time is " + getWorkingTimeFromString(true, t) + " and " + getWorkingTimeFromString(false, t)));
-        System.out.println("Day is " + workingHours.keySet().stream().filter(Objects::nonNull).collect(Collectors.toList()));
+        System.out.println("Day is " + workingHours.keySet().stream().filter(Objects::nonNull).collect(Collectors.toList()));*/
     }
 
 

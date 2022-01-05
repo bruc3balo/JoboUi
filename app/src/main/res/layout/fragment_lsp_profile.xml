@@ -90,6 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:numStars="5"
+                android:isIndicator="true"
                 android:progressTint="@color/deep_purple"
                 android:gravity="center_vertical"
                 android:textColor="@color/black"
@@ -116,7 +117,7 @@
                 android:textColor="@color/black"
                 android:text="@string/to_be_filled"/>
 
-
+<!--
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -244,7 +245,7 @@
 
 
                 </LinearLayout>
-            </HorizontalScrollView>
+            </HorizontalScrollView>-->
 
         </LinearLayout>
     </ScrollView>

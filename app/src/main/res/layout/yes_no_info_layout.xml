@@ -25,10 +25,10 @@
             android:gravity="center"
             android:textStyle="normal"
             android:textColor="@color/black"
-            android:fontFamily="serif"
+            android:fontFamily="@font/roboto_medium"
             android:textSize="16sp"
             android:padding="5dp"
-            android:text="@string/to_be_filled"
+            android:text="@string/description"
             android:id="@+id/newInfoTv"/>
 
         <View
@@ -46,19 +46,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <Button
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="15dp"
-                android:background="@drawable/login_bg_button"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/red"
-                android:textSize="20sp"
-                android:textStyle="bold|italic"
-                android:text="@string/no"
-                android:id="@+id/noButton"/>
+
 
             <Button
                 android:layout_weight="1"
@@ -70,9 +58,24 @@
                 android:background="@drawable/login_bg_button"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                android:textStyle="bold|italic"
+                android:fontFamily="sans-serif-condensed-medium"
+                android:textStyle="bold"
                 android:text="@string/yes"
                 android:id="@+id/yesButton"/>
+
+            <Button
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="15dp"
+                android:background="@drawable/login_bg_button"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/red"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="@string/no"
+                android:id="@+id/noButton"/>
 
         </LinearLayout>
     </LinearLayout>

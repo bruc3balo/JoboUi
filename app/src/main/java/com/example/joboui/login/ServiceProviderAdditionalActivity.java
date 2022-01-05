@@ -16,6 +16,7 @@ import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
@@ -251,6 +252,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         Button cancel_button = binding.cancelButton;
         cancel_button.setOnClickListener(view -> {
             dayTv.setBackground(getDrawable(R.drawable.circle_day_bg_unselected));
+            dayTv.setTextColor(Color.BLACK);
             dialog.dismiss();
         });
     }

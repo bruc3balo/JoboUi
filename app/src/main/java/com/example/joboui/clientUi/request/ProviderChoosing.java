@@ -1,6 +1,8 @@
 package com.example.joboui.clientUi.request;
 
+import static com.example.joboui.clientUi.ServiceRequestActivity.jobRequestForm;
 import static com.example.joboui.clientUi.ServiceRequestActivity.service;
+import static com.example.joboui.globals.GlobalVariables.ASAP;
 import static com.example.joboui.globals.GlobalVariables.LOCAL_SERVICE_PROVIDER_USERNAME;
 
 import android.annotation.SuppressLint;
@@ -56,25 +58,31 @@ public class ProviderChoosing extends Fragment {
         adapter = new ProviderRVAdapter(requireContext(), providerList);
         providerRv.setAdapter(adapter);
 
+
+        adapter.setClickListener((view, position) -> {
+            startActivity(new Intent(requireContext(), LSPReviews.class).putExtra(LOCAL_SERVICE_PROVIDER_USERNAME, providerList.get(position)));
+        });
+
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         try {
             getProviders(service.getName(), 0, 1);
         } catch (JSONException | JsonProcessingException e) {
             e.printStackTrace();
             Toast.makeText(requireContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-
-        adapter.setClickListener((view, position) -> {
-            startActivity(new Intent(requireContext(), LSPReviews.class).putExtra(LOCAL_SERVICE_PROVIDER_USERNAME,providerList.get(position)));
-        });
-
-        return binding.getRoot();
     }
-
-
 
     @SuppressLint("NotifyDataSetChanged")
     private void getProviders(String speciality, Integer page, Integer pageSize) throws JSONException, JsonProcessingException {
-        new ViewModelProvider(this).get(UserViewModel.class).getProviders(speciality, page, pageSize).observe(getViewLifecycleOwner(), appUsers -> {
+        binding.pb.setVisibility(View.VISIBLE);
+        new ViewModelProvider(this).get(UserViewModel.class).getProviders(speciality, page, pageSize, jobRequestForm.getScheduled_at() != null && !jobRequestForm.getScheduled_at().equals(ASAP)).observe(getViewLifecycleOwner(), appUsers -> {
+            binding.pb.setVisibility(View.GONE);
+
             if (!appUsers.isPresent()) {
                 Toast.makeText(requireContext(), "Failed to get service providers", Toast.LENGTH_SHORT).show();
                 return;

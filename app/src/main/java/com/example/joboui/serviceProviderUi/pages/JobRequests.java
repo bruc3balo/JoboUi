@@ -3,6 +3,7 @@ package com.example.joboui.serviceProviderUi.pages;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.JOB;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
+import static com.example.joboui.serviceProviderUi.pages.HistoryActivity.completedStatus;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import com.example.joboui.utils.JobStatus;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -41,9 +43,6 @@ public class JobRequests extends AppCompatActivity {
     private static final LinkedList<Models.Job> myJobsList = new LinkedList<>();
     private JobsRvAdapter jobsRvAdapter;
     public static MutableLiveData<Optional<Boolean>> refreshJobListProvider = new MutableLiveData<>();
-
-
-    //todo confirmation prompt
 
 
     @Override
@@ -101,10 +100,9 @@ public class JobRequests extends AppCompatActivity {
                         Models.Job job = getObjectMapper().readValue(u.toString(), Models.Job.class);
 
 
-                        if (!(job.getJob_status().equals(JobStatus.DECLINED.code)) && !(job.getJob_status().equals(JobStatus.CANCELLED.code)) && !(job.getJob_status().equals(JobStatus.SERVICE_REPORTED.code)) || !(job.getJob_status() == JobStatus.SERVICE_REPORTED.getCode() || !(job.getJob_status() == JobStatus.CLIENT_REPORTED.getCode()))) {
+                        if (!Arrays.asList(completedStatus).contains(job.getJob_status())) {
                             myJobsList.add(job);
                             adapter.notifyDataSetChanged();
-
                         }
 
                     } catch (JsonProcessingException e) {

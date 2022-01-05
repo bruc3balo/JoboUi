@@ -2,19 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
+    android:layout_marginBottom="5dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_bell_notification"
-        android:padding="10dp"/>
 
     <LinearLayout
+        android:background="@color/deep_purple_trans2"
         android:layout_width="0dp"
+        android:padding="10dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_gravity="center"
@@ -29,9 +26,9 @@
             android:gravity="center_vertical"
             android:id="@+id/title"
             android:textStyle="bold"
-            android:text="User"
+            android:text="Title"
             android:padding="5dp"
-            android:textColor="@color/deep_purple"
+            android:textColor="@color/black"
             tools:ignore="NestedWeights" />
 
         <TextView
@@ -41,10 +38,11 @@
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:id="@+id/description"
-            android:textStyle="bold"
+
+            android:textStyle="normal"
             android:text="Description"
             android:padding="5dp"
-            android:textColor="@color/deep_purple"/>
+            android:textColor="@color/black"/>
 
         <TextView
             android:layout_weight="0.5"

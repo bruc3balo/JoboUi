@@ -67,7 +67,7 @@
     <string name="title_activity_maps">MapsActivity</string>
     <string name="code_hint">X X X - X X X</string>
     <string name="role">Role</string>
-    <string name="names">Names</string>
+    <string name="names">Name</string>
     <string name="names_hint">John Doe</string>
     <string name="email_address">Email Address</string>
     <string name="email_address_hint">xyz@email.com</string>
@@ -91,7 +91,7 @@
     <string name="time">Time</string>
     <string name="timeLabel">Time : </string>
     <string name="as_soon_as_possible">As soon as possible</string>
-    <string name="scheduled">Scheduled</string>
+    <string name="scheduled">Schedule</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="my_jobs">My Jobs</string>
@@ -126,6 +126,7 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="decline">Decline</string>
     <string name="negotiate">Negotiate</string>
+    <string name="urgencyLabel">Urgency :</string>
     <string name="urgency">Urgency :</string>
     <string name="min">Min</string>
     <string name="minksh">Min (KSH)</string>
@@ -150,7 +151,7 @@
     <string name="media_channel_description">This is to notify you about relevant media in app</string>
     <string name="user_channel_description">This is to notify you about relevant activity related to you</string>
     <string name="synch_notification_description">To show you when synchronization is occurring</string>
-    <string name="id">Identity Number</string>
+    <string name="id">Identification Number</string>
     <string name="rating">Rating</string>
     <string name="title_activity_job_track">JobTrackActivity</string>
     <string name="large_text">
@@ -248,5 +249,7 @@
     <string name="paying_review">Paying and Review</string>
     <string name="complete">Complete</string>
     <string name="confirm_job">Confirm Job</string>
+    <string name="jobs">Jobs</string>
+    <string name="last_updated">Last updated</string>
 
 </resources>

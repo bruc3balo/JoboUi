@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.location.Address;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
@@ -31,6 +32,7 @@ import com.example.joboui.R;
 import com.example.joboui.db.job.JobViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
+import com.example.joboui.utils.AppRolesEnum;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +72,7 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
         if (job.getJob_description() != null) {
             String jdLabel = activity.getString(R.string.job_description_label);
-            holder.jdContent.setText(getBoldSpannable(jdLabel,job.getScheduled_at()));
+            holder.jdContent.setText(getBoldSpannable(jdLabel,job.getJob_description()));
         }
 
 
@@ -107,6 +109,16 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
             String providerLabel = activity.getString(R.string.service_provider_label);
             holder.providerPartyContent.setText(getBoldSpannable(providerLabel, job.getLocal_service_provider_username()));
 
+
+
+        }
+
+        if (user.getRole().equals(AppRolesEnum.ROLE_CLIENT.name())) {
+            holder.providerPartyContent.setVisibility(View.GONE);
+            holder.clientPartyContent.setVisibility(View.VISIBLE);
+        } else {
+            holder.clientPartyContent.setVisibility(View.GONE);
+            holder.providerPartyContent.setVisibility(View.VISIBLE);
         }
 
         holder.more.setOnClickListener(v -> activity.startActivity(new Intent(activity, JobTrackActivity.class).putExtra(JOB,job)));
@@ -128,11 +140,26 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
         return content;
     }
 
+    public static SpannableStringBuilder getUnderlinedSpannableBuilder(SpannableString s) {
+        SpannableStringBuilder content = new SpannableStringBuilder(s);
+        content.setSpan(new UnderlineSpan(), 0, s.length(), 0);
+        return content;
+    }
+
     public static SpannableStringBuilder getBoldSpannable(String normal, String bold) {
         StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
         int end = normal.length() + bold.length();
 
         SpannableStringBuilder farmNameFormatted = new SpannableStringBuilder(normal.concat(bold));
+        farmNameFormatted.setSpan(boldSpan, normal.length(), end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return farmNameFormatted;
+    }
+
+    public static SpannableStringBuilder getBoldSpannable(SpannableStringBuilder normal, String bold) {
+        StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+        int end = normal.length() + bold.length();
+
+        SpannableStringBuilder farmNameFormatted = new SpannableStringBuilder(normal.toString().concat(bold));
         farmNameFormatted.setSpan(boldSpan, normal.length(), end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return farmNameFormatted;
     }

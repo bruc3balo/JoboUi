@@ -3,6 +3,7 @@ package com.example.joboui.clientUi;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.JOB;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
+import static com.example.joboui.serviceProviderUi.pages.HistoryActivity.completedStatus;
 import static com.example.joboui.utils.JobStatus.CLIENT_CANCELLED_IN_PROGRESS;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +32,7 @@ import com.example.joboui.utils.JobStatus;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -99,7 +101,7 @@ public class MyJobs extends AppCompatActivity {
 
                     try {
                         Models.Job job = getObjectMapper().readValue(u.toString(), Models.Job.class);
-                        if (!(CLIENT_CANCELLED_IN_PROGRESS.getCode() == job.getJob_status()) && !(job.getJob_status() == JobStatus.CLIENT_REPORTED.getCode()) && !(job.getJob_status() == JobStatus.SERVICE_REPORTED.getCode())) {
+                        if (!Arrays.asList(completedStatus).contains(job.getJob_status())) {
                             myJobsList.add(job);
                             System.out.println("PAYMENT FOR JOB " + job.getId() + " is " + getObjectMapper().writeValueAsString(job.getPayments()));
                         }
