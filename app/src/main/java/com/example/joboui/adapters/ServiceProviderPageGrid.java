@@ -60,6 +60,8 @@ public class ServiceProviderPageGrid extends BaseAdapter {
         return convertView;
     }
 
+    //menu of lsp page
+
     private MyLinkedMap<String, Integer> getServiceProviderDrawables() {
 
         MyLinkedMap<String, Integer> map = new MyLinkedMap<>();

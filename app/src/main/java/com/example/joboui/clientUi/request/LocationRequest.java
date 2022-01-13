@@ -125,6 +125,8 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
             }
         });
 
+
+        //set up search query listener on submit only
         locationSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -189,9 +191,13 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
             }
         });
 
+
+        //set up price estimate
         EditText estimate = binding.estimate;
         estimate.addTextChangedListener(priceRangeWatcher());
 
+
+        //set up time estimate
         RadioGroup timeGroup = binding.timeGroup;
         timeGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == binding.asap.getId()) {
@@ -264,6 +270,8 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
             }
         });
 
+
+        //default
         binding.asap.setChecked(true);
 
         return binding.getRoot();
@@ -305,6 +313,8 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
         };
     }
 
+
+    //show location pop up when found
     private void showSuggestions(View anchor) {
         PopupMenu menu = new PopupMenu(requireActivity(), anchor);
         menu.getMenu().add("CANCEL").setTitle("CANCEL").setOnMenuItemClickListener(menuItem -> {
@@ -368,6 +378,8 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
         googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.getUiSettings().setZoomGesturesEnabled(true);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation,15));
+
+        //set up marker to my location
         addMarkerToMap(googleMap,myLocation);
     }
 
@@ -377,6 +389,8 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
         googleMap.addMarker(markerOptions);
     }
 
+
+    //get address
     private String getFromMarker(Marker marker) {
         Geocoder geocoder = new Geocoder(requireActivity(), Locale.getDefault());
         try {
@@ -396,6 +410,8 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
         }
     }
 
+
+    //get address
     private String getFromLocation(LatLng latLng) {
         Geocoder geocoder = new Geocoder(requireActivity(), Locale.getDefault());
         try {
@@ -431,8 +447,9 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    //convert drawable to bitmap for map
     static Bitmap drawableToBitmap(Drawable drawable) {
-        Bitmap bitmap = null;
+        Bitmap bitmap;
 
         if (drawable instanceof BitmapDrawable) {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
@@ -473,6 +490,8 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
     }
 
 
+
+    //get location suggestions
     private void getSuggestions(String query, View anchor) {
         if (query == null || query.isEmpty()) {
             placesList.clear();

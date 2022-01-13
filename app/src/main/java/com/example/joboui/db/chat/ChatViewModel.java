@@ -265,6 +265,7 @@ public class ChatViewModel extends AndroidViewModel {
     }
 
 
+    //get chat info from firebase for a job
     private MutableLiveData<Optional<Models.MessageBundle>> getMessages(Models.Job job) {
         MutableLiveData<Optional<Models.MessageBundle>> mutableLiveData = new MutableLiveData<>();
 

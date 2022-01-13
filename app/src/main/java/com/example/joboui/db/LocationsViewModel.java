@@ -22,6 +22,7 @@ public class LocationsViewModel extends AndroidViewModel {
     }
 
 
+    //get location from geocoder by name of location
     private MutableLiveData<List<Address>> getSuggestions(String query) {
         MutableLiveData<List<Address>> suggestions = new MutableLiveData<>();
 

@@ -56,6 +56,8 @@ public class MyJobs extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
 
+
+        //set up list
         RecyclerView jobsRv = binding.myJobsRv;
         jobsRv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         jobsRvAdapter = new JobsRvAdapter(MyJobs.this, myJobsList);
@@ -77,6 +79,8 @@ public class MyJobs extends AppCompatActivity {
         }
     }
 
+
+    //get jobs
     public static void populateClientJobs(Activity activity, String username, JobsRvAdapter adapter) {
         new ViewModelProvider((ViewModelStoreOwner) activity).get(JobViewModel.class).getAllClientJobs(username, null).observe((LifecycleOwner) activity, jsonResponse -> {
             if (!jsonResponse.isPresent()) {
@@ -132,6 +136,7 @@ public class MyJobs extends AppCompatActivity {
         });
     }
 
+    //listener for updates
     private LiveData<Optional<Boolean>> refreshData() {
         return refreshJobListClient;
     }

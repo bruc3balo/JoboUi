@@ -46,6 +46,7 @@ public class UpdateBroadcast extends BroadcastReceiver {
 
     public static final String UPDATE_INTENT = "com.example.joboui.intent.action.UPDATE";
 
+    //broadcast to update respective pages with active listeners
 
     @Override
     public void onReceive(Context context, Intent intent) {

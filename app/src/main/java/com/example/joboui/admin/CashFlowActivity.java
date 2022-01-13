@@ -43,6 +43,8 @@ public class CashFlowActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
         binding.toolbar.setNavigationOnClickListener(v->finish());
 
+
+        //set up pie chart
         pieChart = binding.pieChart;
         pieChart.setProgressBar(binding.pieChartPb);
 
@@ -68,14 +70,8 @@ public class CashFlowActivity extends AppCompatActivity {
 
     }
 
-   //username -> bruc3balo
-  //password ->  brUcee12
 
-    //username -> provider
-    //password -> provider
-
-
-
+    //get pie chart data
     private void refreshList() {
         if (serviceRepository != null) {
             serviceRepository.getServiceFlowsLiveData().observe(this, services -> {

@@ -30,6 +30,7 @@ public class BulkViewModel extends AndroidViewModel {
         super(application);
     }
 
+    //get notifications
     private MutableLiveData<LinkedHashSet<Models.NotificationModels>> getAllMyNotifications(String username) {
         MutableLiveData<LinkedHashSet<Models.NotificationModels>> mutableLiveData = new MutableLiveData<>();
         LinkedHashSet<Models.NotificationModels> notificationModelsList = new LinkedHashSet<>();
@@ -73,6 +74,7 @@ public class BulkViewModel extends AndroidViewModel {
         return mutableLiveData;
     }
 
+    //set notification to seen
     private MutableLiveData<Optional<Models.NotificationModels>> updateNotification(String username, Long id) {
         MutableLiveData<Optional<Models.NotificationModels>> mutableLiveData = new MutableLiveData<>();
         userApi.updateNotifications(username, id, getAuthorization()).enqueue(new Callback<JsonResponse>() {

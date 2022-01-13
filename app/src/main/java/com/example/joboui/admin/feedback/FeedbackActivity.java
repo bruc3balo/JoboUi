@@ -40,6 +40,8 @@ public class FeedbackActivity extends AppCompatActivity {
     }
 
     private void setUpFeedbackPager() {
+
+        //set up screen and tabs
         feedbackPagerAdapter = new FeedbackPagerAdapter(getSupportFragmentManager(), getLifecycle());
         feedbackPagerAdmin.setUserInputEnabled(true);
         feedbackPagerAdmin.setAdapter(feedbackPagerAdapter);

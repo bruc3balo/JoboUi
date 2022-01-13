@@ -41,7 +41,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
+//methods for offline
 public class ServiceRepository {
     private final ServiceDao serviceDao;
     private final MutableLiveData<Optional<List<Services>>> servicesMutable = new MutableLiveData<>();

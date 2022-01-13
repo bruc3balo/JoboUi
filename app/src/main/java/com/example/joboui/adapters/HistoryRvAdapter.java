@@ -245,9 +245,7 @@ public class HistoryRvAdapter extends RecyclerView.Adapter<HistoryRvAdapter.View
     // total number of rows
     @Override
     public int getItemCount() {
-
         return list.size();
-
     }
 
 

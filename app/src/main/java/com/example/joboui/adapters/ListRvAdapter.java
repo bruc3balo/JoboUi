@@ -38,6 +38,8 @@ public class ListRvAdapter extends RecyclerView.Adapter<ListRvAdapter.ViewHolder
         return new ViewHolder(view);
     }
 
+    //list with remove function
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.imageUri.setText(list.get(position));

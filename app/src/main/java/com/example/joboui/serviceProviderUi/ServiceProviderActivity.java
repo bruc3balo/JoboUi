@@ -66,12 +66,13 @@ public class ServiceProviderActivity extends AppCompatActivity {
         setSupportActionBar(serviceProviderToolbar);
         //serviceProviderToolbar.setOverflowIcon(getDrawable(R.drawable.more));
 
+        //set up menu
         GridView serviceProviderGrid = serviceProviderBinding.serviceProviderGrid;
 
         ImageButton notifications = serviceProviderBinding.notifications;
         notifications.setOnClickListener(v -> goToNotifications());
 
-
+        //read current user data
         if (userRepository != null) {
             userRepository.getUserLive().observe(this, user -> {
                 if (user.isPresent()) {
@@ -111,6 +112,7 @@ public class ServiceProviderActivity extends AppCompatActivity {
     }
 
 
+    //add refresh data listener
     private void addRefreshListener() {
         refreshData().observe(this, refresh -> {
             if (refresh.isPresent()) {

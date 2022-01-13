@@ -22,7 +22,9 @@ import java.util.LinkedList;
 
 public class FeedbackRvAdapter extends RecyclerView.Adapter<FeedbackRvAdapter.ViewHolder> {
 
-    private LinkedList<Models.Feedback> list;
+    //feedback
+
+    private final LinkedList<Models.Feedback> list;
     private ItemClickListener mClickListener;
     private Context mContext;
 
@@ -40,9 +42,11 @@ public class FeedbackRvAdapter extends RecyclerView.Adapter<FeedbackRvAdapter.Vi
         return new ViewHolder(view);
     }
 
+
+    //sets data for instance
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Models.Feedback feedback = list.get(position);
+        Models.Feedback feedback = list.get(holder.getAdapterPosition());
         holder.user.setText(getUnderlinedSpannableBuilder(feedback.getUser().getUsername()));
         holder.comment.setText(feedback.getComment());
         holder.ratingBar.setRating(feedback.getRating());
@@ -57,9 +61,7 @@ public class FeedbackRvAdapter extends RecyclerView.Adapter<FeedbackRvAdapter.Vi
     // total number of rows
     @Override
     public int getItemCount() {
-
         return list.size();
-
     }
 
 

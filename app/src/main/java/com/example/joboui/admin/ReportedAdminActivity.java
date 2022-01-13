@@ -51,6 +51,8 @@ public class ReportedAdminActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
         binding.toolbar.setNavigationOnClickListener(v -> finish());
 
+
+        //set up job list
         RecyclerView rv = binding.reportsRv;
         rv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         adapter = new HistoryRvAdapter(ReportedAdminActivity.this, jobList);
@@ -59,6 +61,8 @@ public class ReportedAdminActivity extends AppCompatActivity {
         populateJobs();
     }
 
+
+    //get jobs data
     private void populateJobs() {
         new ViewModelProvider(this).get(JobViewModel.class).getAllTheJobs(new HashMap<>()).observe(this, jsonResponse -> {
             if (!jsonResponse.isPresent()) {

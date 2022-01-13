@@ -29,6 +29,8 @@ public class ServicesPageGrid extends BaseAdapter {
 
 
 
+    //update services
+
     public ServicesPageGrid(LifecycleOwner lifecycleOwner) {
         try {
             serviceRepository.updateServices();

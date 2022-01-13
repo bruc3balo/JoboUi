@@ -93,6 +93,7 @@ public class SignInActivity extends AppCompatActivity {
         hidePb();
     }
 
+    //validate sign in form
     public boolean validateForm(EditText usernameF, EditText passwordF) {
         boolean valid = false;
         if (usernameF.getText().toString().isEmpty()) {
@@ -127,6 +128,8 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
+
+    //to map objects to classes
     public static ObjectMapper getObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
@@ -137,6 +140,7 @@ public class SignInActivity extends AppCompatActivity {
         return mapper;
     }
 
+    //cache password, token and username
     public static Map<String, ?> getSp(String name, Application application) {
         SharedPreferences sh = application.getSharedPreferences(name, MODE_PRIVATE);
         return sh.getAll();

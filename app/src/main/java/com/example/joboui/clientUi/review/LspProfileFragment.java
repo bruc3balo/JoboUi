@@ -71,6 +71,8 @@ public class LspProfileFragment extends Fragment {
         return binding.getRoot();
     }
 
+
+    //set the profile data to ui
     @SuppressLint("UseCompatLoadingForDrawables")
     private void setUserData(Models.AppUser lsp) {
         this.lsp = lsp;

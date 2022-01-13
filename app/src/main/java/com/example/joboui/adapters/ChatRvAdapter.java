@@ -60,6 +60,8 @@ public class ChatRvAdapter extends RecyclerView.Adapter<ChatRvAdapter.ViewHolder
     @Override
     public ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
 
+        //choose layout of chat item
+
         if (viewType == TYPE_LEFT) {
             return new ViewHolder(mInflater.inflate(R.layout.chat_left, parent, false));
         } else {
@@ -73,7 +75,7 @@ public class ChatRvAdapter extends RecyclerView.Adapter<ChatRvAdapter.ViewHolder
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         fullSize = false;
 
-
+        //set chat deails
 
         Models.Messages messageModel = messagesList.get(position);
 

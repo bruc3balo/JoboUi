@@ -62,6 +62,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
+//get user data from api ... to be attached to an activity / fragment
 public class UserViewModel extends AndroidViewModel {
 
     private final Application application;

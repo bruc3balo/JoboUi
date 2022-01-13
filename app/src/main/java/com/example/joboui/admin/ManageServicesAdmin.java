@@ -24,6 +24,8 @@ public class ManageServicesAdmin extends AppCompatActivity {
         setSupportActionBar(binding.toolbarServices);
         binding.toolbarServices.setNavigationOnClickListener(v -> finish());
 
+
+        //set up pager data
         ViewPager2 servicesPager = binding.servicesPager;
         servicesAdminRvAdapter = new ServicesAdminRvAdapter(ManageServicesAdmin.this);
         servicesPager.setAdapter(servicesAdminRvAdapter);
@@ -58,6 +60,8 @@ public class ManageServicesAdmin extends AppCompatActivity {
         servicesPager.setClipChildren(false);
         servicesPager.setPadding(0, 20, 0, 20);
 
+
+        //set up pager indicator
         binding.indicator.setViewPager(servicesPager);
 
     }

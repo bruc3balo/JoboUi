@@ -23,6 +23,7 @@ import retrofit2.http.QueryMap;
 
 public interface JobApi {
 
+    //api calls
 
     String base = "job";
 

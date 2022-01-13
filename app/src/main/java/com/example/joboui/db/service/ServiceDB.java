@@ -16,6 +16,7 @@ import com.example.joboui.db.userDb.UserDao;
 import com.example.joboui.domain.Domain;
 
 
+//offline db
 @Database(entities = {Domain.Services.class}, version = 2, exportSchema = false)
 public abstract class ServiceDB extends RoomDatabase {
 

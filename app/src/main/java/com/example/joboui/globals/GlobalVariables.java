@@ -1,5 +1,7 @@
 package com.example.joboui.globals;
 
+
+//constant varia
 public class GlobalVariables {
 
     /*** BASE URL OF API ***/

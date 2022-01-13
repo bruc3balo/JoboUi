@@ -19,6 +19,7 @@ import java.util.Objects;
 
 public class FeedbackPagerAdapter extends FragmentStateAdapter {
 
+    //control pages for admin feedback
 
     private final String[] loginTitles = new String[]{"Chart", "Feedback"};
     private final int[] loginIcons = new int[]{R.drawable.ic_chart, R.drawable.ic_list};

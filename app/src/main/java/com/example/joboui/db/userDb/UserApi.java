@@ -25,6 +25,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
+//api calls
 public interface UserApi {
 
     String base = "user";

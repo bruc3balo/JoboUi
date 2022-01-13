@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
+
+//offline db classes for data
 public class Domain {
 
     @Entity(tableName = GlobalVariables.USER_DB)

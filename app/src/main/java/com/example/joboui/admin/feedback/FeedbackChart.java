@@ -64,6 +64,8 @@ public class FeedbackChart extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentFeedbackChartBinding.inflate(inflater);
 
+
+        //set up pie chart
         pieChart = binding.pieChart;
         pieChart.setProgressBar(binding.pieChartPb);
 
@@ -89,6 +91,7 @@ public class FeedbackChart extends Fragment {
     }
 
 
+    //get pie chart data
     private void refreshList() {
 
         new ViewModelProvider(this).get(JobViewModel.class).getAFeedbackChart().observe(getViewLifecycleOwner(), jsonResponse -> {

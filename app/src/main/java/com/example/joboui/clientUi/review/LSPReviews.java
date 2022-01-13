@@ -47,6 +47,7 @@ public class LSPReviews extends AppCompatActivity {
         Models.AppUser lsp = (Models.AppUser) getIntent().getExtras().get(LOCAL_SERVICE_PROVIDER_USERNAME);
         serviceRequested = false;
 
+        //validate form before sending
         binding.confirm.setOnClickListener(v -> {
             jobRequestForm.setLocal_service_provider_username(lsp.getUsername());
 
@@ -73,6 +74,8 @@ public class LSPReviews extends AppCompatActivity {
         setUpLoginPager(lsp);
     }
 
+
+    //set up tabs and pages
     private void setUpLoginPager(Models.AppUser lsp) {
         ReviewPagerAdapter reviewPagerAdapter = new ReviewPagerAdapter(getSupportFragmentManager(), getLifecycle(),lsp);
         ViewPager2 reviewPager = binding.viewPager;
@@ -105,6 +108,7 @@ public class LSPReviews extends AppCompatActivity {
         reviewPagerAdapter.setAllTabIcons(tabLayout);
     }
 
+    //show confirmation dialog
     private void confirmationDialog(String info) {
         Dialog d = new Dialog(this);
         d.getWindow().setBackgroundDrawableResource(R.color.transparent);
@@ -126,7 +130,7 @@ public class LSPReviews extends AppCompatActivity {
         no.setOnClickListener(v -> d.dismiss());
     }
 
-
+    //send job request
     private void addJobRequest() {
         Toast.makeText(this, "Sending your request", Toast.LENGTH_SHORT).show();
 

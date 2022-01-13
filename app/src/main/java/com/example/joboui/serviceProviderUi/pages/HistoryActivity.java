@@ -48,16 +48,18 @@ public class HistoryActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
         binding.toolbar.setNavigationOnClickListener(v -> finish());
 
+
+        //set up list
         RecyclerView rv = binding.rv;
         rv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         adapter = new HistoryRvAdapter(this, jobList);
         rv.setAdapter(adapter);
 
 
-
         userRepository.getUserLive().observe(this, optionalUser -> optionalUser.ifPresent(this::populateJobs));
     }
 
+    //get jobs
     private void populateJobs(Domain.User user) {
         if (user.getRole().equals(AppRolesEnum.ROLE_CLIENT.name())) {
             new ViewModelProvider(this).get(JobViewModel.class).getAllClientJobs(user.getUsername(), null).observe(this, jsonResponse -> {

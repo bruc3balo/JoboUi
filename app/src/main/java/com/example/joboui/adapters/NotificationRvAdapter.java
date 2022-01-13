@@ -38,6 +38,8 @@ public class NotificationRvAdapter extends RecyclerView.Adapter<NotificationRvAd
         return new ViewHolder(view);
     }
 
+    //distplay notifications
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Models.NotificationModels notification = list.get(position);

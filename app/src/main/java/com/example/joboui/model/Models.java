@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 
+//all classes used for Data transfer
 public class Models {
 
     public static class NewUserForm implements Serializable {

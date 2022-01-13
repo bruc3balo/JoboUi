@@ -25,7 +25,7 @@ public class ManageServicesProvider extends AppCompatActivity {
         setSupportActionBar(binding.toolbarServices);
         binding.toolbarServices.setNavigationOnClickListener(v -> finish());
 
-
+        //ser up service page list
         ViewPager2 servicesPager = binding.servicesPager;
         servicesProviderRvAdapter = new ServicesProviderRvAdapter(ManageServicesProvider.this);
         servicesPager.setAdapter(servicesProviderRvAdapter);
@@ -33,6 +33,7 @@ public class ManageServicesProvider extends AppCompatActivity {
         servicesProviderRvAdapter.notifyDataSetChanged();
 
 
+        //set options for page
         servicesPager.setUserInputEnabled(true);
         servicesPager.setPageTransformer(new DepthPageTransformer());
         servicesPager.setOffscreenPageLimit(3);

@@ -17,6 +17,8 @@ import com.example.joboui.domain.Domain;
 import java.util.List;
 import java.util.Optional;
 
+
+//room db / sql methods
 @Dao
 public interface ServiceDao {
 

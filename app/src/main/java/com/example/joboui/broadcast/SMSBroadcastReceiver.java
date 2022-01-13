@@ -13,6 +13,10 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Status;
 
 public class SMSBroadcastReceiver extends BroadcastReceiver {
+
+
+    //auto fill sms receive code
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (SmsRetriever.SMS_RETRIEVED_ACTION.equals(intent.getAction())) {

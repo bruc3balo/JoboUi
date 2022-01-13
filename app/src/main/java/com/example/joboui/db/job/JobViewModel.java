@@ -30,6 +30,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
+//methods to get data from api and make available to the ui
 public class JobViewModel extends AndroidViewModel {
 
     public JobViewModel(@NonNull Application application) {

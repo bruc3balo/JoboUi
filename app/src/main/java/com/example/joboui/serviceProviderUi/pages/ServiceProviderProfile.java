@@ -78,7 +78,7 @@ public class ServiceProviderProfile extends AppCompatActivity {
         }
 
 
-        //todo add updating
+        //updating
         binding.editSpec.setOnClickListener(v -> goToServices());
         binding.editBio.setOnClickListener(v -> showBioDialog());
         binding.editEmail.setOnClickListener(v -> showEmailDialog());
@@ -253,6 +253,8 @@ public class ServiceProviderProfile extends AppCompatActivity {
 
     }
 
+
+    //edit pop ups
     private void showDialogNumber() {
         Dialog d = new Dialog(this);
         d.setContentView(R.layout.number_dialog);
@@ -338,6 +340,7 @@ public class ServiceProviderProfile extends AppCompatActivity {
     }
 
 
+    //get phone numbers
     private void populatePhoneNumberList() {
         userViewModel.getAllPhoneNumbers().observe(this, numbers -> {
             phoneNumberList.clear();

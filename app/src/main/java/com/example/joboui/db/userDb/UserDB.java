@@ -14,6 +14,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.example.joboui.domain.Domain;
 
 
+//offline db
 @Database(entities = {Domain.User.class}, version = 1, exportSchema = false)
 public abstract class UserDB extends RoomDatabase {
 

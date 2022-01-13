@@ -69,6 +69,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         serviceProviderAdditionalBinding = ActivityServiceProviderAdditionalBinding.inflate(getLayoutInflater());
         setContentView(serviceProviderAdditionalBinding.getRoot());
 
+        //set up ui
 
         Button finishAdditionalInfoButton = serviceProviderAdditionalBinding.finishAdditionalInfoButton;
         finishAdditionalInfoButton.setOnClickListener(view -> {
@@ -141,6 +142,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         }
     }
 
+    //update user
     private void sendUpdateRequest() {
         showPb();
         new ViewModelProvider(this).get(UserViewModel.class).updateExistingUser(updateForm).observe(this, user -> {
@@ -164,6 +166,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         }
     }
 
+    //service list
     private void getServices() {
         serviceRepository.getServiceLive().observe(this, services -> {
             if (services.isPresent()) {
@@ -179,6 +182,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         });
     }
 
+    //choose a day
     @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
     private void showDayLayout(TextView dayTv, String day) {
         BottomSheetDialog dialog = new BottomSheetDialog(this);
@@ -267,6 +271,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         serviceProviderAdditionalBinding.finishAdditionalInfoButton.setEnabled(true);
     }
 
+    //valdate additional details form
     private boolean validateForm() {
         boolean valid = false;
 

@@ -44,8 +44,6 @@ public class UserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
         getRoles();
 
         binding = ActivityUserBinding.inflate(getLayoutInflater());
@@ -111,6 +109,8 @@ public class UserActivity extends AppCompatActivity {
 
                 }
 
+
+                //set up filter for roles
                 filterUsers(binding.roleSpinner.getSelectedItem().toString());
 
             } catch (JsonProcessingException e) {

@@ -55,6 +55,7 @@ public class JobRequests extends AppCompatActivity {
 
         binding.toolbar.setNavigationOnClickListener(v -> finish());
 
+        //set up list
         RecyclerView jobsRv = binding.myJobsRv;
         jobsRv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         jobsRvAdapter = new JobsRvAdapter(JobRequests.this, myJobsList);
@@ -76,6 +77,7 @@ public class JobRequests extends AppCompatActivity {
 
     }
 
+    //get job requests
     public static void populateMyJobs(Activity activity, String username, JobsRvAdapter adapter) {
         new ViewModelProvider((ViewModelStoreOwner) activity).get(JobViewModel.class).getAllProviderJobs(username, null).observe((LifecycleOwner) activity, jsonResponse -> {
             if (!jsonResponse.isPresent()) {
@@ -118,6 +120,7 @@ public class JobRequests extends AppCompatActivity {
 
     }
 
+    //add update listener
     private void addRefreshListener(Domain.User user) {
         refreshData().observe(this, refresh -> {
             if (refresh.isPresent()) {
@@ -135,6 +138,8 @@ public class JobRequests extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+
+        //static variables belong to a class ... so they will retain the data till overridden
         myJobsList.clear();
         super.onDestroy();
     }

@@ -124,6 +124,7 @@ public class RegisterActivity extends AppCompatActivity {
         hidePb();
     }
 
+    //validate registration form
     private boolean validateForm(EditText namesField, EditText usernameField, EditText emailAddressField, EditText passwordF, EditText cPasswordF, EditText phoneNumberField) {
         boolean valid = false;
 
@@ -174,6 +175,7 @@ public class RegisterActivity extends AppCompatActivity {
         return valid;
     }
 
+    //get phone numbers validate
     private void populatePhoneNumberList() {
         userViewModel.getAllPhoneNumbers().observe(this, numbers -> {
             phoneNumberList.clear();
@@ -182,6 +184,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    //get usernames validate
     private void populateUserNamesList() {
         userViewModel.getAllUsernames().observe(this, names -> {
             usernameList.clear();
@@ -190,6 +193,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    //choose role
     private void showRoleDialog() {
         Dialog d = new Dialog(RegisterActivity.this);
         RoleDialogBinding roleDialogBinding = RoleDialogBinding.inflate(getLayoutInflater());
@@ -229,6 +233,7 @@ public class RegisterActivity extends AppCompatActivity {
         neverMindButton.setOnClickListener(view -> d.dismiss());
     }
 
+    //send creation request
     private void sendRegisterRequest() throws JSONException, JsonProcessingException {
         Toast.makeText(this, "Sending request", Toast.LENGTH_SHORT).show();
         showPb();
@@ -247,6 +252,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
+    //login the created user
     private void logInNewUser() {
         try {
             Thread.sleep(2000);
@@ -275,6 +281,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
+    //loading
     private void showPb() {
         activityRegister.registerUserButton.setEnabled(false);
         activityRegister.registerPb.setVisibility(View.VISIBLE);

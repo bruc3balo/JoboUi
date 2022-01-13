@@ -51,6 +51,7 @@ public class ServiceRequestActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         jobRequestForm = new JobRequestForm();
+        serviceRequested = false;
 
         Toolbar toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
@@ -58,6 +59,7 @@ public class ServiceRequestActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
+        //get service info transferred from previous page
         if (intent.getExtras() != null && !intent.getExtras().isEmpty()) {
             service = (Domain.Services) intent.getSerializableExtra(SERVICE_DB);
             toolbar.setSubtitle(service.getName());
@@ -84,6 +86,8 @@ public class ServiceRequestActivity extends AppCompatActivity {
                     nextButton.setText("Next");
                     nextButton.setVisibility(View.VISIBLE);
                 }
+
+                //reset menu with new options
                 invalidateOptionsMenu();
                 super.onPageSelected(position);
             }

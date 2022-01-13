@@ -94,6 +94,8 @@ public class ClientActivity extends AppCompatActivity {
             startActivity(new Intent(ClientActivity.this, ServiceRequestActivity.class).putExtras(bundle));
         });
 
+
+        //set up search
         SearchView clientSearch = clientBinding.clientSearch;
         clientSearch.setOnQueryTextFocusChangeListener((view, hasFocus) -> {
             if (hasFocus) {
@@ -144,6 +146,8 @@ public class ClientActivity extends AppCompatActivity {
 
             }
         });
+
+
         NavigationView clientDrawer = clientBinding.clientNavigation;
 
         ImageView openDrawer = clientBinding.openDrawer;
@@ -151,6 +155,7 @@ public class ClientActivity extends AppCompatActivity {
 
         View view = clientDrawer.getHeaderView(0);
 
+        //set up drawer
         clientDrawer.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 default:
@@ -174,6 +179,7 @@ public class ClientActivity extends AppCompatActivity {
             return false;
         });
 
+        //set status adn navigation bar colors
         setWindowColors();
 
         if (userRepository != null) {
@@ -256,7 +262,6 @@ public class ClientActivity extends AppCompatActivity {
         return welcomeText;
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Logout").setOnMenuItemClickListener(menuItem -> {
@@ -267,6 +272,8 @@ public class ClientActivity extends AppCompatActivity {
     }
 
 
+
+    //handle back button click events
     @Override
     public void onBackPressed() {
         if (isDrawerOpen(clientBinding.getRoot())) {

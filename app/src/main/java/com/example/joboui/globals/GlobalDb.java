@@ -38,6 +38,8 @@ public class GlobalDb extends Application {
     }
 
 
+
+    //initialize the offline db and api interfaces
     public static void init(Application application) {
         if (!initialized) {
             GlobalDb.application = application;

@@ -100,6 +100,7 @@ public class NotificationService extends LifecycleService implements ViewModelSt
         return START_STICKY;
     }
 
+    //get notifications per 10 sec
     private void getAllNotifications(String username) {
 
         try {
@@ -149,7 +150,7 @@ public class NotificationService extends LifecycleService implements ViewModelSt
         }
     }
 
-
+    //get location
     private void getDeviceLocation () {
         //todo distance limit
         //todo fencing
@@ -195,9 +196,8 @@ public class NotificationService extends LifecycleService implements ViewModelSt
             } catch (SecurityException e) {
                 e.printStackTrace();
             }
-        }
+        } else {}
     }
-
 
     private void showAllNotifications() {
         notificationList.forEach(this::showNotification);

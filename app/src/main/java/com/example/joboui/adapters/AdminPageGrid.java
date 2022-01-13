@@ -16,8 +16,10 @@ import java.util.Optional;
 
 public class AdminPageGrid extends BaseAdapter {
 
+    //grid of admin menu
 
     public AdminPageGrid() {
+
     }
 
     @Override

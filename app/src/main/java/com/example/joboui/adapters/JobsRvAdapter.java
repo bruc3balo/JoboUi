@@ -69,6 +69,7 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
 
         Models.Job job = list.get(position);
 
+        //set job data
 
         if (job.getJob_description() != null) {
             String jdLabel = activity.getString(R.string.job_description_label);
@@ -133,6 +134,9 @@ public class JobsRvAdapter extends RecyclerView.Adapter<JobsRvAdapter.ViewHolder
     public int getItemCount() {
         return list.size();
     }
+
+
+    //extra methods
 
     public static SpannableStringBuilder getUnderlinedSpannableBuilder(String s) {
         SpannableStringBuilder content = new SpannableStringBuilder(s);

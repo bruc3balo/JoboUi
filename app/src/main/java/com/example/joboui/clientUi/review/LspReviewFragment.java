@@ -59,12 +59,15 @@ public class LspReviewFragment extends Fragment {
         rvAdapter = new ReviewRvAdapter(requireContext(), reviewLinkedList);
         reviewRv.setAdapter(rvAdapter);
 
+
+
         getReviews();
 
         return binding.getRoot();
     }
 
 
+    //get users reviews
     private void getReviews() {
         HashMap<String, String> params = new HashMap<>();
         params.put(LOCAL_SERVICE_PROVIDER_USERNAME, lsp.getUsername());

@@ -322,7 +322,6 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
         }
     }
 
-
     private void autoFill() {
         SmsRetrieverClient smsRetrieverClient = SmsRetriever.getClient(this);
         smsRetrieverClient.startSmsRetriever().addOnSuccessListener(unused -> {
@@ -335,7 +334,7 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
         });
     }
 
-
+    //countdown
     public static String calculateTime(long milliseconds) {
 
         int day = (int) TimeUnit.MILLISECONDS.toDays(milliseconds);
@@ -353,7 +352,6 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
             return time;
         }
     }
-
 
     private void verifyUser() {
         tutorialBinding.infoOpt.setText("Verifying");
@@ -376,6 +374,7 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
         });
     }
 
+    //phone verification
     private void isSafetyNetEnabled() {
         tutorialBinding.countdownTv.setText("Sending OTP, Hang on");
 
@@ -435,6 +434,7 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
         return rotation;
     }
 
+    //ui for pin
     private void enterPin() {
 
         boolean pasted1 = false;
@@ -729,6 +729,7 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
         hidePb();
     }
 
+    //check if verified
     private void checkStatus() {
         tutorialBinding.infoOpt.setText("Checking verification");
         if (user != null) {
@@ -808,7 +809,6 @@ public class VerificationActivity extends AppCompatActivity implements GoogleApi
             });
         }
     }
-
 
     public static void editSingleValue(int inputType, String hint, Activity activity, Function<String, Void> function) {
         Dialog d = new Dialog(activity);

@@ -255,6 +255,8 @@ public class JobsRvAdminAdapter extends RecyclerView.Adapter<JobsRvAdminAdapter.
                     String clientReviewLabel = activity.getString(R.string.client_review_label);
 
                     //service provider
+
+                    //extract rating from string
                     if (review.getClient_review() != null) {
                         MyLinkedMap clientRatingObj = getObjectMapper().readValue(review.getClient_review(), MyLinkedMap.class);
                         Map.Entry clientEntry = clientRatingObj.getEntry(0);

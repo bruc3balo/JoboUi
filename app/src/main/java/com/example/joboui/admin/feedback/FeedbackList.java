@@ -49,6 +49,8 @@ public class FeedbackList extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentFeedbackListBinding.inflate(inflater);
 
+
+        //filter
         RatingBar ratingBar = binding.ratingBar;
         ratingBar.setStepSize(1.0F);
         ratingBar.setOnRatingBarChangeListener((ratingBar1, r, fromUser) -> {
@@ -58,6 +60,8 @@ public class FeedbackList extends Fragment {
             }
         });
 
+
+        //filter checkbox
         CheckBox filter = binding.ratingFilter;
         filter.setChecked(filterRating);
         filter.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -65,6 +69,8 @@ public class FeedbackList extends Fragment {
             refreshList();
         });
 
+
+        //list of feedbacks
         RecyclerView feedbackRv = binding.feedbackRv;
         feedbackRv.setLayoutManager(new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false));
         feedbackRvAdapter = new FeedbackRvAdapter(requireContext(), feedbackList);
@@ -75,6 +81,8 @@ public class FeedbackList extends Fragment {
         return binding.getRoot();
     }
 
+
+    //get feedback data
     private void refreshList() {
         binding.feedbackPb.setVisibility(View.VISIBLE);
         new ViewModelProvider(this).get(JobViewModel.class).getAFeedback(filterRating ? rating : null, null, null, null, null).observe(getViewLifecycleOwner(), jsonResponse -> {

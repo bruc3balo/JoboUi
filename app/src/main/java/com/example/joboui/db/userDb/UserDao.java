@@ -16,6 +16,7 @@ import com.example.joboui.domain.Domain;
 import java.util.List;
 import java.util.Optional;
 
+//offline methods
 @Dao
 public interface UserDao {
 

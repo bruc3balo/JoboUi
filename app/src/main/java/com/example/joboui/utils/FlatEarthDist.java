@@ -4,8 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class FlatEarthDist {
     //returns distance in meters
-    public static double distance(LatLng position1,
-                                  LatLng position2){
+    public static double distance(LatLng position1, LatLng position2) {
         double a = (position1.latitude-position2.latitude)*FlatEarthDist.distPerLat(position1.latitude);
         double b = (position1.longitude-position2.longitude)*FlatEarthDist.distPerLng(position1.latitude);
         return Math.sqrt(a*a+b*b);
@@ -24,4 +23,5 @@ public class FlatEarthDist {
                 +0.4601181791*lat*lat
                 -1.4558127346*lat+110579.25662316;
     }
+
 }

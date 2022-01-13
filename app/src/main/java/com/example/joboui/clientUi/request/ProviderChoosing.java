@@ -53,12 +53,15 @@ public class ProviderChoosing extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentProviderChoosingBinding.inflate(inflater);
 
+
+        //set up list
         RecyclerView providerRv = binding.providerRv;
         providerRv.setLayoutManager(new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false));
         adapter = new ProviderRVAdapter(requireContext(), providerList);
         providerRv.setAdapter(adapter);
 
 
+        //handle click events to view a provider info
         adapter.setClickListener((view, position) -> {
             startActivity(new Intent(requireContext(), LSPReviews.class).putExtra(LOCAL_SERVICE_PROVIDER_USERNAME, providerList.get(position)));
         });
@@ -70,6 +73,8 @@ public class ProviderChoosing extends Fragment {
     public void onResume() {
         super.onResume();
         try {
+
+            //get list of providers
             getProviders(service.getName(), 0, 1);
         } catch (JSONException | JsonProcessingException e) {
             e.printStackTrace();

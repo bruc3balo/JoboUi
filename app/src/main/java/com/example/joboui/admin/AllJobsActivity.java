@@ -60,6 +60,9 @@ public class AllJobsActivity extends AppCompatActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     private void getAllJobs(Integer pageSize, Integer pageNo, Boolean reported) {
+
+
+        //options for parameters for paging
         HashMap<String, String> params = new HashMap<>();
 
         if (pageSize != null) {
@@ -121,6 +124,8 @@ public class AllJobsActivity extends AppCompatActivity {
         });
     }
 
+
+    //add listener for refreshing
     private LiveData<Optional<Boolean>> refreshData() {
         return refreshJobListAdmin;
     }

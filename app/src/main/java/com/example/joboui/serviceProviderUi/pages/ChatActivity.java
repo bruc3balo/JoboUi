@@ -217,6 +217,7 @@ public class ChatActivity extends AppCompatActivity {
         removeMessageListener();
     }
 
+    //get char from firebase
     private void populateThread(Models.Job job) {
         inProgress();
         System.out.println("populating thread");
@@ -244,6 +245,7 @@ public class ChatActivity extends AppCompatActivity {
             updateList();
         });
     }
+
 
     private void sendNewMessage(Models.Messages messages, EditText editText) {
         try {
@@ -289,6 +291,7 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    //auto update messages
     private void addMessageListener(String threadId) {
         if (!listenerAdded) {
             listenerAdded = true;
@@ -300,6 +303,8 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+
+    //validate message data when sending messages
     private void validateMessage(EditText messageField) {
         if (chat == null || chat.getYou() == null || chat.getMe() == null) {
             Toast.makeText(ChatActivity.this, "Failed to get user data", Toast.LENGTH_SHORT).show();
