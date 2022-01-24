@@ -7,6 +7,7 @@ import static com.example.joboui.clientUi.ClientActivity.getWelcomeGreeting;
 import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.USER_DB;
 import static com.example.joboui.login.SignInActivity.clearSp;
+import static com.example.joboui.services.NotificationService.loggedInMutable;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -131,6 +132,7 @@ public class AdminActivity extends AppCompatActivity {
     public static void logout(Application application) {
         userRepository.deleteUserDb();
         clearSp(USER_DB, application);
+        loggedInMutable.postValue(false);
         application.stopService(new Intent(application, NotificationService.class));
     }
 

@@ -35,6 +35,49 @@ public class BulkViewModel extends AndroidViewModel {
         MutableLiveData<LinkedHashSet<Models.NotificationModels>> mutableLiveData = new MutableLiveData<>();
         LinkedHashSet<Models.NotificationModels> notificationModelsList = new LinkedHashSet<>();
 
+        userApi.getAllMyNotifications(username, getAuthorization()).enqueue(new Callback<JsonResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
+
+                JsonResponse jsonResponse = response.body();
+
+                if (response.code() != 200 || jsonResponse == null || jsonResponse.isHas_error() || !jsonResponse.isSuccess() || jsonResponse.getData() == null) {
+                    mutableLiveData.setValue(new LinkedHashSet<>());
+                    return;
+                }
+
+                try {
+                    JsonArray users = new JsonArray(getObjectMapper().writeValueAsString(jsonResponse.getData()));
+                    users.forEach(u -> {
+                        try {
+                            Models.NotificationModels models = getObjectMapper().readValue(u.toString(), Models.NotificationModels.class);
+                            notificationModelsList.add(models);
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    mutableLiveData.setValue(notificationModelsList);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                    mutableLiveData.setValue(new LinkedHashSet<>());
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonResponse> call, @NonNull Throwable t) {
+                t.printStackTrace();
+                mutableLiveData.setValue(new LinkedHashSet<>());
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    private MutableLiveData<LinkedHashSet<Models.NotificationModels>> getMyNotifications(String username) {
+        MutableLiveData<LinkedHashSet<Models.NotificationModels>> mutableLiveData = new MutableLiveData<>();
+        LinkedHashSet<Models.NotificationModels> notificationModelsList = new LinkedHashSet<>();
+
         userApi.getMyNotifications(username, getAuthorization()).enqueue(new Callback<JsonResponse>() {
             @Override
             public void onResponse(@NonNull Call<JsonResponse> call, @NonNull Response<JsonResponse> response) {
@@ -73,6 +116,7 @@ public class BulkViewModel extends AndroidViewModel {
 
         return mutableLiveData;
     }
+
 
     //set notification to seen
     private MutableLiveData<Optional<Models.NotificationModels>> updateNotification(String username, Long id) {

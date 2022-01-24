@@ -72,6 +72,9 @@ public interface UserApi {
     @GET(API_URL + CONTEXT_URL + "notification")
     Call<JsonResponse> getMyNotifications(@Query(USERNAME) String username, @Header(AUTHORIZATION) String header);
 
+    @GET(API_URL + CONTEXT_URL + "notification/all")
+    Call<JsonResponse> getAllMyNotifications(@Query(USERNAME) String username, @Header(AUTHORIZATION) String header);
+
     @POST(API_URL + CONTEXT_URL + "notification")
     Call<JsonResponse> updateNotifications(@Query(USERNAME) String username, @Query(ID) Long id, @Header(AUTHORIZATION) String header);
 }

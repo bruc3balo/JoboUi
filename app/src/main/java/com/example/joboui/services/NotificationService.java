@@ -22,8 +22,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +30,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.HasDefaultViewModelProviderFactory;
 import androidx.lifecycle.LifecycleService;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
@@ -39,7 +39,6 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import com.example.joboui.NotificationActivity;
 import com.example.joboui.R;
 import com.example.joboui.broadcast.UpdateBroadcast;
-import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
 import com.example.joboui.model.Models.NotificationModels;
@@ -49,13 +48,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -71,13 +67,14 @@ public class NotificationService extends LifecycleService implements ViewModelSt
     private ViewModelProvider.Factory mFactory;
     private NotificationManager notificationManager;
     private BulkViewModel bulkViewModel;
-    private final LinkedHashSet<NotificationModels> notificationList = new LinkedHashSet<>();
+    public static final LinkedHashSet<NotificationModels> allNotificationList = new LinkedHashSet<>();
     private Domain.User myUser;
     public static boolean notificationServiceRunning = false;
+    public static MutableLiveData<Boolean> loggedInMutable = new MutableLiveData<>();
 
     public static LatLng myLocation = null;
 
-    public NotificationService () {
+    public NotificationService() {
 
     }
 
@@ -90,15 +87,10 @@ public class NotificationService extends LifecycleService implements ViewModelSt
         bulkViewModel = getDefaultViewModelProviderFactory().create(BulkViewModel.class);
         notificationManager = getSystemService(NotificationManager.class);
 
-        if (userRepository != null) {
-            userRepository.getUserLive().observe(this, optionalUser -> optionalUser.ifPresent(user -> {
-                myUser = user;
-                getAllNotifications(user.getUsername());
-                getDeviceLocation();
-            }));
-        }
 
-        return START_STICKY;
+        checkLoggedIn();
+
+        return START_REDELIVER_INTENT;
     }
 
     //get notifications per 10 sec
@@ -122,12 +114,12 @@ public class NotificationService extends LifecycleService implements ViewModelSt
 
                             try {
                                 JsonArray users = new JsonArray(getObjectMapper().writeValueAsString(jsonResponse.getData()));
-                                if (!users.isEmpty()) notificationList.clear();
+                                if (!users.isEmpty()) allNotificationList.clear();
                                 System.out.println("Getting notifications " + users.size());
                                 users.forEach(u -> {
                                     try {
                                         NotificationModels models = getObjectMapper().readValue(u.toString(), NotificationModels.class);
-                                        notificationList.add(models);
+                                        allNotificationList.add(models);
                                         showNotification(models);
                                     } catch (JsonProcessingException e) {
                                         e.printStackTrace();
@@ -151,8 +143,25 @@ public class NotificationService extends LifecycleService implements ViewModelSt
         }
     }
 
+    private void checkLoggedIn() {
+        loggedInMutable.observe(this, loggedIn -> {
+            if (!loggedIn) {
+                stopSelf();
+            } else {
+                if (userRepository != null) {
+                    System.out.println("Notification started");
+                    userRepository.getUserLive().observe(this, optionalUser -> optionalUser.ifPresent(user -> {
+                        myUser = user;
+                        getAllNotifications(user.getUsername());
+                        getDeviceLocation();
+                    }));
+                }
+            }
+        });
+    }
+
     //get location
-    private void getDeviceLocation () {
+    private void getDeviceLocation() {
         //todo distance limit
         //todo fencing
         //todo remind scheduled jobs
@@ -197,11 +206,12 @@ public class NotificationService extends LifecycleService implements ViewModelSt
             } catch (SecurityException e) {
                 e.printStackTrace();
             }
-        } else {}
+        } else {
+        }
     }
 
     private void showAllNotifications() {
-        notificationList.forEach(this::showNotification);
+        allNotificationList.forEach(this::showNotification);
     }
 
     private void showNotification(NotificationModels notificationModel) {
@@ -236,8 +246,8 @@ public class NotificationService extends LifecycleService implements ViewModelSt
         notificationModel.setNotified(true);
         bulkViewModel.updateNotificationLiveData(notificationModel.getUid(), notificationModel.getId()).observe(this, notification -> {
             notification.ifPresent(n -> {
-                notificationList.remove(notificationModel);
-                notificationList.add(notification.get());
+                allNotificationList.remove(notificationModel);
+                allNotificationList.add(notification.get());
             });
         });
     }
@@ -262,5 +272,7 @@ public class NotificationService extends LifecycleService implements ViewModelSt
     public void onDestroy() {
         super.onDestroy();
         notificationServiceRunning = false;
+        allNotificationList.clear();
+        System.out.println("Notification destroyed");
     }
 }

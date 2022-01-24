@@ -271,7 +271,7 @@ public class ServiceProviderAdditionalActivity extends AppCompatActivity {
         serviceProviderAdditionalBinding.finishAdditionalInfoButton.setEnabled(true);
     }
 
-    //valdate additional details form
+    //validate additional details form
     private boolean validateForm() {
         boolean valid = false;
 

@@ -5,6 +5,7 @@ import static com.example.joboui.globals.GlobalDb.userRepository;
 import static com.example.joboui.globals.GlobalVariables.HY;
 import static com.example.joboui.login.RegisterActivity.goToAdditionalInfoActivity;
 import static com.example.joboui.login.RegisterActivity.goToVerificationPage;
+import static com.example.joboui.services.NotificationService.loggedInMutable;
 import static com.example.joboui.services.NotificationService.notificationServiceRunning;
 
 import android.app.Activity;
@@ -75,6 +76,8 @@ public class LoginActivity extends AppCompatActivity {
                 System.out.println("COULD NOT PROCEED ... user is not present");
                 directToLogin(activity);
                 return;
+            } else {
+                loggedInMutable.postValue(true);
             }
 
 
