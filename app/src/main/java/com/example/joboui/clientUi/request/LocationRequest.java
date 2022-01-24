@@ -6,6 +6,7 @@ import static com.example.joboui.globals.GlobalVariables.ASAP;
 import static com.example.joboui.login.SignInActivity.getObjectMapper;
 import static com.example.joboui.services.NotificationService.myLocation;
 import static com.example.joboui.utils.DataOps.TIMESTAMP_PATTERN;
+import static com.example.joboui.utils.DataOps.getNairobiBounds;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -103,8 +104,7 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for requireActivity() fragment
 
         binding = FragmentLocationRequestBinding.inflate(inflater);
@@ -313,7 +313,6 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
         };
     }
 
-
     //show location pop up when found
     private void showSuggestions(View anchor) {
         PopupMenu menu = new PopupMenu(requireActivity(), anchor);
@@ -331,9 +330,17 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
             Optional<Address> address = placesList.stream().filter(p1 -> p1.getAddressLine(0).equals(item)).findFirst();
             if (address.isPresent()) {
                 LatLng lat = new LatLng(address.get().getLatitude(), address.get().getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lat, 15));
-                addMarkerToMap(mMap, lat);
-                jobRequestForm.setJob_location(new Gson().toJson(lat));
+
+                if (!getNairobiBounds().contains(lat)) {
+                    Toast.makeText(requireActivity(), "Location is not in nairobi", Toast.LENGTH_SHORT).show();
+                    return false;
+                } else {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lat, 15));
+                    addMarkerToMap(mMap, lat);
+                    jobRequestForm.setJob_location(new Gson().toJson(lat));
+                }
+
+
             }
 
             return false;
@@ -344,6 +351,7 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
+
 
         if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(requireActivity(), "Location Not granted", Toast.LENGTH_SHORT).show();
@@ -377,16 +385,27 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
         googleMap.setOnInfoWindowClickListener(this::getFromMarker);
         googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.getUiSettings().setZoomGesturesEnabled(true);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation,15));
+        googleMap.setLatLngBoundsForCameraTarget(getNairobiBounds());
+
+        int padding = (int) (getResources().getDisplayMetrics().widthPixels * 0.2);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(getNairobiBounds(),padding));
+
 
         //set up marker to my location
         addMarkerToMap(googleMap,myLocation);
     }
 
-    private void addMarkerToMap(GoogleMap googleMap, LatLng latLng) {
+        private void addMarkerToMap(GoogleMap googleMap, LatLng latLng) {
+
+        if (!getNairobiBounds().contains(latLng)) {
+            Toast.makeText(requireActivity(), "Location is not in nairobi", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         @SuppressLint("UseCompatLoadingForDrawables") MarkerOptions markerOptions = new MarkerOptions().position(latLng).draggable(true).title(getFromLocation(latLng)).snippet("Click to confirm location").icon(BitmapDescriptorFactory.fromBitmap(drawableToBitmap(requireActivity().getDrawable(R.drawable.ic_service))));
         googleMap.clear();
         googleMap.addMarker(markerOptions);
+        System.out.println("lat "+ latLng.latitude + " long "+latLng.longitude);
     }
 
 

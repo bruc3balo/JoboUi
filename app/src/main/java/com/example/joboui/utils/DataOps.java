@@ -19,6 +19,8 @@ import android.widget.ImageView;
 import com.example.joboui.R;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.squareup.picasso.Transformation;
 
@@ -48,6 +50,15 @@ public class DataOps {
             }
             return specString.substring(1);
         }
+    }
+
+    public static LatLngBounds getNairobiBounds() {
+        LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
+        LatLng nw = new LatLng(-1.108859915563948,36.53222355991602);
+        LatLng se = new LatLng(-1.425452384226304, 37.41520777344704);
+        latLngBuilder.include(nw);
+        latLngBuilder.include(se);
+        return latLngBuilder.build();
     }
 
     public static Transformation getRoundTransformation(Context context, ImageView.ScaleType scaleType) {

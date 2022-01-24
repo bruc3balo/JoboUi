@@ -42,6 +42,7 @@ import com.example.joboui.broadcast.UpdateBroadcast;
 import com.example.joboui.db.userDb.UserViewModel;
 import com.example.joboui.domain.Domain;
 import com.example.joboui.model.Models;
+import com.example.joboui.model.Models.NotificationModels;
 import com.example.joboui.utils.DataOps;
 import com.example.joboui.utils.JsonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -70,7 +71,7 @@ public class NotificationService extends LifecycleService implements ViewModelSt
     private ViewModelProvider.Factory mFactory;
     private NotificationManager notificationManager;
     private BulkViewModel bulkViewModel;
-    private final LinkedHashSet<Models.NotificationModels> notificationList = new LinkedHashSet<>();
+    private final LinkedHashSet<NotificationModels> notificationList = new LinkedHashSet<>();
     private Domain.User myUser;
     public static boolean notificationServiceRunning = false;
 
@@ -125,7 +126,7 @@ public class NotificationService extends LifecycleService implements ViewModelSt
                                 System.out.println("Getting notifications " + users.size());
                                 users.forEach(u -> {
                                     try {
-                                        Models.NotificationModels models = getObjectMapper().readValue(u.toString(), Models.NotificationModels.class);
+                                        NotificationModels models = getObjectMapper().readValue(u.toString(), NotificationModels.class);
                                         notificationList.add(models);
                                         showNotification(models);
                                     } catch (JsonProcessingException e) {
@@ -203,7 +204,7 @@ public class NotificationService extends LifecycleService implements ViewModelSt
         notificationList.forEach(this::showNotification);
     }
 
-    private void showNotification(Models.NotificationModels notificationModel) {
+    private void showNotification(NotificationModels notificationModel) {
         //todo change logo
         if (notificationModel.isNotified()) {
             return;
@@ -231,7 +232,7 @@ public class NotificationService extends LifecycleService implements ViewModelSt
         updateNotification(notificationModel);
     }
 
-    private void updateNotification(Models.NotificationModels notificationModel) {
+    private void updateNotification(NotificationModels notificationModel) {
         notificationModel.setNotified(true);
         bulkViewModel.updateNotificationLiveData(notificationModel.getUid(), notificationModel.getId()).observe(this, notification -> {
             notification.ifPresent(n -> {

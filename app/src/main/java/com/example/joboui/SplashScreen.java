@@ -62,6 +62,7 @@ public class SplashScreen extends AppCompatActivity {
             askPermissions();
         }
     });
+
     private final ActivityResultLauncher<Intent> settingsPermission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == Activity.RESULT_OK) {
             Intent intent = result.getData();
@@ -95,7 +96,6 @@ public class SplashScreen extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         askPermissions();
-
     }
 
 
