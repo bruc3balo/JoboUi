@@ -520,12 +520,18 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
 
         //placesList.addAll(geocoder.getFromLocationName(query, 10));
         locationsViewModel.getSuggestedAddresses(query).observe(requireActivity(), addresses -> {
+            if (addresses.isEmpty()) {
+                Toast.makeText(requireActivity(), "Location not found", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             placesList.clear();
             placesList.addAll(addresses);
             System.out.println(Arrays.toString(addresses.stream().map(p -> p.getAddressLine(0)).toArray()));
+            showSuggestions(anchor);
         });
 
-        showSuggestions(anchor);
+
     }
 
 

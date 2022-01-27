@@ -49,11 +49,6 @@ public class ServicesPageGrid extends BaseAdapter {
                             }
 
                             serviceList.putAll(allServiceList);
-                            try {
-                                System.out.println(getObjectMapper().writeValueAsString(serviceList) + " all");
-                            } catch (JsonProcessingException e) {
-                                e.printStackTrace();
-                            }
                             System.out.println("THE SIZE IS " + services.get().size());
                             notifyDataSetChanged();
                         }

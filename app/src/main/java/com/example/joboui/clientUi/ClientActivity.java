@@ -87,7 +87,6 @@ public class ClientActivity extends AppCompatActivity {
         servicesPageGridAdapter = new ServicesPageGrid(ClientActivity.this);
         servicesGrid.setAdapter(servicesPageGridAdapter);
         servicesGrid.setOnItemClickListener((adapterView, view, position, id) -> {
-            //Toast.makeText(ClientActivity.this, servicesPageGridAdapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
             Bundle bundle = new Bundle();
             Optional<Domain.Services> service = servicesPageGridAdapter.getItem(position);
             bundle.putSerializable(SERVICE_DB, service.orElse(null));

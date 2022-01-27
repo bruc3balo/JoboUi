@@ -79,6 +79,7 @@ public class SignInActivity extends AppCompatActivity {
                     });
                 } catch (JSONException | JsonProcessingException e) {
                     e.printStackTrace();
+                    Toast.makeText(SignInActivity.this, "Something went wrong , Try again", Toast.LENGTH_SHORT).show();
                     hidePb();
                 }
 

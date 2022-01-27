@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LocationsViewModel extends AndroidViewModel {
@@ -30,6 +31,7 @@ public class LocationsViewModel extends AndroidViewModel {
             suggestions.setValue(geocoder.getFromLocationName(query, 10));
         } catch (IOException e) {
             e.printStackTrace();
+            suggestions.setValue(new ArrayList<>());
         }
 
         return suggestions;
