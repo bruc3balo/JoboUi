@@ -89,7 +89,7 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
     private MapView mapView;
     private GoogleMap mMap;
     private FragmentLocationRequestBinding binding;
-    private final Calendar scheduledDate = Calendar.getInstance();
+    private Calendar scheduledDate = Calendar.getInstance();
 
 
     public LocationRequest() {
@@ -206,55 +206,62 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
             } else if (checkedId == binding.schedules.getId()) {
                 binding.scheduledTimeTv.setVisibility(View.VISIBLE);
                 final Calendar cldr = Calendar.getInstance();
-                int dayM = cldr.get(Calendar.DAY_OF_MONTH);
-                final int monthM = cldr.get(Calendar.MONTH);
-                int yearM = cldr.get(Calendar.YEAR);
-                int hr = cldr.get(Calendar.HOUR);
-                int min = cldr.get(Calendar.MINUTE);
+                final Calendar chosenCalendar = Calendar.getInstance();
 
-                final int[] hourS = {0};
-                final int[] minS = {0};
-                final int[] yearS = {0};
-                final int[] monthS = {0};
-                final int[] dayS = {0};
-                LocalTime localTime = LocalTime.now();
+
 
 
                 TimePickerDialog timePickerDialog = new TimePickerDialog(requireContext(), (view, hourOfDay, minute) -> {
-                    hourS[0] = hourOfDay;
-                    minS[0] = minute;
+                    chosenCalendar.set(chosenCalendar.get(Calendar.YEAR), chosenCalendar.get(Calendar.MONTH), chosenCalendar.get(Calendar.DAY_OF_MONTH), chosenCalendar.get(Calendar.HOUR_OF_DAY), chosenCalendar.get(Calendar.MINUTE));
 
                     String h = String.valueOf(hourOfDay).length() == 1 ? "0".concat(String.valueOf(hourOfDay)) : String.valueOf(hourOfDay);
                     String m = String.valueOf(minute).length() == 1 ? "0".concat(String.valueOf(minute)) : String.valueOf(minute);
 
+
                     LocalTime picked = LocalTime.parse(h.concat(":").concat(m));
-                    if (picked.isBefore(localTime)) {
+
+                    final int tense = chosenCalendar.getTime().compareTo(cldr.getTime());
+
+                    if (tense < 0) {
                         binding.asap.setChecked(true);
                         Toast.makeText(requireContext(), "Time cannot be in the past", Toast.LENGTH_SHORT).show();
                         return;
-                    } else if (picked.equals(localTime)) {
-                        binding.asap.setChecked(true);
-                        Toast.makeText(requireContext(), "Changed to as soon as possible", Toast.LENGTH_SHORT).show();
-                        return;
                     }
 
-                    scheduledDate.set(yearS[0], monthS[0], dayS[0], hourS[0], minS[0]);
-                    String date = ConvertDate.formatDateReadable(scheduledDate.getTime());
-                    binding.scheduledTimeTv.setText(date);
-                    jobRequestForm.setScheduled_at(date);
-                }, hr, min, true);
+                    if (tense == 0) {
+                        LocalTime localTime = LocalTime.now();
+                        localTime = LocalTime.parse(localTime.getHour() + ":"+localTime.getMinute());
+
+                        System.out.println("Time is picked" + picked);
+                        System.out.println("Time is local" + localTime);
 
 
+                        if (picked.isBefore(localTime)) {
+                            binding.asap.setChecked(true);
+                            Toast.makeText(requireContext(), "Time cannot be in the past", Toast.LENGTH_SHORT).show();
+                        } else if (picked.equals(localTime)) {
+                            binding.asap.setChecked(true);
+                            Toast.makeText(requireContext(), "Changed to asap", Toast.LENGTH_SHORT).show();
+                        } else {
+                            scheduledDate = chosenCalendar;
+                            String date = ConvertDate.formatDateReadable(scheduledDate.getTime());
+                            binding.scheduledTimeTv.setText(date);
+                            jobRequestForm.setScheduled_at(date);
+                        }
 
+                    } else {
+                        scheduledDate = chosenCalendar;
+                        String date = ConvertDate.formatDateReadable(scheduledDate.getTime());
+                        binding.scheduledTimeTv.setText(date);
+                        jobRequestForm.setScheduled_at(date);
+                    }
 
-
+                }, cldr.get(Calendar.HOUR_OF_DAY), cldr.get(Calendar.MINUTE), true);
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
-                    yearS[0] = year;
-                    monthS[0] = month + 1;
-                    dayS[0] = dayOfMonth;
+                    chosenCalendar.set(year, month, dayOfMonth);
                     timePickerDialog.show();
-                }, yearM, monthM, dayM);
+                }, cldr.get(Calendar.YEAR), cldr.get(Calendar.MONTH), cldr.get(Calendar.DAY_OF_MONTH));
 
                 datePickerDialog.setOnShowListener(dialog -> datePickerDialog.getDatePicker().setMinDate(Calendar.getInstance().getTimeInMillis()));
 
@@ -388,14 +395,14 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
         googleMap.setLatLngBoundsForCameraTarget(getNairobiBounds());
 
         int padding = (int) (getResources().getDisplayMetrics().widthPixels * 0.2);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(getNairobiBounds(),padding));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(getNairobiBounds(), padding));
 
 
         //set up marker to my location
-        addMarkerToMap(googleMap,myLocation);
+        addMarkerToMap(googleMap, myLocation);
     }
 
-        private void addMarkerToMap(GoogleMap googleMap, LatLng latLng) {
+    private void addMarkerToMap(GoogleMap googleMap, LatLng latLng) {
 
         if (!getNairobiBounds().contains(latLng)) {
             Toast.makeText(requireActivity(), "Location is not in nairobi", Toast.LENGTH_SHORT).show();
@@ -405,7 +412,7 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
         @SuppressLint("UseCompatLoadingForDrawables") MarkerOptions markerOptions = new MarkerOptions().position(latLng).draggable(true).title(getFromLocation(latLng)).snippet("Click to confirm location").icon(BitmapDescriptorFactory.fromBitmap(drawableToBitmap(requireActivity().getDrawable(R.drawable.ic_service))));
         googleMap.clear();
         googleMap.addMarker(markerOptions);
-        System.out.println("lat "+ latLng.latitude + " long "+latLng.longitude);
+        System.out.println("lat " + latLng.latitude + " long " + latLng.longitude);
     }
 
 
@@ -507,7 +514,6 @@ public class LocationRequest extends Fragment implements OnMapReadyCallback {
         super.onStart();
         mapView.onStart();
     }
-
 
 
     //get location suggestions
